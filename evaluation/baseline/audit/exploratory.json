@@ -1,0 +1,225 @@
+[
+  {
+    "case": "keyboard after help",
+    "state": {
+      "phase": "实验暂停",
+      "shots": "EXPERIMENT 001",
+      "damage": "0",
+      "dialog": true,
+      "title": "从一颗弹珠开始。",
+      "focus": "help-close"
+    }
+  },
+  {
+    "case": "right mouse click",
+    "state": {
+      "phase": "炼成进行中",
+      "shots": "EXPERIMENT 001",
+      "damage": "2",
+      "dialog": false,
+      "focus": ""
+    }
+  },
+  {
+    "case": "drag release outside",
+    "state": {
+      "phase": "等待发射",
+      "shots": "EXPERIMENT 001",
+      "damage": "0",
+      "dialog": false,
+      "focus": ""
+    }
+  },
+  {
+    "case": "viewport",
+    "width": 1440,
+    "height": 900,
+    "scrollWidth": 1440,
+    "canvas": [
+      535.8125,
+      290,
+      368.34375,
+      467.53125
+    ],
+    "parent": [
+      535.8125,
+      290,
+      368.359375,
+      467.53125
+    ],
+    "button": [
+      1150,
+      818.53125,
+      142,
+      43
+    ]
+  },
+  {
+    "case": "viewport",
+    "width": 1024,
+    "height": 768,
+    "scrollWidth": 1024,
+    "canvas": [
+      353,
+      290,
+      317.984375,
+      403.609375
+    ],
+    "parent": [
+      353,
+      290,
+      318,
+      403.609375
+    ],
+    "button": [
+      854,
+      786.375,
+      142,
+      43
+    ]
+  },
+  {
+    "case": "viewport",
+    "width": 821,
+    "height": 600,
+    "scrollWidth": 821,
+    "canvas": [
+      251.5,
+      290,
+      317.984375,
+      403.609375
+    ],
+    "parent": [
+      251.5,
+      290,
+      318,
+      403.609375
+    ],
+    "button": [
+      651,
+      786.375,
+      142,
+      43
+    ]
+  },
+  {
+    "case": "viewport",
+    "width": 820,
+    "height": 600,
+    "scrollWidth": 820,
+    "canvas": [
+      106,
+      445.5,
+      607.984375,
+      771.6875
+    ],
+    "parent": [
+      106,
+      445.5,
+      608,
+      771.6875
+    ],
+    "button": [
+      591,
+      539,
+      124,
+      45
+    ]
+  },
+  {
+    "case": "viewport",
+    "width": 390,
+    "height": 844,
+    "scrollWidth": 390,
+    "canvas": [
+      15,
+      418.5,
+      359.984375,
+      456.921875
+    ],
+    "parent": [
+      15,
+      418.5,
+      360,
+      456.921875
+    ],
+    "button": [
+      263,
+      783,
+      113,
+      45
+    ]
+  },
+  {
+    "case": "viewport",
+    "width": 375,
+    "height": 667,
+    "scrollWidth": 375,
+    "canvas": [
+      15,
+      418.5,
+      344.984375,
+      437.875
+    ],
+    "parent": [
+      15,
+      418.5,
+      345,
+      437.875
+    ],
+    "button": [
+      248,
+      606,
+      113,
+      45
+    ]
+  },
+  {
+    "case": "viewport",
+    "width": 320,
+    "height": 568,
+    "scrollWidth": 340,
+    "canvas": [
+      15,
+      418.5,
+      309.984375,
+      393.453125
+    ],
+    "parent": [
+      15,
+      418.5,
+      310,
+      393.453125
+    ],
+    "button": [
+      213,
+      507,
+      113,
+      45
+    ]
+  },
+  {
+    "case": "viewport",
+    "width": 844,
+    "height": 390,
+    "scrollWidth": 844,
+    "canvas": [
+      263,
+      290,
+      317.984375,
+      403.609375
+    ],
+    "parent": [
+      263,
+      290,
+      318,
+      403.609375
+    ],
+    "button": [
+      674,
+      786.375,
+      142,
+      43
+    ]
+  }
+]

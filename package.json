@@ -1,0 +1,23 @@
+{
+  "name": "marble-alchemy-workshop",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:playthrough": "node scripts/playthrough.mjs"
+  },
+  "dependencies": {
+    "phaser": "3.90.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.58.2",
+    "typescript": "5.9.3",
+    "vite": "7.3.1",
+    "vitest": "3.2.4"
+  }
+}
