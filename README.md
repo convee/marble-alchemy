@@ -1,6 +1,20 @@
 # 弹珠炼金工坊 · Marble Alchemy
 
-一个完整的单人浏览器小游戏。TypeScript + Phaser 3.90 + Phaser 内置 Matter 物理，Vite 构建。所有图形通过 Phaser Graphics、内联 SVG 和 CSS 绘制，音效通过 Web Audio 合成。无后端、无在线 AI、无外部图片、无字体 CDN、无付费素材。
+[![CI](https://github.com/convee/marble-alchemy/actions/workflows/ci.yml/badge.svg)](https://github.com/convee/marble-alchemy/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-c3a6fb.svg)](LICENSE)
+
+> [在线试玩](https://convee.cn/marble-alchemy/) · [完整无剪辑录屏（v1.0.0）](https://github.com/convee/marble-alchemy/releases/download/v1.0.0/codex-gameplay-v1.0.0.mp4) · [测试与测评证据](evaluation/README.md)
+
+![弹珠炼金工坊真实运行片段](docs/media/demo.gif)
+
+一个完整的单人浏览器小游戏。TypeScript + Phaser 3.90 + Phaser 内置 Matter 物理，Vite 构建。游戏运行时的图形通过 Phaser Graphics、内联 SVG 和 CSS 绘制，音效通过 Web Audio 合成。无后端、无在线 AI、无外部图片请求、无字体 CDN、无付费素材。项目使用 MIT 许可，运行时依赖声明见 [`THIRD_PARTY_NOTICES.txt`](public/THIRD_PARTY_NOTICES.txt)。
+
+<details>
+<summary>English overview</summary>
+
+**Marble Alchemy Workshop** is a five-stage neon pachinko roguelite. Aim a marble, bank damage through real Matter collisions, resolve the shot after every marble drains, then choose one of three upgrades. It runs entirely in the browser with procedural art and synthesized audio. No backend, online AI, external runtime image requests, font CDN, or paid material.
+
+</details>
 
 ## 本地运行
 
@@ -93,4 +107,17 @@ npm run test:playthrough
 
 它只通过界面发射与选择随机升级，记录每次伤害、生命和选卡，并保存截图；不会保证每次随机游玩都获胜。脚本通过不等于通关，需查看输出的 Result 与 `artifacts/natural-run.json`。
 
-详细的实测范围、辅助测试条件与未验证项目见 [TESTING.md](TESTING.md)。构建包含 Phaser 完整运行时，会出现单个 JS 包超过 500kB 的体积提示；本次 gzip 约 345kB，构建正常成功。
+发布录屏同样只操作生产页面的正常界面；它要求工作树干净、最终结果为胜利，并把源码提交、构建、浏览器、请求响应和原始视频校验值写入清单：
+
+```sh
+npm run build
+npm run preview
+# 在另一个终端执行；TAKE 必须是尚不存在的安全目录名
+TAKE=local-proof GAME_URL=http://127.0.0.1:4173/ npm run record
+TAKE=local-proof npm run record:package
+TAKE=local-proof npm run record:export
+```
+
+录屏默认使用本机 Google Chrome。可通过 `PLAYWRIGHT_CHANNEL=chromium` 改用 Playwright Chromium；派生视频需要 FFmpeg。最后一步会脱敏并导出公开测评 JSON，同时生成 MP4、原始 WebM、manifest 和 `SHA256SUMS` 四个 Release 文件。README GIF 是标明倍速与剪辑数的两个实录片段，Release MP4 保留完整时间线且不改变速度，原始 WebM 不做编辑。
+
+详细的实测范围、辅助测试条件与未验证项目见 [TESTING.md](TESTING.md)。修复前的失败用例、修复后的机器可读结果、正常 UI 实玩清单和录屏校验值保存在 [evaluation/](evaluation/README.md)。构建包含 Phaser 完整运行时，会出现单个 JS 包超过 500kB 的体积提示；本次 gzip 约 345kB，构建正常成功。

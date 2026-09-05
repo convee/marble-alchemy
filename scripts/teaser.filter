@@ -1,0 +1,5 @@
+[0:v]trim=start={{OPENING_START}}:end={{OPENING_END}},setpts=0.60*(PTS-STARTPTS)[opening];
+[0:v]trim=start={{FINALE_START}}:end={{FINALE_END}},setpts=0.60*(PTS-STARTPTS)[finale];
+[opening][finale]concat=n=2:v=1:a=0,fps=12,scale=720:-2:flags=lanczos,drawtext=fontfile='{{FONT}}':text='CODEX HIGHLIGHTS  |  1.67x  |  2 CUTS':fontcolor=white:fontsize=18:x=22:y=20:box=1:boxcolor=0x100f19AA:boxborderw=9,split[frames][palette_source];
+[palette_source]palettegen=max_colors=112:stats_mode=diff[palette];
+[frames][palette]paletteuse=dither=bayer:bayer_scale=4:diff_mode=rectangle[out]

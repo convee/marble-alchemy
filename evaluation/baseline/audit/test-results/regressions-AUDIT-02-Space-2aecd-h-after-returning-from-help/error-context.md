@@ -1,0 +1,176 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - link "弹珠炼金工坊首页" [ref=e5] [cursor=pointer]:
+        - /url: ./
+        - img [ref=e7]
+        - generic [ref=e12]:
+          - strong [ref=e13]: 弹珠炼金工坊
+          - generic [ref=e14]: MARBLE ALCHEMY
+      - generic [ref=e15]:
+        - text: 独立实验室
+        - generic [ref=e17]: VOL. 01
+      - navigation "游戏控制" [ref=e18]:
+        - button "? 玩法说明" [ref=e19] [cursor=pointer]:
+          - generic [ref=e20]: "?"
+          - generic [ref=e21]: 玩法说明
+        - button "关闭音效" [pressed] [ref=e22] [cursor=pointer]:
+          - generic [ref=e23]: ♫
+        - button "Ⅱ 暂停" [ref=e24] [cursor=pointer]:
+          - generic [ref=e25]: Ⅱ
+          - generic [ref=e26]: 暂停
+        - button "重新开始" [ref=e27] [cursor=pointer]:
+          - generic [ref=e28]: ↻
+    - main [ref=e29]:
+      - generic [ref=e30]:
+        - generic [ref=e31]:
+          - paragraph [ref=e32]: THE TRANSMUTATION CHAMBER
+          - heading "每一次碰撞，皆是炼金。" [level=1] [ref=e33]:
+            - text: 每一次碰撞，
+            - emphasis [ref=e34]: 皆是炼金。
+        - paragraph [ref=e35]:
+          - text: 瞄准微光，让混沌化为力量。
+          - text: 五场试炼，一颗贤者之石。
+      - generic "五关进度" [ref=e36]:
+        - generic [ref=e37]:
+          - generic [ref=e38]: "1"
+          - generic [ref=e39]: 游离幽灵
+        - generic [ref=e40]:
+          - generic [ref=e41]: "2"
+          - generic [ref=e42]: 铜锈守卫
+        - generic [ref=e43]:
+          - generic [ref=e44]: "3"
+          - generic [ref=e45]: 棱镜幻影
+        - generic [ref=e46]:
+          - generic [ref=e47]: "4"
+          - generic [ref=e48]: 星尘吞噬者
+        - generic [ref=e49]:
+          - generic [ref=e50]: "5"
+          - generic [ref=e51]: 虚空贤者
+          - generic [ref=e52]: 终章
+      - generic [ref=e53]:
+        - complementary [ref=e54]:
+          - generic [ref=e55]:
+            - generic [ref=e56]:
+              - generic [ref=e57]: 当前试炼
+              - generic [ref=e58]: 01 / 05
+            - generic [ref=e59]:
+              - img [ref=e60]
+              - generic [ref=e73]: 游离体 · I
+            - paragraph [ref=e74]: THE WANDERING WISP
+            - heading "游离幽灵" [level=2] [ref=e75]
+            - paragraph [ref=e76]: 一团从试剂瓶中溜出的不安灵火。
+            - generic [ref=e77]:
+              - generic [ref=e78]: 敌人生命
+              - strong [ref=e79]: 12 / 12
+            - paragraph [ref=e82]:
+              - generic [ref=e83]: ⚔
+              - text: 存活反击
+              - generic [ref=e84]: −1 生命
+          - generic [ref=e85]:
+            - generic [ref=e86]:
+              - generic [ref=e87]: 炼金师生命
+              - generic [ref=e88]: 5 / 5
+            - generic "生命 5 / 5" [ref=e89]:
+              - generic [ref=e90]: ♥
+              - generic [ref=e91]: ♥
+              - generic [ref=e92]: ♥
+              - generic [ref=e93]: ♥
+              - generic [ref=e94]: ♥
+            - paragraph [ref=e95]: 保护好你最后的火种。
+          - generic [ref=e96]:
+            - generic [ref=e97]: ✧
+            - paragraph [ref=e98]:
+              - text: 伤害会先储存在炼金容器中，
+              - text: 所有弹珠落下后统一释放。
+        - region "弹珠炼金弹盘" [ref=e99]:
+          - generic [ref=e100]:
+            - generic [ref=e103]: 实验暂停
+            - generic [ref=e104]: EXPERIMENT 001
+          - application "弹盘。移动鼠标瞄准并点击发射；触屏拖动瞄准后松手；也可用方向键和空格。" [ref=e105]
+          - generic [ref=e107]:
+            - generic [ref=e108]: 移动瞄准 · 点击或松手发射
+            - generic [ref=e109]:
+              - text: ← →
+              - generic [ref=e110]: SPACE
+          - generic [ref=e111]:
+            - generic [ref=e112]: Ⅱ
+            - strong [ref=e113]: 实验已暂停
+        - complementary [ref=e114]:
+          - generic [ref=e115]:
+            - generic [ref=e116]:
+              - generic [ref=e117]: 本轮炼成伤害
+              - generic [ref=e118]: ✧
+            - generic [ref=e119]:
+              - strong [ref=e120]: "0"
+              - generic [ref=e121]: DMG
+            - generic [ref=e122]:
+              - generic [ref=e123]: 碰撞次数 0
+              - generic [ref=e124]: 弹珠 1
+            - generic [ref=e125]: 等待第一道火花
+          - generic [ref=e126]:
+            - generic [ref=e127]:
+              - generic [ref=e128]: 我的炼金配方
+              - generic [ref=e129]: 0 种
+            - generic [ref=e130]:
+              - generic [ref=e131]: ◉
+              - generic [ref=e132]:
+                - strong [ref=e133]: 原初弹珠
+                - generic [ref=e134]: 基础碰撞伤害 1
+              - generic [ref=e135]: 初始
+            - generic [ref=e136]:
+              - img [ref=e137]
+              - paragraph [ref=e142]: 配方尚未书写
+              - text: 击败敌人，选择你的炼金之路。
+      - generic [ref=e143]:
+        - status [ref=e144]: ✧ 新的实验开始了 · 瞄准钉子，炼成你的第一击
+        - button "发射弹珠 ↗" [disabled] [ref=e145]:
+          - text: 发射弹珠
+          - generic [ref=e146]: ↗
+  - dialog "从一颗弹珠开始。" [ref=e147]:
+    - generic [ref=e148]:
+      - paragraph [ref=e149]: THE ALCHEMIST’S HANDBOOK
+      - heading "从一颗弹珠开始。" [level=2] [ref=e150]
+      - generic [ref=e151]:
+        - generic [ref=e152]:
+          - generic [ref=e153]: "01"
+          - paragraph [ref=e154]:
+            - strong [ref=e155]: 瞄准与发射
+            - text: 鼠标移动瞄准、点击弹盘发射；触屏按住拖动、松手发射。也可按 ← → 调整方向，空格发射。
+        - generic [ref=e156]:
+          - generic [ref=e157]: "02"
+          - paragraph [ref=e158]:
+            - strong [ref=e159]: 让碰撞炼成伤害
+            - text: 每次撞钉累计伤害，所有弹珠落到底部后统一攻击。瞄准线只预览首次碰撞前的路径。钉子颜色仅为装饰。
+        - generic [ref=e160]:
+          - generic [ref=e161]: "03"
+          - paragraph [ref=e162]:
+            - strong [ref=e163]: 升级，穿越五场试炼
+            - text: 敌人存活则反击；击败后从 3 张随机配方中选 1 张。第五关选取最后一份配方后获胜。生命归零则失败。
+      - generic [ref=e164]:
+        - paragraph [ref=e165]:
+          - generic [ref=e166]: ✦ 强化
+          - text: 每次碰撞的基础伤害 +1。每一次触碰，都更有力量。
+        - paragraph [ref=e167]:
+          - generic [ref=e168]: ♨ 火焰
+          - text: 每次碰撞额外累计 1 点火焰伤害。重复获得可叠加。
+        - paragraph [ref=e169]:
+          - generic [ref=e170]: ϟ 闪电
+          - text: 碰撞时连接最近的另外两颗钉子，各造成 1 点伤害。连锁不再触发连锁。
+        - paragraph [ref=e171]:
+          - generic [ref=e172]: ⑂ 分裂
+          - text: 每次发射的首次碰撞额外生成 2 颗弹珠。新弹珠不会继续分裂。
+        - paragraph [ref=e173]:
+          - generic [ref=e174]: ◇ 暴击
+          - text: 每次碰撞有 20% 概率使本次直接伤害翻倍，包含火焰，不含闪电连锁。
+        - paragraph [ref=e175]:
+          - generic [ref=e176]: ♡ 治疗
+          - text: 立即恢复 2 点生命，最多恢复至 5 点。让下一次实验更从容。
+      - paragraph [ref=e177]: P / Esc 暂停或继续 · 切换到后台自动暂停 · 滞留弹珠会轻推，16 秒后自动回收（暂停不计时）。
+      - button "明白了，继续实验 ↗" [active] [ref=e178] [cursor=pointer]:
+        - text: 明白了，继续实验
+        - generic [ref=e179]: ↗
+```

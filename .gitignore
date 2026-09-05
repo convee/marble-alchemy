@@ -1,7 +1,7 @@
-node_modules/
-dist/
-test-results/
-playwright-report/
+/node_modules/
+/dist/
+/test-results/
+/playwright-report/
 .DS_Store
-artifacts/
+/artifacts/
 *.zip

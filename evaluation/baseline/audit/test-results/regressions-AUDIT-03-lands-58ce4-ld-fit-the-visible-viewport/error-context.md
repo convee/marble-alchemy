@@ -1,0 +1,98 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - link "弹珠炼金工坊首页" [ref=e5] [cursor=pointer]:
+      - /url: ./
+      - img [ref=e7]
+      - generic [ref=e12]:
+        - strong [ref=e13]: 弹珠炼金工坊
+        - generic [ref=e14]: MARBLE ALCHEMY
+    - navigation "游戏控制" [ref=e15]:
+      - button "?" [ref=e16] [cursor=pointer]:
+        - generic [ref=e17]: "?"
+      - button "关闭音效" [pressed] [ref=e18] [cursor=pointer]:
+        - generic [ref=e19]: ♫
+      - button "Ⅱ" [ref=e20] [cursor=pointer]:
+        - generic [ref=e21]: Ⅱ
+      - button "重新开始" [ref=e22] [cursor=pointer]:
+        - generic [ref=e23]: ↻
+  - main [ref=e24]:
+    - generic [ref=e26]:
+      - paragraph [ref=e27]: THE TRANSMUTATION CHAMBER
+      - heading "每一次碰撞，皆是炼金。" [level=1] [ref=e28]:
+        - text: 每一次碰撞，
+        - emphasis [ref=e29]: 皆是炼金。
+    - generic "五关进度" [ref=e30]:
+      - generic [ref=e32]: "1"
+      - generic [ref=e34]: "2"
+      - generic [ref=e36]: "3"
+      - generic [ref=e38]: "4"
+      - generic [ref=e40]: "5"
+    - generic [ref=e41]:
+      - complementary [ref=e42]:
+        - generic [ref=e43]:
+          - generic [ref=e44]:
+            - generic [ref=e45]: 当前试炼
+            - generic [ref=e46]: 01 / 05
+          - img [ref=e48]
+          - heading "游离幽灵" [level=2] [ref=e61]
+          - generic [ref=e62]:
+            - generic [ref=e63]: 敌人生命
+            - strong [ref=e64]: 12 / 12
+          - paragraph [ref=e68]:
+            - generic [ref=e69]: ⚔
+            - text: 存活反击
+            - generic [ref=e70]: −1 生命
+        - generic [ref=e71]:
+          - generic [ref=e72]:
+            - generic [ref=e73]: 炼金师生命
+            - generic [ref=e74]: 5 / 5
+          - generic "生命 5 / 5" [ref=e75]:
+            - generic [ref=e76]: ♥
+            - generic [ref=e77]: ♥
+            - generic [ref=e78]: ♥
+            - generic [ref=e79]: ♥
+            - generic [ref=e80]: ♥
+          - paragraph [ref=e81]: 保护好你最后的火种。
+      - region "弹珠炼金弹盘" [ref=e82]:
+        - generic [ref=e83]:
+          - generic [ref=e86]: 炼成进行中
+          - generic [ref=e87]: EXPERIMENT 001
+        - application "弹盘。移动鼠标瞄准并点击发射；触屏拖动瞄准后松手；也可用方向键和空格。" [ref=e88]
+        - generic [ref=e90]:
+          - generic [ref=e91]: 静候炼成 · 所有弹珠落底后结算
+          - generic [ref=e92]: 4 DMG · 4 次碰撞
+      - complementary [ref=e93]:
+        - generic [ref=e94]:
+          - generic [ref=e95]:
+            - generic [ref=e96]: 本轮炼成伤害
+            - generic [ref=e97]: ✧
+          - generic [ref=e98]:
+            - strong [ref=e99]: "4"
+            - generic [ref=e100]: DMG
+          - generic [ref=e101]:
+            - generic [ref=e102]: 碰撞次数 4
+            - generic [ref=e103]: 弹珠 1
+          - generic [ref=e104]: 能量储存中 · 落底后释放
+        - generic [ref=e105]:
+          - generic [ref=e106]:
+            - generic [ref=e107]: 我的炼金配方
+            - generic [ref=e108]: 0 种
+          - generic [ref=e109]:
+            - generic [ref=e110]: ◉
+            - generic [ref=e111]:
+              - strong [ref=e112]: 原初弹珠
+              - generic [ref=e113]: 基础碰撞伤害 1
+          - generic [ref=e114]:
+            - paragraph [ref=e115]: 配方尚未书写
+            - text: 击败敌人，选择你的炼金之路。
+    - generic [ref=e116]:
+      - status [ref=e117]: ✧ 炼成中 · 碰撞伤害将在所有弹珠回收后结算
+      - button "炼成中 ✧" [disabled] [ref=e118]:
+        - text: 炼成中
+        - generic [ref=e119]: ✧
+  - contentinfo [ref=e120]:
+    - generic [ref=e121]: ✦ 一间小工坊，无限种可能。
+```

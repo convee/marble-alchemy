@@ -6,6 +6,9 @@ export default defineConfig({
   expect: { timeout: 20000 },
   fullyParallel: false,
   workers: 1,
+  metadata: {
+    browserChannel: process.env.PLAYWRIGHT_CHANNEL || 'chrome',
+  },
   reporter: [
     ['list'],
     ['json', { outputFile: 'artifacts/e2e-results.json' }],
