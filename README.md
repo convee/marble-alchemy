@@ -4,6 +4,8 @@
 击败五关敌人即炼金大成。TypeScript + Phaser 3.90（Matter 物理）+ Vite。无后端、无在线接口、无外部图片与音频，
 全部美术用 Canvas / Graphics 程序绘制，音效用 WebAudio 合成。
 
+在线试玩：https://convee.cn/marble-alchemy-claude/ （GitHub Pages，仓库 https://github.com/convee/marble-alchemy-claude ）
+
 ![gameplay](docs/media/gameplay.gif)
 
 完整演示视频：[docs/media/gameplay.mp4](docs/media/gameplay.mp4)（录制方式见下文「录屏」）。
@@ -109,6 +111,11 @@ node e2e/trace.mjs [url] [angle]              # 轨迹：每 200ms 打印弹珠�
 
 `npm run record` 不依赖真机帧率：停掉 requestAnimationFrame 主循环，按 60Hz 合成时钟手动 `game.step()`，
 每两步截一帧（30fps），最后用 ffmpeg 合成 H.264 MP4 与 GIF。无 GPU 的服务器上也能得到完全平滑的画面。
+
+## 部署
+
+推送到 `main` 后，`.github/workflows/pages.yml` 自动执行 `npm ci && npm run build` 并把 `dist/` 发布到 GitHub Pages；
+`.github/workflows/ci.yml` 在推送与 PR 上跑类型检查、单元测试和构建。`base: './'` 让产物在 `/<仓库名>/` 子路径下直接可用。
 
 ## 目录
 
