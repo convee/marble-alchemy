@@ -1,0 +1,779 @@
+{
+  "schemaVersion": 2,
+  "take": "codex-v1-release",
+  "target": "http://127.0.0.1:4173/",
+  "finalUrl": "http://127.0.0.1:4173/",
+  "capturedAt": "2026-09-05T16:32:21.099Z",
+  "completedAt": "2026-09-05T16:33:18.495Z",
+  "label": "Codex 版",
+  "source": {
+    "before": {
+      "head": "2d369cb2b9a52e988ef369b64229d62ce8c378aa",
+      "dirty": false,
+      "status": "",
+      "packageLockSha256": "835680283081579326fc6c4468f033d7af7fa0449d749ccaa9b83e07e57d4103",
+      "recorderSha256": "e041bb99cb73f2f8fccce5cd8e82f3fec582f8ecf44a03f6a97e1f578d4d1cd1",
+      "dist": {
+        "sha256": "2503ba97fc3f99a8290ff553513ccfa007d86dcb9208477861fa34b720cbf818",
+        "files": {
+          "THIRD_PARTY_NOTICES.txt": {
+            "sha256": "00dcf5b2ebcef5a04d07104462a40b3ef3b828e4617f982ebaf3fe72663f9e57",
+            "size": 1607
+          },
+          "assets/index-mt8VRN1v.css": {
+            "sha256": "14ed1ab76c446aeef74242d76352ed36ffcb820e3d020cf3821ab36362dde3d1",
+            "size": 24044
+          },
+          "assets/index-pWwVUDUi.js": {
+            "sha256": "b3d7179b80971470ffb7e45115c37dfe96c6eb72f90ad72d221c26191e64519e",
+            "size": 1240066
+          },
+          "index.html": {
+            "sha256": "e3d28c6239d95926f3635b5c82cda02896062c99b8820a1679455579d2e90c27",
+            "size": 968
+          }
+        },
+        "requiredPaths": [
+          "assets/index-mt8VRN1v.css",
+          "assets/index-pWwVUDUi.js",
+          "index.html"
+        ]
+      }
+    },
+    "after": {
+      "head": "2d369cb2b9a52e988ef369b64229d62ce8c378aa",
+      "dirty": false,
+      "status": "",
+      "packageLockSha256": "835680283081579326fc6c4468f033d7af7fa0449d749ccaa9b83e07e57d4103",
+      "recorderSha256": "e041bb99cb73f2f8fccce5cd8e82f3fec582f8ecf44a03f6a97e1f578d4d1cd1",
+      "dist": {
+        "sha256": "2503ba97fc3f99a8290ff553513ccfa007d86dcb9208477861fa34b720cbf818",
+        "files": {
+          "THIRD_PARTY_NOTICES.txt": {
+            "sha256": "00dcf5b2ebcef5a04d07104462a40b3ef3b828e4617f982ebaf3fe72663f9e57",
+            "size": 1607
+          },
+          "assets/index-mt8VRN1v.css": {
+            "sha256": "14ed1ab76c446aeef74242d76352ed36ffcb820e3d020cf3821ab36362dde3d1",
+            "size": 24044
+          },
+          "assets/index-pWwVUDUi.js": {
+            "sha256": "b3d7179b80971470ffb7e45115c37dfe96c6eb72f90ad72d221c26191e64519e",
+            "size": 1240066
+          },
+          "index.html": {
+            "sha256": "e3d28c6239d95926f3635b5c82cda02896062c99b8820a1679455579d2e90c27",
+            "size": 968
+          }
+        },
+        "requiredPaths": [
+          "assets/index-mt8VRN1v.css",
+          "assets/index-pWwVUDUi.js",
+          "index.html"
+        ]
+      }
+    },
+    "unchanged": true
+  },
+  "runtime": {
+    "node": "v22.22.3"
+  },
+  "browser": {
+    "engine": "Chromium",
+    "channel": "chrome",
+    "version": "140.0.7339.186"
+  },
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "result": "炼金完成",
+  "outcome": "won",
+  "events": [
+    {
+      "seconds": 0.313,
+      "action": "ready",
+      "phase": "等待发射",
+      "level": "01 / 05",
+      "damage": 0,
+      "hits": 0,
+      "life": "5 / 5"
+    },
+    {
+      "seconds": 1.502,
+      "action": "help-open"
+    },
+    {
+      "seconds": 3.342,
+      "action": "help-close"
+    },
+    {
+      "seconds": 5.521,
+      "action": "shoot",
+      "shot": 1,
+      "aimRadians": 0.3,
+      "phase": "等待发射",
+      "level": "01 / 05",
+      "damage": 0,
+      "hits": 0,
+      "life": "5 / 5"
+    },
+    {
+      "seconds": 6.675,
+      "action": "pause",
+      "phase": "实验暂停",
+      "level": "01 / 05",
+      "damage": 4,
+      "hits": 4,
+      "life": "5 / 5"
+    },
+    {
+      "seconds": 8.109,
+      "action": "resume",
+      "phase": "炼成进行中",
+      "level": "01 / 05",
+      "damage": 4,
+      "hits": 4,
+      "life": "5 / 5"
+    },
+    {
+      "seconds": 12.444,
+      "action": "settled",
+      "shot": 1,
+      "phase": "选择配方",
+      "level": "01 / 05",
+      "damage": 15,
+      "hits": 15,
+      "life": "5 / 5"
+    },
+    {
+      "seconds": 12.619,
+      "action": "upgrade-offers",
+      "shot": 1,
+      "offers": [
+        "split",
+        "lightning",
+        "heal"
+      ]
+    },
+    {
+      "seconds": 15.157,
+      "action": "upgrade-picked",
+      "shot": 1,
+      "choice": "split"
+    },
+    {
+      "seconds": 16.521,
+      "action": "shoot",
+      "shot": 2,
+      "aimRadians": 0.3,
+      "phase": "等待发射",
+      "level": "02 / 05",
+      "damage": 0,
+      "hits": 0,
+      "life": "5 / 5"
+    },
+    {
+      "seconds": 21.89,
+      "action": "settled",
+      "shot": 2,
+      "phase": "选择配方",
+      "level": "02 / 05",
+      "damage": 27,
+      "hits": 27,
+      "life": "5 / 5"
+    },
+    {
+      "seconds": 22.028,
+      "action": "upgrade-offers",
+      "shot": 2,
+      "offers": [
+        "power",
+        "lightning",
+        "critical"
+      ]
+    },
+    {
+      "seconds": 24.558,
+      "action": "upgrade-picked",
+      "shot": 2,
+      "choice": "lightning"
+    },
+    {
+      "seconds": 25.921,
+      "action": "shoot",
+      "shot": 3,
+      "aimRadians": 0.3,
+      "phase": "等待发射",
+      "level": "03 / 05",
+      "damage": 0,
+      "hits": 0,
+      "life": "5 / 5"
+    },
+    {
+      "seconds": 31.292,
+      "action": "settled",
+      "shot": 3,
+      "phase": "选择配方",
+      "level": "03 / 05",
+      "damage": 81,
+      "hits": 27,
+      "life": "5 / 5"
+    },
+    {
+      "seconds": 31.434,
+      "action": "upgrade-offers",
+      "shot": 3,
+      "offers": [
+        "fire",
+        "power",
+        "heal"
+      ]
+    },
+    {
+      "seconds": 33.975,
+      "action": "upgrade-picked",
+      "shot": 3,
+      "choice": "fire"
+    },
+    {
+      "seconds": 35.355,
+      "action": "shoot",
+      "shot": 4,
+      "aimRadians": 0.3,
+      "phase": "等待发射",
+      "level": "04 / 05",
+      "damage": 0,
+      "hits": 0,
+      "life": "5 / 5"
+    },
+    {
+      "seconds": 40.707,
+      "action": "settled",
+      "shot": 4,
+      "phase": "选择配方",
+      "level": "04 / 05",
+      "damage": 108,
+      "hits": 27,
+      "life": "5 / 5"
+    },
+    {
+      "seconds": 40.857,
+      "action": "upgrade-offers",
+      "shot": 4,
+      "offers": [
+        "heal",
+        "critical",
+        "power"
+      ]
+    },
+    {
+      "seconds": 43.393,
+      "action": "upgrade-picked",
+      "shot": 4,
+      "choice": "power"
+    },
+    {
+      "seconds": 44.756,
+      "action": "shoot",
+      "shot": 5,
+      "aimRadians": 0.3,
+      "phase": "等待发射",
+      "level": "05 / 05",
+      "damage": 0,
+      "hits": 0,
+      "life": "5 / 5"
+    },
+    {
+      "seconds": 50.109,
+      "action": "settled",
+      "shot": 5,
+      "phase": "选择配方",
+      "level": "05 / 05",
+      "damage": 135,
+      "hits": 27,
+      "life": "5 / 5"
+    },
+    {
+      "seconds": 50.311,
+      "action": "upgrade-offers",
+      "shot": 5,
+      "offers": [
+        "power",
+        "heal",
+        "critical"
+      ]
+    },
+    {
+      "seconds": 52.843,
+      "action": "upgrade-picked",
+      "shot": 5,
+      "choice": "power"
+    },
+    {
+      "seconds": 53.445,
+      "action": "run-finished",
+      "phase": "炼金完成",
+      "level": "05 / 05",
+      "damage": 135,
+      "hits": 27,
+      "life": "5 / 5"
+    },
+    {
+      "seconds": 56.092,
+      "action": "restart",
+      "phase": "等待发射",
+      "level": "01 / 05",
+      "damage": 0,
+      "hits": 0,
+      "life": "5 / 5"
+    }
+  ],
+  "errors": [],
+  "consoleErrors": [],
+  "requestFailures": [],
+  "requests": [
+    {
+      "url": "http://127.0.0.1:4173/",
+      "method": "GET",
+      "resourceType": "document"
+    },
+    {
+      "url": "http://127.0.0.1:4173/assets/index-pWwVUDUi.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "url": "http://127.0.0.1:4173/assets/index-mt8VRN1v.css",
+      "method": "GET",
+      "resourceType": "stylesheet"
+    }
+  ],
+  "responses": [
+    {
+      "url": "http://127.0.0.1:4173/",
+      "status": 200,
+      "sameOrigin": true,
+      "distPath": "index.html",
+      "expectedSha256": "e3d28c6239d95926f3635b5c82cda02896062c99b8820a1679455579d2e90c27",
+      "sha256": "e3d28c6239d95926f3635b5c82cda02896062c99b8820a1679455579d2e90c27",
+      "matchesDist": true
+    },
+    {
+      "url": "http://127.0.0.1:4173/assets/index-mt8VRN1v.css",
+      "status": 200,
+      "sameOrigin": true,
+      "distPath": "assets/index-mt8VRN1v.css",
+      "expectedSha256": "14ed1ab76c446aeef74242d76352ed36ffcb820e3d020cf3821ab36362dde3d1",
+      "sha256": "14ed1ab76c446aeef74242d76352ed36ffcb820e3d020cf3821ab36362dde3d1",
+      "matchesDist": true
+    },
+    {
+      "url": "http://127.0.0.1:4173/assets/index-pWwVUDUi.js",
+      "status": 200,
+      "sameOrigin": true,
+      "distPath": "assets/index-pWwVUDUi.js",
+      "expectedSha256": "b3d7179b80971470ffb7e45115c37dfe96c6eb72f90ad72d221c26191e64519e",
+      "sha256": "b3d7179b80971470ffb7e45115c37dfe96c6eb72f90ad72d221c26191e64519e",
+      "matchesDist": true
+    }
+  ],
+  "validation": {
+    "passed": true,
+    "errors": [],
+    "externalRequests": [],
+    "httpErrors": [],
+    "responseMismatches": [],
+    "unservedDistPaths": [
+      "THIRD_PARTY_NOTICES.txt"
+    ],
+    "unservedRequiredDistPaths": []
+  },
+  "rawVideo": {
+    "path": "codex-raw.webm",
+    "sha256": "e0ada687d69c536ab2ec1c591034f632363878a98d43251814ae79e70cb0bc40",
+    "editing": "none",
+    "media": {
+      "streams": [
+        {
+          "index": 0,
+          "codec_name": "vp8",
+          "codec_long_name": "On2 VP8",
+          "profile": "0",
+          "codec_type": "video",
+          "codec_tag_string": "[0][0][0][0]",
+          "codec_tag": "0x0000",
+          "width": 1440,
+          "height": 900,
+          "coded_width": 1440,
+          "coded_height": 900,
+          "closed_captions": 0,
+          "film_grain": 0,
+          "has_b_frames": 0,
+          "sample_aspect_ratio": "1:1",
+          "display_aspect_ratio": "8:5",
+          "pix_fmt": "yuv420p",
+          "level": -99,
+          "chroma_location": "center",
+          "field_order": "progressive",
+          "refs": 1,
+          "r_frame_rate": "25/1",
+          "avg_frame_rate": "25/1",
+          "time_base": "1/1000",
+          "start_pts": 0,
+          "start_time": "0.000000",
+          "disposition": {
+            "default": 0,
+            "dub": 0,
+            "original": 0,
+            "comment": 0,
+            "lyrics": 0,
+            "karaoke": 0,
+            "forced": 0,
+            "hearing_impaired": 0,
+            "visual_impaired": 0,
+            "clean_effects": 0,
+            "attached_pic": 0,
+            "timed_thumbnails": 0,
+            "non_diegetic": 0,
+            "captions": 0,
+            "descriptions": 0,
+            "metadata": 0,
+            "dependent": 0,
+            "still_image": 0,
+            "multilayer": 0
+          },
+          "tags": {
+            "ENCODER": "Lavc61.3.100 libvpx",
+            "DURATION": "00:00:58.000000000"
+          }
+        }
+      ],
+      "format": {
+        "filename": "artifacts/recordings/codex-v1-release/codex-raw.webm",
+        "nb_streams": 1,
+        "nb_programs": 0,
+        "nb_stream_groups": 0,
+        "format_name": "matroska,webm",
+        "format_long_name": "Matroska / WebM",
+        "start_time": "0.000000",
+        "duration": "58.000000",
+        "size": "5418355",
+        "bit_rate": "747359",
+        "probe_score": 100,
+        "tags": {
+          "ENCODER": "Lavf61.1.100"
+        }
+      }
+    }
+  },
+  "audio": "silent: Playwright video records the browser image, not system audio",
+  "integrity": "Normal UI inputs only. No test bridge, random seed override, life/damage edit, speed-up, or generated gameplay frames.",
+  "packaging": {
+    "completedAt": "2026-09-05T16:33:31.904Z",
+    "inputs": {
+      "packagerSha256": "4167a0825ccd1b76c61d32cdaf967d6fa29d0efa87f12e27870db515f64f614e",
+      "teaserFilter": {
+        "fileName": "teaser.filter",
+        "sha256": "8bfc87d0f46b007f910bf9f6b386b09bce84b9028b0f1c4df74b0de016fb4ebb",
+        "resolvedSha256": "6d044d3eb92c3b54f4f3b496739db5232ccc111264d87f67aaa225ab3055b1bf"
+      },
+      "font": {
+        "fileName": "Arial Bold.ttf",
+        "sha256": "d72db21f9242aedd6b917d8549ad5921766b24d5f8d0becfda2ff4c620b3c2e0"
+      }
+    },
+    "clips": {
+      "opening": [
+        3.2920000000000003,
+        15.557
+      ],
+      "finale": [
+        44.656,
+        54.795
+      ],
+      "socialFrameSecond": 53.945
+    }
+  },
+  "derivatives": {
+    "fullMp4": {
+      "path": "artifacts/release/codex-gameplay-v1.0.0.mp4",
+      "relativeTo": "repository-root",
+      "sha256": "08f1f3d707ec8c5625eb0207244e12efa8b82896f3c2b967a78674dc4aced212",
+      "processing": "Complete H.264 transcode with label overlay; no cuts or speed changes",
+      "temporalEditing": "none",
+      "fastStart": true,
+      "media": {
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "h264",
+            "codec_long_name": "H.264 / AVC / MPEG-4 AVC / MPEG-4 part 10",
+            "profile": "High",
+            "codec_type": "video",
+            "codec_tag_string": "avc1",
+            "codec_tag": "0x31637661",
+            "width": 1440,
+            "height": 900,
+            "coded_width": 1440,
+            "coded_height": 900,
+            "closed_captions": 0,
+            "film_grain": 0,
+            "has_b_frames": 2,
+            "sample_aspect_ratio": "1:1",
+            "display_aspect_ratio": "8:5",
+            "pix_fmt": "yuv420p",
+            "level": 40,
+            "color_range": "tv",
+            "color_space": "bt470bg",
+            "chroma_location": "center",
+            "field_order": "progressive",
+            "refs": 1,
+            "is_avc": "true",
+            "nal_length_size": "4",
+            "id": "0x1",
+            "r_frame_rate": "25/1",
+            "avg_frame_rate": "25/1",
+            "time_base": "1/12800",
+            "start_pts": 0,
+            "start_time": "0.000000",
+            "duration_ts": 742400,
+            "duration": "58.000000",
+            "bit_rate": "377149",
+            "bits_per_raw_sample": "8",
+            "nb_frames": "1450",
+            "extradata_size": 52,
+            "disposition": {
+              "default": 1,
+              "dub": 0,
+              "original": 0,
+              "comment": 0,
+              "lyrics": 0,
+              "karaoke": 0,
+              "forced": 0,
+              "hearing_impaired": 0,
+              "visual_impaired": 0,
+              "clean_effects": 0,
+              "attached_pic": 0,
+              "timed_thumbnails": 0,
+              "non_diegetic": 0,
+              "captions": 0,
+              "descriptions": 0,
+              "metadata": 0,
+              "dependent": 0,
+              "still_image": 0,
+              "multilayer": 0
+            },
+            "tags": {
+              "language": "und",
+              "handler_name": "VideoHandler",
+              "vendor_id": "[0][0][0][0]",
+              "encoder": "Lavc61.19.101 libx264"
+            }
+          }
+        ],
+        "format": {
+          "filename": "artifacts/release/codex-gameplay-v1.0.0.mp4",
+          "nb_streams": 1,
+          "nb_programs": 0,
+          "nb_stream_groups": 0,
+          "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+          "format_long_name": "QuickTime / MOV",
+          "start_time": "0.000000",
+          "duration": "58.000000",
+          "size": "2752505",
+          "bit_rate": "379655",
+          "probe_score": 100,
+          "tags": {
+            "major_brand": "isom",
+            "minor_version": "512",
+            "compatible_brands": "isomiso2avc1mp41",
+            "encoder": "Lavf61.7.100"
+          }
+        }
+      }
+    },
+    "readmeGif": {
+      "path": "docs/media/demo.gif",
+      "relativeTo": "repository-root",
+      "sha256": "840fa875cc45ed7305afb2413bf3d94ee1133434a4ec367e5c1de71ef941ce69",
+      "processing": "Two disclosed excerpts, 1.67x speed, 12fps, 720x450, label overlay",
+      "excerptsSeconds": [
+        [
+          3.2920000000000003,
+          15.557
+        ],
+        [
+          44.656,
+          54.795
+        ]
+      ],
+      "speed": 1.6666666666666667,
+      "media": {
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "gif",
+            "codec_long_name": "CompuServe GIF (Graphics Interchange Format)",
+            "codec_type": "video",
+            "codec_tag_string": "[0][0][0][0]",
+            "codec_tag": "0x0000",
+            "width": 720,
+            "height": 450,
+            "coded_width": 720,
+            "coded_height": 450,
+            "closed_captions": 0,
+            "film_grain": 0,
+            "has_b_frames": 0,
+            "sample_aspect_ratio": "1:1",
+            "display_aspect_ratio": "8:5",
+            "pix_fmt": "bgra",
+            "level": -99,
+            "refs": 1,
+            "r_frame_rate": "12/1",
+            "avg_frame_rate": "25/2",
+            "time_base": "1/100",
+            "start_pts": 0,
+            "start_time": "0.000000",
+            "duration_ts": 1341,
+            "duration": "13.410000",
+            "nb_frames": "161",
+            "disposition": {
+              "default": 0,
+              "dub": 0,
+              "original": 0,
+              "comment": 0,
+              "lyrics": 0,
+              "karaoke": 0,
+              "forced": 0,
+              "hearing_impaired": 0,
+              "visual_impaired": 0,
+              "clean_effects": 0,
+              "attached_pic": 0,
+              "timed_thumbnails": 0,
+              "non_diegetic": 0,
+              "captions": 0,
+              "descriptions": 0,
+              "metadata": 0,
+              "dependent": 0,
+              "still_image": 0,
+              "multilayer": 0
+            }
+          }
+        ],
+        "format": {
+          "filename": "docs/media/demo.gif",
+          "nb_streams": 1,
+          "nb_programs": 0,
+          "nb_stream_groups": 0,
+          "format_name": "gif",
+          "format_long_name": "CompuServe Graphics Interchange Format (GIF)",
+          "start_time": "0.000000",
+          "duration": "13.410000",
+          "size": "1883040",
+          "bit_rate": "1123364",
+          "probe_score": 100
+        }
+      }
+    },
+    "socialPreview": {
+      "path": "docs/media/social-preview.jpg",
+      "relativeTo": "repository-root",
+      "sha256": "b735d03ce0eca506c6f5b2ea16069a82fdf4ffeabbc4c1d19c6536e2b28721da",
+      "processing": "Static gameplay frame at 53.945s, cropped to 1280x640 with title overlay",
+      "media": {
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mjpeg",
+            "codec_long_name": "Motion JPEG",
+            "profile": "Baseline",
+            "codec_type": "video",
+            "codec_tag_string": "[0][0][0][0]",
+            "codec_tag": "0x0000",
+            "width": 1280,
+            "height": 640,
+            "coded_width": 1280,
+            "coded_height": 640,
+            "closed_captions": 0,
+            "film_grain": 0,
+            "has_b_frames": 0,
+            "sample_aspect_ratio": "1:1",
+            "display_aspect_ratio": "2:1",
+            "pix_fmt": "yuvj420p",
+            "level": -99,
+            "color_range": "pc",
+            "color_space": "bt470bg",
+            "chroma_location": "center",
+            "refs": 1,
+            "r_frame_rate": "25/1",
+            "avg_frame_rate": "25/1",
+            "time_base": "1/25",
+            "start_pts": 0,
+            "start_time": "0.000000",
+            "duration_ts": 1,
+            "duration": "0.040000",
+            "bits_per_raw_sample": "8",
+            "disposition": {
+              "default": 0,
+              "dub": 0,
+              "original": 0,
+              "comment": 0,
+              "lyrics": 0,
+              "karaoke": 0,
+              "forced": 0,
+              "hearing_impaired": 0,
+              "visual_impaired": 0,
+              "clean_effects": 0,
+              "attached_pic": 0,
+              "timed_thumbnails": 0,
+              "non_diegetic": 0,
+              "captions": 0,
+              "descriptions": 0,
+              "metadata": 0,
+              "dependent": 0,
+              "still_image": 0,
+              "multilayer": 0
+            }
+          }
+        ],
+        "format": {
+          "filename": "docs/media/social-preview.jpg",
+          "nb_streams": 1,
+          "nb_programs": 0,
+          "nb_stream_groups": 0,
+          "format_name": "image2",
+          "format_long_name": "image2 sequence",
+          "start_time": "0.000000",
+          "duration": "0.040000",
+          "size": "34036",
+          "bit_rate": "6807200",
+          "probe_score": 50
+        }
+      }
+    }
+  },
+  "tools": {
+    "ffmpeg": "ffmpeg version 7.1.1 Copyright (c) 2000-2025 the FFmpeg developers",
+    "ffprobe": "ffprobe version 7.1.1 Copyright (c) 2007-2025 the FFmpeg developers"
+  },
+  "releaseBundle": {
+    "version": "v1.0.0",
+    "files": {
+      "fullMp4": {
+        "path": "codex-gameplay-v1.0.0.mp4",
+        "sha256": "08f1f3d707ec8c5625eb0207244e12efa8b82896f3c2b967a78674dc4aced212"
+      },
+      "rawWebm": {
+        "path": "codex-gameplay-v1.0.0-raw.webm",
+        "sha256": "e0ada687d69c536ab2ec1c591034f632363878a98d43251814ae79e70cb0bc40"
+      },
+      "manifest": {
+        "path": "recording-manifest-v1.0.0.json"
+      },
+      "checksums": {
+        "path": "SHA256SUMS"
+      }
+    }
+  }
+}
