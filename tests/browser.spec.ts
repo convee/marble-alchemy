@@ -140,6 +140,10 @@ test('all five upgrade screens, unique offers, healing, victory and play again',
   for (let level = 0; level < 5; level++) {
     await fixture(page, { enemyHp: 1 });
     await page.locator('#launch').click();
+    await expect.poll(async () => (await snapshot(page)).hits).toBeGreaterThan(0);
+    await expect.poll(async () => (await snapshot(page)).balls.length).toBe(3);
+    await expect.poll(async () => (await snapshot(page)).pendingSplit).toBe(0);
+    await page.evaluate(() => (window as any).__alchemyTest.recall());
     await expect(page.locator('[data-upgrade]')).toHaveCount(3);
     expect((await snapshot(page)).level).toBe(level);
     expect(new Set((await snapshot(page)).offers)).toEqual(new Set(['power', 'fire', 'heal']));
@@ -196,6 +200,8 @@ test('mobile touch launch and responsive upgrade cards', async ({ browser }) => 
     box.x + ((260 + Math.tan(0.3) * 224) / 520) * box.width,
     box.y + (300 / 660) * box.height,
   );
+  await expect.poll(async () => (await snapshot(page)).hits).toBeGreaterThan(0);
+  await page.evaluate(() => (window as any).__alchemyTest.recall());
   await expect(page.locator('[data-upgrade]')).toHaveCount(3);
   await page.screenshot({ path: 'artifacts/mobile-upgrades.png', fullPage: true });
   for (const card of await page.locator('[data-upgrade]').all()) {
@@ -214,7 +220,15 @@ test('stationary fixture triggers nudge and returns to real physics', async ({ p
   await page.locator('#launch').click();
   await page.evaluate(() => (window as any).__alchemyTest.rest());
   await expect.poll(async () => (await snapshot(page)).nudgeCount).toBeGreaterThan(0);
+  const beforeRelease = (await snapshot(page)).balls[0];
   await page.evaluate(() => (window as any).__alchemyTest.release());
+  await expect
+    .poll(async () => {
+      const ball = (await snapshot(page)).balls[0];
+      return ball ? Math.hypot(ball.x - beforeRelease.x, ball.y - beforeRelease.y) : 0;
+    })
+    .toBeGreaterThan(1);
+  await page.evaluate(() => (window as any).__alchemyTest.recall());
   await expect.poll(async () => (await snapshot(page)).phase).toBe('aiming');
   expect((await snapshot(page)).balls).toHaveLength(0);
 });

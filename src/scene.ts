@@ -54,7 +54,7 @@ export class AlchemyScene extends Phaser.Scene {
   private lastUi = 0;
   private nudgeCount = 0;
   private floating = new Set<Phaser.GameObjects.Text>();
-  private settlement?: Phaser.Time.TimerEvent;
+  private settlementAt?: number;
   ready = false;
   constructor(
     private hooks: SceneHooks,
@@ -231,15 +231,19 @@ export class AlchemyScene extends Phaser.Scene {
     this.balls.delete(id);
   }
   update(_time: number, rawDelta: number) {
+    // The Scene delta is smoothed for stable Matter steps. The loop's raw delta is
+    // the active wall time and Phaser resets it after tab sleep/focus changes, so a
+    // 16 second watchdog stays 16 seconds without counting time spent paused.
+    const activeDelta = Math.max(0, this.game.loop.rawDelta);
     const dt = Math.min(rawDelta, 50);
-    this.elapsed += dt;
+    this.elapsed += activeDelta;
     for (const point of this.splitQueue.splice(0)) {
       this.spawn(Phaser.Math.Clamp(point.x - 15, 27, 493), point.y - 15, -4.5, -3.5, true);
       this.spawn(Phaser.Math.Clamp(point.x + 15, 27, 493), point.y - 15, 4.5, -3.5, true);
       this.float(point.x, point.y - 36, '分裂 +2', '#8df0cd');
     }
     for (const [id, ball] of this.balls) {
-      ball.age += dt;
+      ball.age += activeDelta;
       const { x, y } = ball.body.position;
       if (
         !Number.isFinite(x + y) ||
@@ -255,7 +259,7 @@ export class AlchemyScene extends Phaser.Scene {
       }
       ball.trail.push({ x, y });
       if (ball.trail.length > 15) ball.trail.shift();
-      ball.stuck = Math.hypot(x - ball.lastX, y - ball.lastY) < 0.7 ? ball.stuck + dt : 0;
+      ball.stuck = Math.hypot(x - ball.lastX, y - ball.lastY) < 0.7 ? ball.stuck + activeDelta : 0;
       ball.lastX = x;
       ball.lastY = y;
       if (ball.stuck > 850) {
@@ -279,14 +283,16 @@ export class AlchemyScene extends Phaser.Scene {
     ) {
       this.hooks.notice(`炼成完毕 · ${this.run.damage} 点伤害即将释放`);
       this.hooks.change();
-      this.settlement = this.time.delayedCall(650, () => {
-        this.settlement = undefined;
-        if (!this.run.settle()) return;
+      this.settlementAt = this.elapsed + 650;
+    }
+    if (this.settlementAt !== undefined && this.elapsed >= this.settlementAt) {
+      this.settlementAt = undefined;
+      if (this.run.settle()) {
         const killed = this.run.enemyHp === 0;
         this.synth.tone(killed ? 'win' : 'hurt');
         this.hooks.settled(killed);
         this.hooks.change();
-      });
+      }
     }
     for (const p of this.pegs) p.flash = Math.max(0, p.flash - dt / 350);
     for (const p of this.particles) {
@@ -427,8 +433,7 @@ export class AlchemyScene extends Phaser.Scene {
     if (this.ready) this.sys.resume();
   }
   resetRun() {
-    this.settlement?.remove(false);
-    this.settlement = undefined;
+    this.settlementAt = undefined;
     for (const ball of this.balls.values()) this.matter.world.remove(ball.body);
     this.balls.clear();
     this.splitQueue = [];
