@@ -9,15 +9,29 @@
     "preview": "vite preview --host 127.0.0.1",
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "test:playthrough": "node scripts/playthrough.mjs"
+    "test:playthrough": "node scripts/playthrough.mjs",
+    "format": "prettier --write src tests scripts *.ts *.json .github/**/*.yml",
+    "format:check": "prettier --check src tests scripts *.ts *.json .github/**/*.yml",
+    "record": "node scripts/record-gameplay.mjs"
   },
   "dependencies": {
     "phaser": "3.90.0"
   },
   "devDependencies": {
     "@playwright/test": "1.58.2",
+    "prettier": "3.6.2",
     "typescript": "5.9.3",
     "vite": "7.3.1",
     "vitest": "3.2.4"
+  },
+  "description": "A playable neon marble roguelite built with TypeScript, Phaser and Matter.",
+  "license": "MIT",
+  "author": "convee",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/convee/marble-alchemy.git"
+  },
+  "engines": {
+    "node": ">=22.12.0"
   }
 }
