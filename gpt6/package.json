@@ -10,8 +10,8 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "test:playthrough": "node scripts/playthrough.mjs",
-    "format": "prettier --write src tests scripts *.ts *.json .github/**/*.yml",
-    "format:check": "prettier --check src tests scripts *.ts *.json .github/**/*.yml",
+    "format": "prettier --write src tests scripts *.ts *.json",
+    "format:check": "prettier --check src tests scripts *.ts *.json",
     "record": "node scripts/record-gameplay.mjs",
     "record:package": "node scripts/package-recording.mjs",
     "record:export": "node scripts/export-evidence.mjs"

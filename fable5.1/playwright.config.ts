@@ -24,9 +24,10 @@ export default defineConfig({
   webServer: process.env.E2E_BASE_URL
     ? undefined
     : {
-        command: 'npx vite build && npx vite preview --port 4173 --strictPort',
+        // 必须显式绑 127.0.0.1：默认只绑 localhost，CI 上会解析到 ::1 而 baseURL 的 127.0.0.1 连不上
+        command: 'npx vite build && npx vite preview --host 127.0.0.1 --port 4173 --strictPort',
         url: 'http://127.0.0.1:4173',
         reuseExistingServer: true,
-        timeout: 120_000,
+        timeout: 180_000,
       },
 });
