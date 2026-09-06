@@ -16,7 +16,7 @@ export default defineConfig({
   reporter: [['list']],
   use: {
     baseURL,
-    channel: 'chrome',
+    channel: process.env.PLAYWRIGHT_CHANNEL ?? 'chrome',
     headless: true,
     viewport: { width: 1280, height: 800 },
     launchOptions: { args: ['--autoplay-policy=no-user-gesture-required'] },

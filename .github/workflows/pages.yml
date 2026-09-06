@@ -17,14 +17,37 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@v7
         with:
           node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: npm run build
+
+      # 对比首页 + 两个版本各自的构建产物，分别落在 /gpt6/ 与 /fable5.1/ 子路径
+      - name: Build gpt6
+        working-directory: gpt6
+        run: |
+          npm ci
+          npm run build -- --base=./
+      - name: Build fable5.1
+        working-directory: fable5.1
+        run: |
+          npm ci
+          npm run build
+      - name: Assemble site
+        run: |
+          rm -rf dist
+          mkdir -p dist
+          cp -r site/. dist/
+          cp -r gpt6/dist dist/gpt6
+          cp -r fable5.1/dist dist/fable5.1
+          test -f dist/index.html
+          test -f dist/gpt6/index.html
+          test -f dist/fable5.1/index.html
+
       - uses: actions/configure-pages@v6
         with:
           enablement: true

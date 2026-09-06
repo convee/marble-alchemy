@@ -1,7 +1,12 @@
 version: 2
 updates:
   - package-ecosystem: npm
-    directory: /
+    directory: /gpt6
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+  - package-ecosystem: npm
+    directory: /fable5.1
     schedule:
       interval: weekly
     open-pull-requests-limit: 5

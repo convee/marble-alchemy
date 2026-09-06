@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#080c18" />
+    <meta name="description" content="同一份需求，两个模型各自实现的浏览器弹珠 Roguelite：Codex GPT-6 版与 Claude Code fable 5.1 版，可直接试玩对比。" />
+    <title>弹珠炼金工坊 · 双版本对比</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='12' fill='%2335f2ff'/%3E%3Ccircle cx='12' cy='12' r='4' fill='white'/%3E%3C/svg%3E" />
+    <style>
+      :root {
+        --bg: #080c18;
+        --panel: rgba(14, 20, 40, 0.86);
+        --text: #e8f4ff;
+        --muted: #8ea2c8;
+        --cyan: #35f2ff;
+        --gold: #d8c68f;
+        --violet: #c3a6fb;
+        --font: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(1100px 620px at 18% 8%, rgba(195, 166, 251, 0.16), transparent 60%),
+          radial-gradient(900px 560px at 84% 92%, rgba(53, 242, 255, 0.13), transparent 60%),
+          var(--bg);
+        color: var(--text);
+        font-family: var(--font);
+        line-height: 1.7;
+      }
+      .wrap { max-width: 1080px; margin: 0 auto; padding: 56px 20px 72px; }
+      header { text-align: center; margin-bottom: 40px; }
+      h1 {
+        margin: 0 0 10px;
+        font-size: clamp(28px, 5vw, 44px);
+        letter-spacing: 4px;
+        text-shadow: 0 0 14px rgba(53, 242, 255, 0.55), 0 0 36px rgba(195, 166, 251, 0.35);
+      }
+      .lead { color: var(--muted); margin: 0 auto; max-width: 720px; font-size: 15px; }
+      .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 22px; margin: 36px 0 30px; }
+      .card {
+        background: var(--panel);
+        border: 1px solid rgba(142, 162, 200, 0.28);
+        border-radius: 18px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+      }
+      .card:hover { transform: translateY(-4px); }
+      .card.gpt6:hover { border-color: var(--gold); box-shadow: 0 0 30px rgba(216, 198, 143, 0.28); }
+      .card.fable:hover { border-color: var(--cyan); box-shadow: 0 0 30px rgba(53, 242, 255, 0.3); }
+      .card img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; background: #05070f; }
+      .card .body { padding: 18px 20px 22px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+      .card h2 { margin: 0; font-size: 21px; letter-spacing: 2px; }
+      .card.gpt6 h2 { color: var(--gold); }
+      .card.fable h2 { color: var(--cyan); }
+      .card p { margin: 0; color: var(--muted); font-size: 14px; }
+      .facts { list-style: none; margin: 4px 0 0; padding: 0; font-size: 13px; color: var(--muted); }
+      .facts li { padding: 3px 0 3px 16px; position: relative; }
+      .facts li::before { content: ''; position: absolute; left: 0; top: 12px; width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: 0.6; }
+      .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: auto; padding-top: 12px; }
+      .btn {
+        flex: 1 1 auto;
+        text-align: center;
+        text-decoration: none;
+        padding: 10px 16px;
+        border-radius: 10px;
+        font-size: 15px;
+        letter-spacing: 2px;
+        border: 1px solid rgba(142, 162, 200, 0.4);
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.04);
+      }
+      .card.gpt6 .btn.play { border-color: var(--gold); background: rgba(216, 198, 143, 0.16); }
+      .card.fable .btn.play { border-color: var(--cyan); background: rgba(53, 242, 255, 0.16); }
+      .btn:hover { background: rgba(255, 255, 255, 0.12); }
+      table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 12px; }
+      th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid rgba(142, 162, 200, 0.18); vertical-align: top; }
+      th { color: var(--muted); font-weight: 600; }
+      td:first-child { color: var(--muted); white-space: nowrap; }
+      h3 { letter-spacing: 2px; margin: 34px 0 6px; font-size: 18px; }
+      .note { color: var(--muted); font-size: 13px; }
+      footer { margin-top: 40px; text-align: center; color: var(--muted); font-size: 13px; }
+      a { color: var(--cyan); }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <h1>弹珠炼金工坊 · 双版本对比</h1>
+        <p class="lead">
+          同一份中文需求，交给两个模型各自从零实现的浏览器弹珠 Roguelite。两版都用 TypeScript + Phaser 3.90 + Matter 物理 + Vite，
+          都不接后端与在线 AI，美术与音效全部程序生成。代码、测试与证据分别放在同一个仓库的两个目录里，可以直接对照阅读。
+        </p>
+      </header>
+
+      <div class="cards">
+        <section class="card gpt6">
+          <img src="media/gpt6-cover.jpg" alt="Codex GPT-6 版画面" loading="lazy" />
+          <div class="body">
+            <h2>Codex · GPT-6</h2>
+            <p>目录 <code>gpt6/</code></p>
+            <ul class="facts">
+              <li>规则测试 10 项、浏览器测试 16 项（该版自测口径）</li>
+              <li>完整无剪辑通关录屏，含 SHA-256 校验清单</li>
+              <li>Prettier 格式检查与 npm audit 进 CI</li>
+            </ul>
+            <div class="actions">
+              <a class="btn play" href="gpt6/">在线试玩</a>
+              <a class="btn" href="https://github.com/convee/marble-alchemy/tree/main/gpt6">源码</a>
+            </div>
+          </div>
+        </section>
+
+        <section class="card fable">
+          <img src="media/fable5.1-cover.jpg" alt="Claude Code fable 5.1 版画面" loading="lazy" />
+          <div class="body">
+            <h2>Claude Code · fable 5.1</h2>
+            <p>目录 <code>fable5.1/</code></p>
+            <ul class="facts">
+              <li>单元测试 24 项、端到端 18 项（该版自测口径）</li>
+              <li>12 局机器人自动对局：胜率 42%，0 局卡死</li>
+              <li>逐帧合成录屏，画面不受运行环境帧率影响</li>
+            </ul>
+            <div class="actions">
+              <a class="btn play" href="fable5.1/">在线试玩</a>
+              <a class="btn" href="https://github.com/convee/marble-alchemy/tree/main/fable5.1">源码</a>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <h3>玩法一致的部分</h3>
+      <p class="note">
+        两版都遵循同一份需求：瞄准发射弹珠，弹珠撞钉子累计伤害，所有弹珠落底后统一结算；敌人存活则反击，玩家初始 5 点生命；
+        五关递增，每次击败敌人后从 3 张里选 1 个升级；升级池固定为强化、火焰、闪电、分裂、暴击、治疗六种，
+        其中强化与火焰可重复获得。具体数值、弹盘布局、视觉与音效由各自设计。
+      </p>
+
+      <h3>两版自测数据</h3>
+      <table>
+        <thead>
+          <tr><th>项目</th><th>Codex · GPT-6</th><th>Claude Code · fable 5.1</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>自动化测试</td><td>规则 10 项、浏览器 16 项</td><td>单元 24 项、端到端 18 项</td></tr>
+          <tr><td>录屏方式</td><td>真实 UI 操作，完整无剪辑，附 SHA-256</td><td>停主循环逐帧合成，与帧率无关</td></tr>
+          <tr><td>通关证据</td><td>一局五关胜利，58.7 秒，5/5 生命</td><td>12 局随机瞄准机器人对局，胜 5 局</td></tr>
+          <tr><td>额外检查</td><td>Prettier、npm audit、外部请求为 0</td><td>逐关命中数实测、卡死看门狗单测</td></tr>
+        </tbody>
+      </table>
+      <p class="note">
+        两列的口径不同，是各自版本自己跑出来的结果，不能直接相减比较，也没有裁判打分。详细报告见
+        <a href="https://github.com/convee/marble-alchemy/blob/main/gpt6/evaluation/README.md">gpt6/evaluation</a> 与
+        <a href="https://github.com/convee/marble-alchemy/blob/main/fable5.1/docs/TEST-REPORT.md">fable5.1/docs/TEST-REPORT.md</a>。
+      </p>
+
+      <footer>
+        仓库 <a href="https://github.com/convee/marble-alchemy">github.com/convee/marble-alchemy</a> · MIT License
+      </footer>
+    </div>
+  </body>
+</html>

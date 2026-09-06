@@ -1,10 +1,12 @@
-# 弹珠炼金工坊 / Marble Alchemy Workshop
+# 弹珠炼金工坊 / Marble Alchemy Workshop（Claude Code fable 5.1 版）
+
+> 本目录是双版本对比仓库的 Claude Code 版实现。另一版在 [`../gpt6/`](../gpt6/)，对比首页见 [仓库根 README](../README.md) 与 https://convee.cn/marble-alchemy/ 。
 
 霓虹炼金工坊风格的弹珠 Roguelite 浏览器小游戏：瞄准发射弹珠，撞钉子累计伤害，所有弹珠落底后一次结算，
 击败五关敌人即炼金大成。TypeScript + Phaser 3.90（Matter 物理）+ Vite。无后端、无在线接口、无外部图片与音频，
 全部美术用 Canvas / Graphics 程序绘制，音效用 WebAudio 合成。
 
-在线试玩：https://convee.cn/marble-alchemy-claude/ （GitHub Pages，仓库 https://github.com/convee/marble-alchemy-claude ）
+在线试玩：https://convee.cn/marble-alchemy/fable5.1/ （GitHub Pages）
 
 ![gameplay](docs/media/gameplay.gif)
 
@@ -16,6 +18,7 @@
 要求 Node 20.19 以上或 22.12 以上（Vite 7 的要求）。
 
 ```bash
+cd fable5.1       # 双版本仓库，本版在这个子目录
 npm ci            # 按 package-lock.json 安装
 npm run dev       # 开发服务器 http://localhost:5173（绑定 0.0.0.0，可局域网访问）
 ```
@@ -114,8 +117,9 @@ node e2e/trace.mjs [url] [angle]              # 轨迹：每 200ms 打印弹珠�
 
 ## 部署
 
-推送到 `main` 后，`.github/workflows/pages.yml` 自动执行 `npm ci && npm run build` 并把 `dist/` 发布到 GitHub Pages；
-`.github/workflows/ci.yml` 在推送与 PR 上跑类型检查、单元测试和构建。`base: './'` 让产物在 `/<仓库名>/` 子路径下直接可用。
+推送到 `main` 后，仓库根的 `.github/workflows/pages.yml` 会分别构建两个版本，把本版产物放到站点的 `/fable5.1/` 子路径；
+`.github/workflows/ci.yml` 对两个版本各跑一遍类型检查、单元测试、构建与端到端。`base: './'` 让产物在任意子路径下直接可用。
+端到端默认用系统 Chrome，CI 里通过 `PLAYWRIGHT_CHANNEL=chromium` 切换为 Playwright 自带的 Chromium。
 
 ## 目录
 

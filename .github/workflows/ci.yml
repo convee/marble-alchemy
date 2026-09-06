@@ -1,0 +1,82 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gpt6:
+    name: gpt6 (Codex)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: gpt6
+    env:
+      PLAYWRIGHT_CHANNEL: chromium
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: gpt6/package-lock.json
+      - run: npm ci
+      - run: npm audit --audit-level=high
+      - run: npm run format:check
+      - run: npm test
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: gpt6-e2e
+          path: |
+            gpt6/playwright-report/
+            gpt6/test-results/
+            gpt6/artifacts/e2e-results.json
+          retention-days: 14
+
+  fable:
+    name: fable5.1 (Claude Code)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: fable5.1
+    env:
+      PLAYWRIGHT_CHANNEL: chromium
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: fable5.1/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: fable5.1-e2e
+          path: |
+            fable5.1/playwright-report/
+            fable5.1/test-results/
+          retention-days: 14

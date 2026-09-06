@@ -1,9 +1,11 @@
-# 弹珠炼金工坊 · Marble Alchemy
+# 弹珠炼金工坊 · Marble Alchemy（Codex GPT-6 版）
+
+> 本目录是双版本对比仓库的 Codex 版实现。另一版在 [`../fable5.1/`](../fable5.1/)，对比首页见 [仓库根 README](../README.md) 与 https://convee.cn/marble-alchemy/ 。
 
 [![CI](https://github.com/convee/marble-alchemy/actions/workflows/ci.yml/badge.svg)](https://github.com/convee/marble-alchemy/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-c3a6fb.svg)](LICENSE)
 
-> [在线试玩](https://convee.cn/marble-alchemy/) · [完整无剪辑录屏（v1.0.0）](https://github.com/convee/marble-alchemy/releases/download/v1.0.0/codex-gameplay-v1.0.0.mp4) · [测试与测评证据](evaluation/README.md)
+> [在线试玩](https://convee.cn/marble-alchemy/gpt6/) · [完整无剪辑录屏（v1.0.0）](https://github.com/convee/marble-alchemy/releases/download/v1.0.0/codex-gameplay-v1.0.0.mp4) · [测试与测评证据](evaluation/README.md)
 
 ![弹珠炼金工坊真实运行片段](docs/media/demo.gif)
 
@@ -21,7 +23,7 @@
 需要 Node.js 22.12+（本次使用 22.22.3）及 npm。
 
 ```sh
-cd marble-alchemy
+cd marble-alchemy/gpt6
 npm ci
 npm run dev
 ```
