@@ -24,7 +24,7 @@
     "prettier": "3.6.2",
     "typescript": "5.9.3",
     "vite": "7.3.6",
-    "vitest": "3.2.7"
+    "vitest": "4.1.11"
   },
   "description": "A playable neon marble roguelite built with TypeScript, Phaser and Matter.",
   "license": "MIT",
