@@ -1,0 +1,43 @@
+{
+  "name": "marble-alchemy",
+  "private": true,
+  "version": "1.0.0",
+  "description": "弹珠炼金工坊 - Phaser 3 + Matter 弹珠 Roguelite 浏览器小游戏",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "record": "node e2e/record.mjs",
+    "autoplay": "node e2e/autoplay.mjs",
+    "showcase": "node e2e/showcase.mjs",
+    "smoke": "node e2e/smoke.mjs"
+  },
+  "dependencies": {
+    "phaser": "3.90.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^24.13.3",
+    "typescript": "~5.9.3",
+    "vite": "^7.3.6",
+    "vitest": "^3.2.7"
+  },
+  "license": "MIT",
+  "keywords": [
+    "phaser",
+    "matter-js",
+    "typescript",
+    "vite",
+    "game",
+    "roguelite",
+    "pachinko",
+    "peglin-like"
+  ],
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  }
+}

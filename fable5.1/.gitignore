@@ -1,0 +1,9 @@
+node_modules/
+dist/
+playwright-report/
+test-results/
+e2e/.screens/
+e2e/.frames/
+e2e/scratch-*.mjs
+*.log
+.DS_Store
