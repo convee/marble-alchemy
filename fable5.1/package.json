@@ -17,7 +17,7 @@
     "smoke": "node e2e/smoke.mjs"
   },
   "dependencies": {
-    "phaser": "3.90.0"
+    "phaser": "4.2.1"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
