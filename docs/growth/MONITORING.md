@@ -4,6 +4,7 @@
 
 - Cloudflare Web Analytics：覆盖 `chaoschemy.com/`、`/gpt6/`、`/fable5.1/`，统计页面访问、设备/地区和性能指标。
 - 入口页、两个游戏页都加载官方 beacon；隐私说明位于 `/privacy.html`。
+- 2026-09-25 23:38（GMT+8）现场回读 Cloudflare 站点列表：`chaoschemy.com` 显示最近 24 小时 3 次 page views、3 次 visits。这是本次上线验证流量，不是自然获客样本。
 
 ## 游戏事件协议
 
