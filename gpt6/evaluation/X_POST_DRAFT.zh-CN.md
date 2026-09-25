@@ -1,18 +1,18 @@
 # X 对比 Thread 草稿
 
-Claude Code · fable 5.1 的占位内容必须用它自己的实测证据填写后再发布。
+状态：已填入当前仓库的实测证据，尚未发布。
 
 ## 1 / 3
 
-同一份需求，两套 coding agent 做《弹珠炼金工坊》。Codex 版：TypeScript + Phaser + Matter，5 关、6 种真实生效升级、键鼠/触屏、程序美术与合成音效。Claude Code · fable 5.1 版：`[填写实际结果]`
+同一份需求，两套 coding agent 做《弹珠炼金工坊》。Codex 版：TypeScript + Phaser + Matter，5 关、6 种真实生效升级、键鼠/触屏、程序美术与合成音效。Claude Code · fable 5.1 版：同样是 TypeScript + Phaser + Matter，5 关、6 种升级、键鼠/触屏输入与独立视觉音效。
 
 ## 2 / 3
 
-这次不只看首屏。Codex 版首轮独立验收发现 4 个输入/适配问题，修复后全部转成回归；发布版 10 项规则测试 + 16 项本机 Chrome 测试通过，正常 UI 录屏完成五关。Claude 同口径：`[填构建 / 测试 / 正常通关 / 缺陷]`
+这次不只看首屏。Codex 版首轮独立验收发现 4 个输入/适配问题，修复后全部转成回归；发布版 10 项规则测试 + 16 项本机 Chrome 测试通过，正常 UI 录屏完成五关。Claude 版 24 项单元测试 + 18 项端到端测试通过，12 局随机瞄准机器人胜 5 局（42%）、0 局卡死；两版证据口径不同。
 
 ## 3 / 3
 
-试玩：https://chaoschemy.com/gpt6/
+对比首页：https://chaoschemy.com/ · Codex：https://chaoschemy.com/gpt6/ · Claude：https://chaoschemy.com/fable5.1/
 
 源码、完整原片与可复核材料：https://github.com/convee/marble-alchemy
 
