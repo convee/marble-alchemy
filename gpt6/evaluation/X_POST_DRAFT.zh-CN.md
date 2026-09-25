@@ -1,6 +1,10 @@
 # X 对比 Thread 草稿
 
-状态：已填入当前仓库的实测证据，尚未发布。
+状态：已于 2026-09-25 发布，公开 Thread：
+
+- 1/3：https://x.com/Youzi_Ai/status/2103513585158848773
+- 2/3：https://x.com/Youzi_Ai/status/2103513586924753188
+- 3/3：https://x.com/Youzi_Ai/status/2103513588749176981
 
 ## 1 / 3
 
