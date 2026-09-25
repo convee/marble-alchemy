@@ -13,6 +13,10 @@
 
 对比首页：https://chaoschemy.com/
 
+增长闭环材料：[`docs/growth/KEYWORD-RESEARCH.md`](docs/growth/KEYWORD-RESEARCH.md) · [`docs/growth/MONITORING.md`](docs/growth/MONITORING.md) · [隐私说明](https://chaoschemy.com/privacy.html)
+
+首页与两个游戏入口已接入 Cloudflare Web Analytics。游戏事件协议已落地；在配置 `VITE_ANALYTICS_ENDPOINT` 前，事件只保存在浏览器本地，不把行为数据发送到第三方。
+
 ## 需求里两版一致的部分
 
 - 瞄准并发射弹珠，弹珠在弹盘中碰撞钉子累计伤害；所有弹珠落到底部后统一对敌人结算。

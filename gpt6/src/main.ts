@@ -3,6 +3,7 @@ import './style.css';
 import { AlchemyScene, WIDTH, HEIGHT } from './scene';
 import { LEVELS, UPGRADES, type UpgradeId } from './game';
 import { Synth } from './audio';
+import { track } from './analytics';
 
 const star =
   '<svg viewBox="0 0 40 40" fill="none" aria-hidden="true"><path d="M20 3 35 29H5L20 3Z" stroke="currentColor"/><path d="m20 37 15-26H5l15 26Z" stroke="currentColor"/><circle cx="20" cy="20" r="7" stroke="currentColor"/><circle cx="20" cy="20" r="2" fill="currentColor"/></svg>';
@@ -36,6 +37,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <footer><span>✦ 一间小工坊，无限种可能。</span><span>程序绘制 · 纯粹碰撞 <b>EST. 2026</b></span></footer>
 </div>
 <dialog id="modal" aria-labelledby="modal-title"><div id="modal-content"></div></dialog>`;
+track('page_view', { app: 'gpt6' });
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 const sound = new Synth();
@@ -56,6 +58,18 @@ const scene = new AlchemyScene(
       $('notice').textContent = killed
         ? `${LEVELS[scene.run.level].name}已净化 · 选择一份新的炼金配方`
         : `释放 ${scene.run.damage} 点伤害 · 敌人反击，失去 ${LEVELS[scene.run.level].attack} 点生命`;
+      track(
+        killed && scene.run.level === 4
+          ? 'run_complete'
+          : killed
+            ? 'level_complete'
+            : 'volley_settled',
+        {
+          app: 'gpt6',
+          level: scene.run.level + 1,
+          killed,
+        },
+      );
     },
   },
   sound,
@@ -247,6 +261,11 @@ function showUpgrade() {
   document.querySelectorAll<HTMLButtonElement>('[data-upgrade]').forEach((button) => {
     button.onclick = () => {
       if (!scene.run.choose(button.dataset.upgrade as UpgradeId)) return;
+      track('upgrade_selected', {
+        app: 'gpt6',
+        upgrade: button.dataset.upgrade ?? 'unknown',
+        level: scene.run.level + 1,
+      });
       sound.unlock();
       sound.tone('upgrade');
       closeModal();
@@ -257,6 +276,11 @@ function showUpgrade() {
 }
 function showEnd() {
   const won = scene.run.phase === 'won';
+  track(won ? 'run_won' : 'run_lost', {
+    app: 'gpt6',
+    level: scene.run.level + 1,
+    shots: scene.run.shots,
+  });
   openModal(
     'end',
     `<p class="eyebrow">${won ? 'THE PHILOSOPHER’S STONE' : 'EVERY EXPERIMENT TEACHES'}</p><div class="modal-emblem">${won ? star : '◇'}</div><h2 id="modal-title">${won ? '你炼成了，属于自己的奇迹。' : '火种暂熄，灵感未尽。'}</h2><p class="modal-copy">${won ? '五场试炼全部完成。贤者之石在你的工坊里熠熠生辉。' : '生命已归零。这一次的碰撞，会成为下一次的灵感。'}</p><div class="end-stats"><div><b>${won ? 5 : scene.run.level}</b><span>净化试炼</span></div><div><b>${scene.run.totalDamage}</b><span>累计伤害</span></div><div><b>${scene.run.shots}</b><span>发射次数</span></div></div><button class="primary" id="play-again">再来一次实验 <span>↻</span></button>`,
@@ -272,7 +296,10 @@ function updateSound() {
 $('help').onclick = showHelp;
 $('pause').onclick = showPause;
 $('restart').onclick = showRestart;
-$('launch').onclick = () => scene.launch();
+$('launch').onclick = () => {
+  track('shot_attempt', { app: 'gpt6' });
+  scene.launch();
+};
 $('sound').onclick = () => {
   sound.toggle();
   updateSound();
