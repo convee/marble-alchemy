@@ -1,12 +1,12 @@
 # 弹珠炼金工坊 / Marble Alchemy Workshop（Claude Code fable 5.1 版）
 
-> 本目录是双版本对比仓库的 Claude Code 版实现。另一版在 [`../gpt6/`](../gpt6/)，对比首页见 [仓库根 README](../README.md) 与 https://convee.cn/marble-alchemy/ 。
+> 本目录是双版本对比仓库的 Claude Code 版实现。另一版在 [`../gpt6/`](../gpt6/)，对比首页见 [仓库根 README](../README.md) 与 https://chaoschemy.com/ 。
 
 霓虹炼金工坊风格的弹珠 Roguelite 浏览器小游戏：瞄准发射弹珠，撞钉子累计伤害，所有弹珠落底后一次结算，
 击败五关敌人即炼金大成。TypeScript + Phaser 3.90（Matter 物理）+ Vite。无后端、无在线接口、无外部图片与音频，
 全部美术用 Canvas / Graphics 程序绘制，音效用 WebAudio 合成。
 
-在线试玩：https://convee.cn/marble-alchemy/fable5.1/ （GitHub Pages）
+在线试玩：https://chaoschemy.com/fable5.1/ （GitHub Pages）
 
 ![gameplay](docs/media/gameplay.gif)
 

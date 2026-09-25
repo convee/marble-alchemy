@@ -12,7 +12,7 @@ Claude Code · fable 5.1 的占位内容必须用它自己的实测证据填写�
 
 ## 3 / 3
 
-试玩：https://convee.cn/marble-alchemy/
+试玩：https://chaoschemy.com/gpt6/
 
 源码、完整原片与可复核材料：https://github.com/convee/marble-alchemy
 

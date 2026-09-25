@@ -8,10 +8,10 @@
 
 | 版本 | 目录 | 在线试玩 | 说明 |
 |---|---|---|---|
-| Codex · GPT-6 | [`gpt6/`](gpt6/) | https://convee.cn/marble-alchemy/gpt6/ | [README](gpt6/README.md) · [测评材料](gpt6/evaluation/README.md) |
-| Claude Code · fable 5.1 | [`fable5.1/`](fable5.1/) | https://convee.cn/marble-alchemy/fable5.1/ | [README](fable5.1/README.md) · [测试报告](fable5.1/docs/TEST-REPORT.md) |
+| Codex · GPT-6 | [`gpt6/`](gpt6/) | https://chaoschemy.com/gpt6/ | [README](gpt6/README.md) · [测评材料](gpt6/evaluation/README.md) |
+| Claude Code · fable 5.1 | [`fable5.1/`](fable5.1/) | https://chaoschemy.com/fable5.1/ | [README](fable5.1/README.md) · [测试报告](fable5.1/docs/TEST-REPORT.md) |
 
-对比首页：https://convee.cn/marble-alchemy/
+对比首页：https://chaoschemy.com/
 
 ## 需求里两版一致的部分
 
