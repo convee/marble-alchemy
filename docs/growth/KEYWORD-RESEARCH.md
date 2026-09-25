@@ -32,3 +32,7 @@
 2. 先测试 2 个标题版本：`Free Browser Roguelite` 与 `Marble Roguelite`。
 3. 只有当某个词带来至少 30 个合格访问并且 `game_start / landing_view >= 25%`，才继续为该词做外链或内容页。
 4. 不购买批量外链，不把目录收录或搜索结果排名当成用户留存。
+
+## 本轮获客标记
+
+X Thread 已发布；后续可将同一站点链接加上 `utm_source=x&utm_campaign=launch_thread`，事件协议会把这三个 UTM 字段保留到事件中，方便把来源、开始率和复玩率放在同一份报告里。没有 UTM 的旧访问会归入 `(direct)`，不会被强行归因。

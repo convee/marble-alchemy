@@ -13,6 +13,21 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  growth-loop:
+    name: growth loop event analyzer
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - run: node --test scripts/analyze-events.test.mjs
+      - run: node --test infra/analytics-worker/src/index.test.mjs
+      - run: node scripts/analyze-events.mjs docs/growth/events.sample.ndjson --pretty
+
   gpt6:
     name: gpt6 (Codex)
     runs-on: ubuntu-latest

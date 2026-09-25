@@ -1,0 +1,5 @@
+{
+  "name": "chaoschemy-analytics-worker",
+  "private": true,
+  "type": "module"
+}

@@ -29,11 +29,15 @@ jobs:
       # 对比首页 + 两个版本各自的构建产物，分别落在 /gpt6/ 与 /fable5.1/ 子路径
       - name: Build gpt6
         working-directory: gpt6
+        env:
+          VITE_ANALYTICS_ENDPOINT: ${{ vars.VITE_ANALYTICS_ENDPOINT }}
         run: |
           npm ci
           npm run build -- --base=./
       - name: Build fable5.1
         working-directory: fable5.1
+        env:
+          VITE_ANALYTICS_ENDPOINT: ${{ vars.VITE_ANALYTICS_ENDPOINT }}
         run: |
           npm ci
           npm run build

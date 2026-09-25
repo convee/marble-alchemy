@@ -1,4 +1,14 @@
 type Value = string | number | boolean;
+type EventRecord = {
+  name: string;
+  props: Record<string, Value>;
+  ts: string;
+  path: string;
+  session_id: string;
+  utm_source?: string;
+  utm_campaign?: string;
+  utm_content?: string;
+};
 
 const QUEUE_KEY = "chaoschemy:analytics:v1";
 const SESSION_KEY = "chaoschemy:session:v1";
@@ -32,32 +42,80 @@ function queue(event: unknown): void {
   }
 }
 
-export function track(name: string, props: Record<string, Value> = {}): void {
-  const event = {
-    name,
-    props,
-    ts: new Date().toISOString(),
-    path: location.pathname,
-    session_id: sessionId(),
-  };
-  if (!endpoint) {
-    queue(event);
-    return;
+function queued(): EventRecord[] {
+  try {
+    const current = JSON.parse(localStorage.getItem(QUEUE_KEY) ?? "[]");
+    return Array.isArray(current) ? (current as EventRecord[]) : [];
+  } catch {
+    return [];
   }
+}
+
+function send(event: EventRecord): boolean {
+  if (!endpoint) return false;
   const body = JSON.stringify(event);
   try {
     const sent = navigator.sendBeacon?.(
       endpoint,
       new Blob([body], { type: "application/json" }),
     );
-    if (!sent)
-      void fetch(endpoint, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body,
-        keepalive: true,
-      });
+    if (sent) return true;
+    void fetch(endpoint, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body,
+      keepalive: true,
+    });
+    return true;
   } catch {
-    queue(event);
+    return false;
   }
 }
+
+function flushQueue(): void {
+  if (!endpoint) return;
+  const pending = queued();
+  if (!pending.length) return;
+  const unsent = pending.filter((event) => !send(event));
+  try {
+    if (unsent.length) localStorage.setItem(QUEUE_KEY, JSON.stringify(unsent));
+    else localStorage.removeItem(QUEUE_KEY);
+  } catch {
+    // Storage can be disabled by privacy mode; gameplay must continue.
+  }
+}
+
+function attribution(): Pick<
+  EventRecord,
+  "utm_source" | "utm_campaign" | "utm_content"
+> {
+  try {
+    const query = new URLSearchParams(location.search);
+    const value = (key: string) => query.get(key)?.trim().slice(0, 80) || undefined;
+    return {
+      utm_source: value("utm_source"),
+      utm_campaign: value("utm_campaign"),
+      utm_content: value("utm_content"),
+    };
+  } catch {
+    return {};
+  }
+}
+
+export function track(name: string, props: Record<string, Value> = {}): void {
+  const event: EventRecord = {
+    name,
+    props,
+    ts: new Date().toISOString(),
+    path: location.pathname,
+    session_id: sessionId(),
+    ...attribution(),
+  };
+  if (!endpoint) {
+    queue(event);
+    return;
+  }
+  if (!send(event)) queue(event);
+}
+
+if (endpoint) flushQueue();

@@ -13,9 +13,9 @@
 
 对比首页：https://chaoschemy.com/
 
-增长闭环材料：[`docs/growth/KEYWORD-RESEARCH.md`](docs/growth/KEYWORD-RESEARCH.md) · [`docs/growth/MONITORING.md`](docs/growth/MONITORING.md) · [`docs/growth/MONETIZATION.md`](docs/growth/MONETIZATION.md) · [隐私说明](https://chaoschemy.com/privacy.html)
+增长闭环材料：[`docs/growth/KEYWORD-RESEARCH.md`](docs/growth/KEYWORD-RESEARCH.md) · [`docs/growth/MONITORING.md`](docs/growth/MONITORING.md) · [`docs/growth/LOOP-STATUS.md`](docs/growth/LOOP-STATUS.md) · [`docs/growth/MONETIZATION.md`](docs/growth/MONETIZATION.md) · [隐私说明](https://chaoschemy.com/privacy.html)
 
-首页与两个游戏入口已接入 Cloudflare Web Analytics。游戏事件协议已落地；在配置 `VITE_ANALYTICS_ENDPOINT` 前，事件只保存在浏览器本地，不把行为数据发送到第三方。
+首页与两个游戏入口已接入 Cloudflare Web Analytics。游戏事件协议已落地；在配置 `VITE_ANALYTICS_ENDPOINT` 前，事件只保存在浏览器本地，不把行为数据发送到第三方。第一方 Worker+D1 的部署骨架位于 [`infra/analytics-worker/`](infra/analytics-worker/)，导出后可用 [`scripts/analyze-events.mjs`](scripts/analyze-events.mjs) 做来源、漏斗和复玩分析。
 
 ## 需求里两版一致的部分
 

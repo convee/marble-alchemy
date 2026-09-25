@@ -1,0 +1,6 @@
+{"name":"page_view","props":{"app":"gpt6"},"ts":"2026-09-01T00:00:00Z","path":"/gpt6/","session_id":"sample-x","utm_source":"x","utm_campaign":"launch_thread"}
+{"name":"game_start","props":{"app":"gpt6"},"ts":"2026-09-01T00:01:00Z","path":"/gpt6/","session_id":"sample-x","utm_source":"x","utm_campaign":"launch_thread"}
+{"name":"run_restart","props":{"app":"gpt6"},"ts":"2026-09-01T00:04:00Z","path":"/gpt6/","session_id":"sample-x","utm_source":"x","utm_campaign":"launch_thread"}
+{"name":"run_won","props":{"app":"gpt6","level":5},"ts":"2026-09-02T00:05:00Z","path":"/gpt6/","session_id":"sample-x","utm_source":"x","utm_campaign":"launch_thread"}
+{"name":"page_view","props":{"app":"fable5.1"},"ts":"2026-09-01T00:10:00Z","path":"/fable5.1/","session_id":"sample-direct"}
+{"name":"game_start","props":{"app":"fable5.1"},"ts":"2026-09-01T00:11:00Z","path":"/fable5.1/","session_id":"sample-direct"}
