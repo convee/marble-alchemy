@@ -29,9 +29,9 @@
 
 - 首页、`guide.html` 和 `support.html` 已加载 `monetization-config.js`；配置为空时不会加载 AdSense、不显示支持按钮，也不会产生第三方支付请求。
 - 支持入口由 `monetization.js` 动态插入；`analytics.js` 现在使用事件委托捕获动态入口的 `cta_click(target=support_click)`，因此启用支付后可以归因支持按钮点击。
-- GitHub Pages 构建会从 repository variables 读取 `STRIPE_PAYMENT_LINK`、`PADDLE_PAYMENT_LINK`、`PADDLE_CLIENT_TOKEN`、`ADSENSE_CLIENT`、`ADSENSE_SLOT`，生成公开配置文件；这些值不是秘密，但只能在账号持有人完成审核后写入。
+- GitHub Pages 构建会从 repository variables 读取 `STRIPE_PAYMENT_LINK`、`PADDLE_PAYMENT_LINK`、`PADDLE_CLIENT_TOKEN`、`PADDLE_PRICE_ID`、`ADSENSE_CLIENT`、`ADSENSE_SLOT`，生成公开配置文件；这些值不是秘密，但只能在账号持有人完成审核后写入。
 - Pages 构建在配置 `ADSENSE_CLIENT` 后会自动生成 `ads.txt`；为空时删除该文件，避免发布无效的广告授权声明。
-- 支持链接只接受 Stripe `https://buy.stripe.com/` 或 Paddle Hosted Checkout `https://pay.paddle.io/checkout/` 前缀；Paddle 客户端 Token 只接受 `live_` 前缀；AdSense 仅接受 `ca-pub-` publisher ID 和广告位 ID，避免误把测试地址或任意脚本注入生产页。
+- 支持链接只接受 Stripe `https://buy.stripe.com/` 或 Paddle Hosted Checkout `https://pay.paddle.io/checkout/` 前缀；Hosted Checkout 不可用时，页面会使用 `live_` 客户端 Token 与 `pri_` 一次性价格 ID 直接打开 Paddle.js 结账；AdSense 仅接受 `ca-pub-` publisher ID 和广告位 ID，避免误把测试地址或任意脚本注入生产页。
 
 ## 接入门槛
 
@@ -46,7 +46,7 @@
 
 ## 技术接手步骤
 
-1. 在 Paddle 完成 `chaoschemy.com` 网站批准，创建 Live 客户端 Token，并生成一次性支持商品的 Hosted Checkout；将公开 URL 写入 `PADDLE_PAYMENT_LINK`，将客户端 Token 写入 `PADDLE_CLIENT_TOKEN`。
+1. 在 Paddle 完成 `chaoschemy.com` 网站批准，创建 Live 客户端 Token，并将一次性支持价格 ID 写入 `PADDLE_PRICE_ID`；若后续获批 Hosted Checkout，再将公开 URL 写入 `PADDLE_PAYMENT_LINK`。
 2. 在 AdSense 站点审核通过后，将 publisher ID 写入 `ADSENSE_CLIENT`、广告位 ID 写入 `ADSENSE_SLOT`。
 3. 手动触发 Pages workflow，回读首页的支持入口、广告位、隐私页和浏览器事件；支付先用 Paddle sandbox 验证成功、取消和退款路径。
 4. 若要暂停变现，清空 `PADDLE_PAYMENT_LINK`、`STRIPE_PAYMENT_LINK`、`ADSENSE_CLIENT` 和 `ADSENSE_SLOT` 并重新部署即可；空配置会自动隐藏入口。

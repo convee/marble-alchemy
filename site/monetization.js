@@ -2,6 +2,8 @@
   const config = window.CHAOSCHEMY_MONETIZATION || {};
   const stripePaymentLink = typeof config.stripePaymentLink === 'string' ? config.stripePaymentLink : '';
   const paddlePaymentLink = typeof config.paddlePaymentLink === 'string' ? config.paddlePaymentLink : '';
+  const paddleClientToken = typeof config.paddleClientToken === 'string' ? config.paddleClientToken : '';
+  const paddlePriceId = typeof config.paddlePriceId === 'string' ? config.paddlePriceId : '';
   const paymentLink = [
     [stripePaymentLink, (value) => value.startsWith('https://buy.stripe.com/')],
     [paddlePaymentLink, (value) => value.startsWith('https://pay.paddle.io/checkout/')],
@@ -14,6 +16,31 @@
       slot.hidden = false;
       slot.innerHTML = `<p><strong>Keep the lab open</strong><br><span>Support the workshop if today’s experiment earned a replay.</span></p><a class="btn support" href="${paymentLink}" data-track="support_click">Support the lab</a>`;
     });
+  } else if (paddleClientToken.startsWith('live_') && paddlePriceId.startsWith('pri_')) {
+    document.querySelectorAll('[data-support-slot]').forEach((slot) => {
+      slot.hidden = false;
+      slot.innerHTML = '<p><strong>Keep the lab open</strong><br><span>Support the workshop if today’s experiment earned a replay.</span></p><a class="btn support" href="support.html" data-track="support_click" data-paddle-support>Support the lab</a>';
+    });
+
+    const script = document.createElement('script');
+    script.src = 'https://cdn.paddle.com/paddle/v2/paddle.js';
+    script.onload = () => {
+      if (!window.Paddle) return;
+      window.Paddle.Initialize({
+        token: paddleClientToken,
+        checkout: { settings: { displayMode: 'overlay', theme: 'dark', locale: 'en' } },
+      });
+      document.querySelectorAll('[data-paddle-support]').forEach((button) => {
+        button.addEventListener('click', (event) => {
+          event.preventDefault();
+          window.Paddle.Checkout.open({
+            items: [{ priceId: paddlePriceId, quantity: 1 }],
+            settings: { displayMode: 'overlay', theme: 'dark', variant: 'one-page' },
+          });
+        });
+      });
+    };
+    document.head.append(script);
   }
 
   if (adClient.startsWith('ca-pub-') && adSlot) {

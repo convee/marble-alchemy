@@ -57,6 +57,7 @@ jobs:
           STRIPE_PAYMENT_LINK: ${{ vars.STRIPE_PAYMENT_LINK }}
           PADDLE_PAYMENT_LINK: ${{ vars.PADDLE_PAYMENT_LINK }}
           PADDLE_CLIENT_TOKEN: ${{ vars.PADDLE_CLIENT_TOKEN }}
+          PADDLE_PRICE_ID: ${{ vars.PADDLE_PRICE_ID }}
           ADSENSE_CLIENT: ${{ vars.ADSENSE_CLIENT }}
           ADSENSE_SLOT: ${{ vars.ADSENSE_SLOT }}
         run: |
@@ -66,6 +67,7 @@ jobs:
             stripePaymentLink: String(process.env.STRIPE_PAYMENT_LINK || '').trim(),
             paddlePaymentLink: String(process.env.PADDLE_PAYMENT_LINK || '').trim(),
             paddleClientToken: String(process.env.PADDLE_CLIENT_TOKEN || '').trim(),
+            paddlePriceId: String(process.env.PADDLE_PRICE_ID || '').trim(),
             adsenseClient: String(process.env.ADSENSE_CLIENT || '').trim(),
             adsenseSlot: String(process.env.ADSENSE_SLOT || '').trim(),
           };

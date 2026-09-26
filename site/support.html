@@ -28,12 +28,18 @@
     <script>
       const config = window.CHAOSCHEMY_MONETIZATION || {};
       const token = typeof config.paddleClientToken === 'string' ? config.paddleClientToken : '';
+      const priceId = typeof config.paddlePriceId === 'string' ? config.paddlePriceId : '';
       const status = document.querySelector('#checkout-status');
       const transactionId = new URLSearchParams(location.search).get('_ptxn');
       if (token.startsWith('live_') && window.Paddle) {
         window.Paddle.Initialize({ token, checkout: { settings: { displayMode: 'overlay', theme: 'dark', locale: 'en' } } });
         if (transactionId) {
           window.Paddle.Checkout.open({ transactionId });
+        } else if (priceId.startsWith('pri_')) {
+          window.Paddle.Checkout.open({
+            items: [{ priceId, quantity: 1 }],
+            settings: { displayMode: 'overlay', theme: 'dark', variant: 'one-page' },
+          });
         } else {
           status.textContent = 'Checkout is ready. Return to the homepage and use the support button to open it.';
         }
