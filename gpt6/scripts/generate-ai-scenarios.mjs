@@ -11,17 +11,14 @@ if (!apiKey) {
   process.exit(1);
 }
 
-const prompt = `You are the content director for Marble Alchemy, a short original browser roguelite.
-Create exactly 3 daily AI alchemy challenges. Return JSON only as an array, with no markdown or commentary.
-Each item must contain only these five string keys: id, title, prophecy, effect, debrief.
-The effect must be exactly one of: double_first_hit, heal_after_settlement, glass_cannon.
-Use these exact mechanics: double_first_hit doubles the first peg contact of each shot; heal_after_settlement restores one life after a successful settlement that defeats an enemy; glass_cannon starts the run with two life.
-Keep title under 32 characters and prophecy under 140 characters.
-Keep debrief under 180 characters. The debrief is shown after the run and should turn the result into one concrete next move.
-The rules must be exciting but fair, and must not require a server call during physics gameplay.
-Use this exact shape: [{"id":"daily_one","title":"Short title","prophecy":"Short prophecy","effect":"double_first_hit","debrief":"One concrete next move."}, {"id":"daily_two","title":"Short title","prophecy":"Short prophecy","effect":"heal_after_settlement","debrief":"One concrete next move."}, {"id":"daily_three","title":"Short title","prophecy":"Short prophecy","effect":"glass_cannon","debrief":"One concrete next move."}]`;
+const prompt = `Return exactly 3 original English Marble Alchemy challenge objects as JSON only.
+Keys: id, title, prophecy, effect, debrief. Effects: double_first_hit, heal_after_settlement, glass_cannon.
+Mechanics: first effect doubles the first peg contact of each shot; second restores one life after a settlement that defeats an enemy; third starts with two lives.
+Keep title under 32 chars, prophecy under 140, debrief under 180. Use only real concepts: aim, peg contacts, damage, life, settlement, shots, and the six upgrades. Never mention rerolls, mana, decks, currencies, shops, spells, energy, or relics.
+Shape: [{"id":"daily_one","title":"Short title","prophecy":"Short prophecy","effect":"double_first_hit","debrief":"Aim at a dense peg cluster on the next shot."},{"id":"daily_two","title":"Short title","prophecy":"Short prophecy","effect":"heal_after_settlement","debrief":"Choose an upgrade that keeps damage reliable."},{"id":"daily_three","title":"Short title","prophecy":"Short prophecy","effect":"glass_cannon","debrief":"Protect your two lives and favor steady damage."}]`;
 
 const effects = new Set(['double_first_hit', 'heal_after_settlement', 'glass_cannon']);
+const forbiddenMechanics = /\b(reroll|mana|deck|currency|shop|spell|energy|relic)\b/i;
 const models = [...new Set([requestedModel, 'glm-5.3'])];
 let scenarios;
 let usedModel;
@@ -38,7 +35,7 @@ for (const model of models) {
       body: JSON.stringify({
         model,
         temperature: 0.2,
-        max_tokens: 1200,
+        max_tokens: 1600,
         messages: [
           { role: 'system', content: 'Return valid JSON with no markdown fences.' },
           { role: 'user', content: prompt },
@@ -72,6 +69,7 @@ for (const model of models) {
         typeof item.debrief !== 'string' ||
         item.debrief.length === 0 ||
         item.debrief.length > 180 ||
+        forbiddenMechanics.test(`${item.prophecy} ${item.debrief}`) ||
         !effects.has(item.effect)
       )
         throw new Error('schema mismatch');
