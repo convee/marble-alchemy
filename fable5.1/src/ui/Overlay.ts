@@ -1,5 +1,6 @@
 import { RULES } from '../core/balance';
 import { UPGRADES, type UpgradeId } from '../core/upgrades';
+import { track } from '../analytics';
 
 /**
  * 前端组件：DOM 覆盖层（开始/说明/暂停/升级/失败/胜利）。
@@ -234,10 +235,11 @@ export class Overlay {
         <h1 class="title danger">Alchemy failed</h1>
         <p class="subtitle">The crucible blew. Regroup and try another run.</p>
         ${this.summaryHtml(s)}
-        <div class="btn-row"><button class="btn primary" data-testid="restart-btn">Restart</button></div>
+        <div class="btn-row"><button class="btn primary" data-testid="restart-btn">Restart</button><a class="btn secondary" data-testid="support-btn" href="../support.html?utm_source=game&amp;utm_campaign=post_run&amp;utm_content=fable5_1">Support the workshop</a></div>
       </div>`,
     );
     this.bind(el, 'restart-btn', onRestart);
+    this.bindSupport(el, 'lost');
     this.keys({ Enter: onRestart, r: onRestart, R: onRestart });
   }
 
@@ -248,11 +250,17 @@ export class Overlay {
         <h1 class="title gold">Alchemy complete</h1>
         <p class="subtitle">The Core Golem turns to ash and the workshop is at peace.</p>
         ${this.summaryHtml(s)}
-        <div class="btn-row"><button class="btn primary" data-testid="restart-btn">Play again</button></div>
+        <div class="btn-row"><button class="btn primary" data-testid="restart-btn">Play again</button><a class="btn secondary" data-testid="support-btn" href="../support.html?utm_source=game&amp;utm_campaign=post_run&amp;utm_content=fable5_1">Support the workshop</a></div>
       </div>`,
     );
     this.bind(el, 'restart-btn', onRestart);
+    this.bindSupport(el, 'won');
     this.keys({ Enter: onRestart, r: onRestart, R: onRestart });
+  }
+
+  private bindSupport(el: HTMLElement, result: 'won' | 'lost'): void {
+    const button = el.querySelector<HTMLElement>('[data-testid="support-btn"]');
+    button?.addEventListener('click', () => track('cta_click', { target: 'post_run_support', result }));
   }
 
   toast(text: string, ms = 1400): void {

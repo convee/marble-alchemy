@@ -35,6 +35,11 @@
       const reportPaddleEvent = (data) => {
         if (typeof data?.name !== 'string') return;
         window.dispatchEvent(new CustomEvent('chaoschemy:paddle-event', { detail: { name: data.name } }));
+        if (/complete|paid|success/i.test(data.name)) {
+          status.textContent = 'Thank you — your support was received. The workshop stays open.';
+        } else if (/close|cancel/i.test(data.name)) {
+          status.textContent = 'Checkout closed. You can return to the game whenever you like.';
+        }
       };
       if (token.startsWith('live_') && window.Paddle) {
         window.Paddle.Initialize({ token, eventCallback: reportPaddleEvent, checkout: { settings: { displayMode: 'overlay', theme: 'dark', locale: 'en' } } });

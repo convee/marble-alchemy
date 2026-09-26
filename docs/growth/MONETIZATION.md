@@ -31,6 +31,7 @@
 
 - 首页、`guide.html` 和 `support.html` 已加载 `monetization-config.js`。生产构建读取 Live Paddle 客户端 Token 和价格 ID 后，首页显示 `Support the lab` 并通过 Paddle.js 打开一次性结账；本地空配置仍不会产生第三方请求。
 - 支持入口由 `monetization.js` 动态插入；`analytics.js` 现在使用事件委托捕获动态入口的 `cta_click(target=support_click)`，因此启用支付后可以归因支持按钮点击。
+- 两个 Marble Alchemy build 的通关/失败结果层都加入了英文 `Support the workshop` 入口，带 `utm_source=game&utm_campaign=post_run`；点击会记录 `cta_click(target=post_run_support)`，再进入现有 Paddle 支持页。这把“完成体验 → 支持”串成了可测量的闭环，不把支持按钮提前打断首局体验。
 - GitHub Pages 构建会从 repository variables 读取 `STRIPE_PAYMENT_LINK`、`PADDLE_PAYMENT_LINK`、`PADDLE_CLIENT_TOKEN`、`PADDLE_PRICE_ID`、`ADSENSE_CLIENT`、`ADSENSE_SLOT`，生成公开配置文件。Paddle 客户端 Token 和价格 ID 属于前端公开配置，不能与 API secret 混用；当前 Live Token 和价格 ID 已由账号持有人配置。
 - Pages 构建在配置 `ADSENSE_CLIENT` 后会自动生成 `ads.txt`；为空时删除该文件，避免发布无效的广告授权声明。
 - 支持链接只接受 Stripe `https://buy.stripe.com/` 或 Paddle Hosted Checkout `https://pay.paddle.io/checkout/` 前缀；Hosted Checkout 不可用时，页面会使用 `live_` 客户端 Token 与 `pri_` 一次性价格 ID 直接打开 Paddle.js 结账；AdSense 仅接受 `ca-pub-` publisher ID 和广告位 ID，避免误把测试地址或任意脚本注入生产页。

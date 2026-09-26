@@ -5,9 +5,11 @@
 - Cloudflare Web Analytics：覆盖 `chaoschemy.com/`、`/gpt6/`、`/fable5.1/`，统计页面访问、设备/地区和性能指标。
 - 入口页、两个 Marble Alchemy 游戏页和 Kids Game Garden 页面都加载官方 beacon；隐私说明位于 `/privacy.html`。
 - 2026-09-26（GMT+8）现场回读 Cloudflare 站点列表：`chaoschemy.com` 显示最近 24 小时 37 次 page views、35 次 visits；包含验证和未知来源流量，不能当作自然获客样本。
+- 2026-09-26 23:44（GMT+8）再次回读 Cloudflare Web Analytics：仪表板显示 0 visits / 0 page views，并提示数据量不足；这说明当前还没有可用于判断增长的 Cloudflare 样本。
 - 第一方事件接收 Worker 已部署在 `https://chaoschemy-analytics.convee-cn.workers.dev/events`，D1 数据库绑定为 `chaoschemy-analytics`；GitHub Pages 构建变量 `VITE_ANALYTICS_ENDPOINT` 已配置。
 - 2026-09-26（GMT+8）用正式站点真实浏览器链路回读到 `page_view`、`game_start`、`shot_attempt`、`level_complete`，两个版本都带有 `utm_source=x` 和 `utm_campaign=launch_thread`。这些是发布验证流量，不是自然用户 cohort。
 - 2026-09-26 19:29（GMT+8）导出第一方 D1：264 events / 17 sessions / 41 page views / 2 game-start sessions / 3 completed sessions / 1 replay session。来源分层为 direct 12 sessions、X 4 sessions、landing 2 sessions、guide 2 sessions；D1/D7 尚无 eligible cohort。这仍是同日混合验证样本，不能推导自然转化率或留存。
+- 2026-09-26 23:44（GMT+8）D1 当前累计为 281 events / 19 sessions / 49 page views / 8 game starts / 3 completions；最近一小时只有 1 个直接首页 session（2 个事件），无法证明是外部自然用户，仍按混合验证样本处理。
 
 ## 游戏事件协议
 
