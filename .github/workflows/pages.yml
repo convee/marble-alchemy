@@ -49,12 +49,10 @@ jobs:
           cp -r site/. dist/
           cp -r gpt6/dist dist/gpt6
           cp -r fable5.1/dist dist/fable5.1
-          cp -r angry-birds dist/angry-birds
           node scripts/generate-game-pages.mjs dist/games.json dist/games
           test -f dist/index.html
           test -f dist/gpt6/index.html
           test -f dist/fable5.1/index.html
-          test -f dist/angry-birds/index.html
 
       - name: Validate game registry
         run: |

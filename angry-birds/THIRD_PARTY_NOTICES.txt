@@ -1,3 +1,0 @@
-Matter.js 0.19.0
-Copyright (c) 2014-2023 Liam Brummitt and contributors
-MIT License: https://github.com/liabru/matter-js/blob/master/LICENSE

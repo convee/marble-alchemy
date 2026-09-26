@@ -29,26 +29,6 @@
           "analyticsApp": "fable5.1"
         }
       ]
-    },
-    {
-      "slug": "angry-birds",
-      "title": "Angry Birds",
-      "tagline": "Physics-based slingshot game",
-      "description": "Launch birds, break structures, and clear each level in a touch-friendly Matter.js experiment.",
-      "genre": ["Physics", "Browser game"],
-      "status": "published",
-      "sourcePath": "https://github.com/convee/marble-alchemy/tree/main/angry-birds",
-      "variants": [
-        {
-          "slug": "matter-js",
-          "title": "Matter.js physics build",
-          "description": "A responsive Canvas build with slingshot aiming, destructible materials, pigs, and level progression.",
-          "playPath": "/angry-birds/",
-          "sourcePath": "https://github.com/convee/marble-alchemy/tree/main/angry-birds",
-          "image": "/media/angry-birds-cover.svg",
-          "analyticsApp": "angry-birds"
-        }
-      ]
     }
   ]
 }

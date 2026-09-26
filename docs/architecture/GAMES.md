@@ -4,8 +4,6 @@ The public catalog is driven by [`site/games.json`](../../site/games.json). A to
 
 The first catalog page is [`/games/`](https://chaoschemy.com/games/). Each registered game also receives a generated detail page such as [`/games/marble-alchemy/`](https://chaoschemy.com/games/marble-alchemy/). Existing `/gpt6/` and `/fable5.1/` URLs remain stable aliases while the catalog grows.
 
-The catalog currently contains `marble-alchemy` and `angry-birds`. Angry Birds is a standalone English-first Matter.js build at `/angry-birds/`; its source, runtime notice and anonymous telemetry live under [`angry-birds/`](../../angry-birds/).
-
 To add a game in phase one:
 
 1. Add a new top-level entry to `site/games.json` with a stable `slug`, title, description, status, source path and one or more variants.
