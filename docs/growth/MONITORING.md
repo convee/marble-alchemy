@@ -10,6 +10,7 @@
 - 2026-09-26（GMT+8）用正式站点真实浏览器链路回读到 `page_view`、`game_start`、`shot_attempt`、`level_complete`，两个版本都带有 `utm_source=x` 和 `utm_campaign=launch_thread`。这些是发布验证流量，不是自然用户 cohort。
 - 2026-09-26 19:29（GMT+8）导出第一方 D1：264 events / 17 sessions / 41 page views / 2 game-start sessions / 3 completed sessions / 1 replay session。来源分层为 direct 12 sessions、X 4 sessions、landing 2 sessions、guide 2 sessions；D1/D7 尚无 eligible cohort。这仍是同日混合验证样本，不能推导自然转化率或留存。
 - 2026-09-26 23:44（GMT+8）D1 当前累计为 281 events / 19 sessions / 49 page views / 8 game starts / 3 completions；最近一小时只有 1 个直接首页 session（2 个事件），无法证明是外部自然用户，仍按混合验证样本处理。
+- 2026-09-27 00:24（GMT+8）清理已确认的结账冒烟验证 session 后，D1 正本为 238 events / 19 sessions / 30 page views / 8 game starts / 3 completions；最近可见的非结账验证首页 session 在 16:16 UTC，来源字段为空，仍只能标记为 unknown/direct。
 
 ## 游戏事件协议
 
