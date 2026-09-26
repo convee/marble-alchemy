@@ -11,7 +11,7 @@
     <meta property="og:title" content="Marble Alchemy · AI-Directed Browser Roguelite" />
     <meta property="og:description" content="Play a free five-stage marble roguelite. GLM-5.3 Flash writes the daily challenge; deterministic physics makes it real." />
     <meta property="og:url" content="https://chaoschemy.com/" />
-    <meta property="og:image" content="https://chaoschemy.com/media/gpt6-cover.jpg" />
+    <meta property="og:image" content="https://chaoschemy.com/media/gpt6-cover-en.jpg" />
     <script type="application/ld+json">
       {"@context":"https://schema.org","@type":"VideoGame","name":"Marble Alchemy","url":"https://chaoschemy.com/","description":"A free AI-directed browser roguelite with deterministic marble physics.","genre":["Roguelite","Browser game"],"gamePlatform":"Web browser","isAccessibleForFree":true,"applicationCategory":"Game"}
     </script>
@@ -62,7 +62,7 @@
       .card:hover { transform: translateY(-4px); }
       .card.gpt6:hover { border-color: var(--gold); box-shadow: 0 0 30px rgba(216, 198, 143, 0.28); }
       .card.fable:hover { border-color: var(--cyan); box-shadow: 0 0 30px rgba(53, 242, 255, 0.3); }
-      .card img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; background: #05070f; }
+      .card img { width: 100%; height: clamp(180px, 28vw, 300px); aspect-ratio: 16 / 9; object-fit: cover; display: block; background: #05070f; }
       .card .body { padding: 18px 20px 22px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
       .card h2 { margin: 0; font-size: 21px; letter-spacing: 2px; }
       .card.gpt6 h2 { color: var(--gold); }
@@ -115,7 +115,7 @@
 
       <div class="cards">
         <section class="card gpt6">
-          <img src="media/gpt6-cover.jpg" alt="Marble Alchemy AI Director gameplay" width="1280" height="800" fetchpriority="high" />
+          <img src="media/gpt6-cover-en.jpg" alt="Marble Alchemy AI Director gameplay" width="1586" height="992" fetchpriority="high" />
           <div class="body">
             <h2>Codex · GPT-6 AI Director</h2>
             <p>Five stages · no install · no account</p>
@@ -127,13 +127,13 @@
             </ul>
             <div class="actions">
               <a class="btn play" data-track="gpt6" href="gpt6/?utm_source=landing&amp;utm_campaign=homepage_cta&amp;utm_content=gpt6">Play the AI challenge</a>
-              <a class="btn" href="https://github.com/convee/marble-alchemy/tree/main/gpt6">源码</a>
+              <a class="btn" href="https://github.com/convee/marble-alchemy/tree/main/gpt6">Source</a>
             </div>
           </div>
         </section>
 
         <section class="card fable">
-          <img src="media/fable5.1-cover.jpg" alt="Marble Alchemy deterministic baseline gameplay" width="1280" height="800" loading="lazy" />
+          <img src="media/fable5.1-cover-en.jpg" alt="Marble Alchemy deterministic baseline gameplay" width="1586" height="992" loading="lazy" />
           <div class="body">
             <h2>Claude Code · fable 5.1</h2>
             <p>Deterministic comparison build</p>
@@ -144,7 +144,7 @@
             </ul>
             <div class="actions">
               <a class="btn play" data-track="fable5.1" href="fable5.1/?utm_source=landing&amp;utm_campaign=homepage_cta&amp;utm_content=fable5.1">Play the baseline</a>
-              <a class="btn" href="https://github.com/convee/marble-alchemy/tree/main/fable5.1">源码</a>
+              <a class="btn" href="https://github.com/convee/marble-alchemy/tree/main/fable5.1">Source</a>
             </div>
           </div>
         </section>
