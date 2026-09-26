@@ -18,12 +18,25 @@
 - 没有在真实账户中选择国家、接受协议或输入企业/银行资料；也没有创建测试商品或价格，避免替项目擅自决定收费方案。
 - 可接手位置：Chrome 中的 `注册并创建 Stripe 账户 | Stripe` 标签页；另有 `New business 沙盒` 测试控制台可用于后续集成演练。
 
+## 当前技术状态
+
+- 首页和 `guide.html` 已加载 `monetization-config.js` 与 `monetization.js`。配置为空时不会加载 AdSense、不显示支持按钮，也不会产生第三方支付请求。
+- GitHub Pages 构建会从 repository variables 读取 `STRIPE_PAYMENT_LINK`、`ADSENSE_CLIENT`、`ADSENSE_SLOT`，生成公开配置文件；这些值不是秘密，但只能在账号持有人完成审核后写入。
+- Stripe Payment Link 仅接受 `https://buy.stripe.com/` 前缀；AdSense 仅接受 `ca-pub-` publisher ID 和广告位 ID，避免误把测试地址或任意脚本注入生产页。
+
 ## 接入门槛
 
-广告或支付代码暂不放入生产站点。先跑 7–14 天真实访问，确认开始率、通关率和复玩率，再决定是否接入；接入前还要完成隐私说明、广告/支付政策、账号验证和收款资料回读。
+广告和支付代码已经以“空配置不启用”的方式随站点发布，但当前没有真实广告或支付入口。先跑 7–14 天真实访问，确认开始率、通关率和复玩率，再决定是否填入配置；接入前还要完成隐私说明、广告/支付政策、账号验证和收款资料回读。
 
 ## 用户接手清单
 
 1. AdSense：确认实际法定收款国家/地区后，再决定是否接受条款并提交；不要直接保留“美国”默认值。
 2. Stripe：确认真实法律实体注册国家/地区、业务主体和收款银行后，再从测试沙盒切换到真实账户；沙盒账号不能代替生产支付账号。
 3. 提交后回读账号状态、站点审核状态和支付资料状态；在这些状态可核验前，不在站点插入广告脚本或真实支付入口。
+
+## 技术接手步骤
+
+1. 在 Stripe 真实账户创建经过税务与退款政策核对的 Payment Link；将公开 URL 写入 GitHub repository variable `STRIPE_PAYMENT_LINK`。
+2. 在 AdSense 站点审核通过后，将 publisher ID 写入 `ADSENSE_CLIENT`、广告位 ID 写入 `ADSENSE_SLOT`。
+3. 手动触发 Pages workflow，回读首页的支持入口、广告位、隐私页和浏览器事件；支付先用 Stripe 的合法测试方式验证成功、取消和退款路径。
+4. 若要暂停变现，清空这三个 variables 并重新部署即可；空配置会自动隐藏入口。

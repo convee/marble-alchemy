@@ -1,21 +1,21 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#080c18" />
-    <meta name="description" content="一个由 GLM-5.3 Flash 提出每日命题、由确定性物理执行的 AI 弹珠 Roguelite，并附 Claude Code fable 5.1 对照版。" />
-    <meta name="keywords" content="free browser roguelite, marble game, no download web game, 弹珠 roguelite" />
+    <meta name="description" content="Marble Alchemy is a free browser roguelite with no download: GLM-5.3 Flash writes a daily challenge, while deterministic marble physics turns it into a playable rule." />
+    <meta name="keywords" content="free browser roguelite, marble game browser, no download web game, AI game, browser pinball roguelite" />
     <link rel="canonical" href="https://chaoschemy.com/" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="弹珠炼金工坊 · AI 游戏闭环" />
-    <meta property="og:description" content="GLM-5.3 Flash 提出每日炼金命题并写下复盘建议，玩家用真实 Matter 碰撞完成五关试炼。" />
+    <meta property="og:title" content="Marble Alchemy · AI-Directed Browser Roguelite" />
+    <meta property="og:description" content="Play a free five-stage marble roguelite. GLM-5.3 Flash writes the daily challenge; deterministic physics makes it real." />
     <meta property="og:url" content="https://chaoschemy.com/" />
     <meta property="og:image" content="https://chaoschemy.com/media/gpt6-cover.jpg" />
     <script type="application/ld+json">
-      {"@context":"https://schema.org","@type":"VideoGame","name":"Marble Alchemy","url":"https://chaoschemy.com/","genre":["Roguelite","Browser game"],"gamePlatform":"Web browser","isAccessibleForFree":true}
+      {"@context":"https://schema.org","@type":"VideoGame","name":"Marble Alchemy","url":"https://chaoschemy.com/","description":"A free AI-directed browser roguelite with deterministic marble physics.","genre":["Roguelite","Browser game"],"gamePlatform":"Web browser","isAccessibleForFree":true,"applicationCategory":"Game"}
     </script>
-    <title>弹珠炼金工坊 · AI 游戏闭环</title>
+    <title>Marble Alchemy · AI-Directed Browser Roguelite</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='12' fill='%2335f2ff'/%3E%3Ccircle cx='12' cy='12' r='4' fill='white'/%3E%3C/svg%3E" />
     <style>
       :root {
@@ -93,6 +93,12 @@
       td:first-child { color: var(--muted); white-space: nowrap; }
       h3 { letter-spacing: 2px; margin: 34px 0 6px; font-size: 18px; }
       .note { color: var(--muted); font-size: 13px; }
+      .growth-panel, .support-panel, .ad-slot { margin-top: 24px; padding: 18px 20px; border: 1px solid rgba(53, 242, 255, 0.2); border-radius: 14px; background: rgba(53, 242, 255, 0.05); }
+      .growth-panel h3 { margin-top: 0; }
+      .support-panel { border-color: rgba(216, 198, 143, 0.35); background: rgba(216, 198, 143, 0.06); }
+      .support-panel p { margin: 0 0 10px; color: var(--muted); font-size: 14px; }
+      .btn.support { display: inline-block; border-color: var(--gold); background: rgba(216, 198, 143, 0.16); }
+      .ad-slot { min-height: 0; }
       footer { margin-top: 40px; text-align: center; color: var(--muted); font-size: 13px; }
       a { color: var(--cyan); }
     </style>
@@ -100,83 +106,91 @@
   <body>
     <div class="wrap">
       <header>
-        <h1>弹珠炼金工坊 · AI 游戏闭环</h1>
+        <h1>Marble Alchemy · AI-Directed Browser Roguelite</h1>
         <p class="lead">
-          这是一个让 AI 参与玩法的浏览器弹珠 Roguelite。GPT-6 版由 GLM-5.3 Flash 提出每日命题、写下受限规则和通关复盘，
-          玩家用真实 Matter 碰撞回应命题并累积连续天数；fable 5.1 版保留为确定性对照。代码、测试与证据都可直接阅读。
+          A free browser roguelite with no download or account wall. GLM-5.3 Flash writes a daily challenge and debrief;
+          deterministic Matter physics makes the rule playable and auditable. Compare the AI Director build with a deterministic baseline.
         </p>
       </header>
 
       <div class="cards">
         <section class="card gpt6">
-          <img src="media/gpt6-cover.jpg" alt="Codex GPT-6 版画面" loading="lazy" />
+          <img src="media/gpt6-cover.jpg" alt="Marble Alchemy AI Director gameplay" width="1280" height="800" fetchpriority="high" />
           <div class="body">
-            <h2>Codex · GPT-6</h2>
-            <p>目录 <code>gpt6/</code></p>
+            <h2>Codex · GPT-6 AI Director</h2>
+            <p>Five stages · no install · no account</p>
             <ul class="facts">
-              <li>GLM-5.3 Flash 提出命题与复盘，三种规则均在本地确定性执行</li>
-              <li>模型命题 → 真实碰撞 → AI 复盘 → 连续完成记录</li>
-              <li>完整无剪辑通关录屏，含 SHA-256 校验清单</li>
-              <li>Prettier 格式检查与 npm audit 进 CI</li>
+              <li>GLM-5.3 Flash writes the prophecy and debrief</li>
+              <li>Model challenge → real collisions → AI reflection → daily streak</li>
+              <li>Three bounded mechanics run locally and deterministically</li>
+              <li>Touch and mouse controls for quick sessions</li>
             </ul>
             <div class="actions">
-              <a class="btn play" href="gpt6/">在线试玩</a>
+              <a class="btn play" data-track="gpt6" href="gpt6/?utm_source=landing&amp;utm_campaign=homepage_cta&amp;utm_content=gpt6">Play the AI challenge</a>
               <a class="btn" href="https://github.com/convee/marble-alchemy/tree/main/gpt6">源码</a>
             </div>
           </div>
         </section>
 
         <section class="card fable">
-          <img src="media/fable5.1-cover.jpg" alt="Claude Code fable 5.1 版画面" loading="lazy" />
+          <img src="media/fable5.1-cover.jpg" alt="Marble Alchemy deterministic baseline gameplay" width="1280" height="800" loading="lazy" />
           <div class="body">
             <h2>Claude Code · fable 5.1</h2>
-            <p>目录 <code>fable5.1/</code></p>
+            <p>Deterministic comparison build</p>
             <ul class="facts">
-              <li>单元测试 24 项、端到端 18 项（该版自测口径）</li>
-              <li>12 局机器人自动对局：胜率 42%，0 局卡死</li>
-              <li>逐帧合成录屏，画面不受运行环境帧率影响</li>
+              <li>Five stages and six real upgrades</li>
+              <li>Keyboard and touch controls</li>
+              <li>Procedural visuals and synthesized sound</li>
             </ul>
             <div class="actions">
-              <a class="btn play" href="fable5.1/">在线试玩</a>
+              <a class="btn play" data-track="fable5.1" href="fable5.1/?utm_source=landing&amp;utm_campaign=homepage_cta&amp;utm_content=fable5.1">Play the baseline</a>
               <a class="btn" href="https://github.com/convee/marble-alchemy/tree/main/fable5.1">源码</a>
             </div>
           </div>
         </section>
       </div>
 
-      <h3>玩法一致的部分</h3>
+      <h3>Why this is different</h3>
       <p class="note">
-        两版都遵循同一份需求：瞄准发射弹珠，弹珠撞钉子累计伤害，所有弹珠落底后统一结算；敌人存活则反击，玩家初始 5 点生命；
-        五关递增，每次击败敌人后从 3 张里选 1 个升级；升级池固定为强化、火焰、闪电、分裂、暴击、治疗六种，
-        其中强化与火焰可重复获得。具体数值、弹盘布局、视觉与音效由各自设计。
+        Aim and launch a marble, let real peg collisions build damage, then choose one of three upgrades after each victory.
+        Five stages escalate the pressure; six upgrades shape each run. The AI Director changes one bounded rule each day so the same board asks a new question.
       </p>
 
-      <h3>AI 导演如何参与</h3>
+      <h3>How the AI Director participates</h3>
       <p class="note">
-        模型先写下带叙事的每日命题，校验器把它限制在首击翻倍、击败回血或玻璃炮三种规则内；玩家随后选择配方、完成五场真实碰撞，
-        结束页回放模型给出的下一步建议。完成记录、规则触发和分享分别进入匿名事件账本，下一次访问继续面对新的命题。
+        The model writes a narrative prophecy, a validator constrains it to three auditable mechanics, and the browser executes the mechanic locally.
+        Your result then receives a model-authored strategy plus measured run stats. No browser key or opaque per-frame model call is required.
       </p>
 
-      <h3>两版自测数据</h3>
+      <section class="growth-panel">
+        <h3>Start with the shortest path</h3>
+        <p class="note">Read the <a href="guide.html">browser roguelite field guide</a>, then play the AI challenge and share the result.</p>
+        <div class="actions"><a class="btn play" data-track="guide" href="guide.html">Read the field guide</a><a class="btn" data-track="gpt6_secondary" href="gpt6/?utm_source=landing&amp;utm_campaign=homepage_cta&amp;utm_content=gpt6_secondary">Play today’s challenge</a></div>
+      </section>
+
+      <section class="support-panel" data-support-slot hidden aria-label="Support the workshop"></section>
+      <div class="ad-slot" data-ad-slot hidden aria-label="Advertisement"></div>
+
+      <h3>Evidence you can inspect</h3>
       <table>
         <thead>
-          <tr><th>项目</th><th>Codex · GPT-6</th><th>Claude Code · fable 5.1</th></tr>
+          <tr><th>Evidence</th><th>Codex · GPT-6</th><th>Claude Code · fable 5.1</th></tr>
         </thead>
         <tbody>
-          <tr><td>自动化测试</td><td>规则 13 项、浏览器 19 项</td><td>单元 24 项、端到端 18 项</td></tr>
-          <tr><td>录屏方式</td><td>真实 UI 操作，完整无剪辑，附 SHA-256</td><td>停主循环逐帧合成，与帧率无关</td></tr>
-          <tr><td>通关证据</td><td>一局五关胜利，58.7 秒，5/5 生命</td><td>12 局随机瞄准机器人对局，胜 5 局</td></tr>
-          <tr><td>额外检查</td><td>Prettier、npm audit、模型命题校验与 AI 闭环回归</td><td>逐关命中数实测、卡死看门狗单测</td></tr>
+          <tr><td>Automated tests</td><td>13 rule checks, 19 browser checks</td><td>24 unit tests, 18 end-to-end checks</td></tr>
+          <tr><td>Recording</td><td>Real UI operation, unedited, SHA-256 attached</td><td>Frame-by-frame synthesis with the main loop paused</td></tr>
+          <tr><td>Run evidence</td><td>Five-stage win, 58.7 seconds, 5/5 lives</td><td>12 random-aim bot runs, 5 wins</td></tr>
+          <tr><td>Extra checks</td><td>Prettier, npm audit, challenge validation and AI-loop regression</td><td>Per-stage hit counts and stuck-run watchdog tests</td></tr>
         </tbody>
       </table>
       <p class="note">
-        两列的口径不同，是各自版本自己跑出来的结果，不能直接相减比较，也没有裁判打分。详细报告见
-        <a href="https://github.com/convee/marble-alchemy/blob/main/gpt6/evaluation/README.md">gpt6/evaluation</a> 与
-        <a href="https://github.com/convee/marble-alchemy/blob/main/fable5.1/docs/TEST-REPORT.md">fable5.1/docs/TEST-REPORT.md</a>。
+        The two columns use different test scopes and are reported separately. Read the raw reports, source and release checks in
+        <a href="https://github.com/convee/marble-alchemy/blob/main/gpt6/evaluation/README.md">gpt6/evaluation</a> and
+        <a href="https://github.com/convee/marble-alchemy/blob/main/fable5.1/docs/TEST-REPORT.md">fable5.1/docs/TEST-REPORT.md</a>.
       </p>
 
       <footer>
-        仓库 <a href="https://github.com/convee/marble-alchemy">github.com/convee/marble-alchemy</a> · <a href="privacy.html">隐私说明</a> · MIT License
+        <a href="guide.html">Field guide</a> · <a href="https://github.com/convee/marble-alchemy">Source and evidence</a> · <a href="privacy.html">Privacy</a> · MIT License
       </footer>
     </div>
     <script>
@@ -188,5 +202,8 @@
         document.body.append(beacon);
       }
     </script>
+    <script src="monetization-config.js"></script>
+    <script src="analytics.js"></script>
+    <script src="monetization.js"></script>
   </body>
 </html>

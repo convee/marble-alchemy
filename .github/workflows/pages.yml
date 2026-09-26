@@ -52,6 +52,22 @@ jobs:
           test -f dist/gpt6/index.html
           test -f dist/fable5.1/index.html
 
+      - name: Write public monetization config
+        env:
+          STRIPE_PAYMENT_LINK: ${{ vars.STRIPE_PAYMENT_LINK }}
+          ADSENSE_CLIENT: ${{ vars.ADSENSE_CLIENT }}
+          ADSENSE_SLOT: ${{ vars.ADSENSE_SLOT }}
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const values = {
+            stripePaymentLink: String(process.env.STRIPE_PAYMENT_LINK || '').trim(),
+            adsenseClient: String(process.env.ADSENSE_CLIENT || '').trim(),
+            adsenseSlot: String(process.env.ADSENSE_SLOT || '').trim(),
+          };
+          fs.writeFileSync('dist/monetization-config.js', `window.CHAOSCHEMY_MONETIZATION = ${JSON.stringify(values)};\n`);
+          NODE
+
       - uses: actions/configure-pages@v6
         with:
           enablement: true

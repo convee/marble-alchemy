@@ -19,6 +19,7 @@ const EVENT_NAMES = new Set([
   'daily_challenge_completed',
   'share_attempt',
   'share_completed',
+  'cta_click',
 ]);
 
 function headers() {
@@ -52,6 +53,7 @@ function validEvent(value) {
     app: String(props.app ?? '').slice(0, 40),
     utm_source: String(value.utm_source ?? '').slice(0, 80),
     utm_campaign: String(value.utm_campaign ?? '').slice(0, 80),
+    utm_content: String(value.utm_content ?? '').slice(0, 80),
     payload: JSON.stringify({ props }),
   };
 }
@@ -82,8 +84,8 @@ export default {
       await env.DB.batch(
         events.map((event) =>
           env.DB.prepare(
-            `INSERT INTO events (name, session_id, occurred_at, path, app, utm_source, utm_campaign, payload)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            `INSERT INTO events (name, session_id, occurred_at, path, app, utm_source, utm_campaign, utm_content, payload)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
           ).bind(
             event.name,
             event.session_id,
@@ -92,6 +94,7 @@ export default {
             event.app,
             event.utm_source,
             event.utm_campaign,
+            event.utm_content,
             event.payload,
           ),
         ),

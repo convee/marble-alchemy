@@ -1,6 +1,6 @@
 # Chaoschemy 找词记录
 
-更新时间：2026-09-25（第一轮种子词研究）
+更新时间：2026-09-26（第一轮种子词研究与现场趋势复核）
 
 ## 目标
 
@@ -26,6 +26,12 @@
 - [PlayBrain browser roguelike list](https://playbrain.games/roguelike-games)
 - [itch.io web roguelike tag](https://itch.io/games/free/platform-web/tag-roguelike)
 
+## 现场趋势边界
+
+2026-09-26 用 Google Trends 全球、过去 30 天、Google Web Search 做相对比较：`no download web game` 的相对平均值为 10，`marble game browser` 为 3，`free browser roguelite`、`marble roguelite`、`browser pinball roguelite` 和 `browser roguelite game` 为 0 或数据不足。Google Trends 是相对指数，不是月搜索量；这些结果只支持优先测试“no download web game”与玩法长尾，不支持承诺流量。
+
+Search Console 现场回读为“当前账号无权访问 chaoschemy.com”，所以查询、点击和 CTR 仍未测量。完成站点所有权验证后再更新本表。
+
 ## 发布前决策规则
 
 1. 用 Google Trends、Search Console 或关键词工具补真实趋势/点击数据；本文件当前没有伪造搜索量。
@@ -35,4 +41,4 @@
 
 ## 本轮获客标记
 
-X Thread 已发布；后续可将同一站点链接加上 `utm_source=x&utm_campaign=launch_thread`，事件协议会把这三个 UTM 字段保留到事件中，方便把来源、开始率和复玩率放在同一份报告里。没有 UTM 的旧访问会归入 `(direct)`，不会被强行归因。
+X Thread 已发布；首页、指南和游戏入口现已使用 `utm_source`、`utm_campaign`、`utm_content` 三段标记，事件协议会完整保留这些字段，方便把来源、开始率和复玩率放在同一份报告里。没有 UTM 的旧访问会归入 `(direct)`，不会被强行归因。

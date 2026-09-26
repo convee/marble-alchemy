@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="A practical guide to playing and evaluating Marble Alchemy, a free no-download browser roguelite directed by an AI model." />
+    <link rel="canonical" href="https://chaoschemy.com/guide.html" />
+    <meta property="og:title" content="Marble Alchemy · Browser Roguelite Field Guide" />
+    <meta property="og:description" content="Learn how the AI Director, deterministic marble physics and daily replay loop work." />
+    <title>Marble Alchemy · Browser Roguelite Field Guide</title>
+    <script type="application/ld+json">
+      {"@context":"https://schema.org","@type":"Article","headline":"Marble Alchemy Browser Roguelite Field Guide","description":"How to play and evaluate an AI-directed browser roguelite.","mainEntityOfPage":"https://chaoschemy.com/guide.html"}
+    </script>
+    <style>
+      :root { color-scheme: dark; --bg:#080c18; --panel:#10182d; --text:#e8f4ff; --muted:#9aabd0; --cyan:#35f2ff; --gold:#d8c68f; }
+      * { box-sizing: border-box; }
+      body { margin:0; background:radial-gradient(900px 500px at 12% 0,rgba(195,166,251,.16),transparent 60%),var(--bg); color:var(--text); font:16px/1.75 system-ui,-apple-system,"Segoe UI",sans-serif; }
+      main { max-width:860px; margin:0 auto; padding:56px 22px 80px; }
+      a { color:var(--cyan); }
+      .eyebrow { color:var(--gold); letter-spacing:2px; font-size:12px; }
+      h1 { max-width:760px; font-size:clamp(32px,6vw,58px); line-height:1.08; margin:10px 0 18px; }
+      h2 { margin-top:42px; line-height:1.2; }
+      .lead { color:var(--muted); max-width:700px; font-size:18px; }
+      .card { margin:22px 0; padding:20px 22px; background:rgba(16,24,45,.86); border:1px solid rgba(142,162,200,.25); border-radius:16px; }
+      .actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:24px; }
+      .button { display:inline-block; padding:10px 16px; border:1px solid var(--cyan); border-radius:10px; text-decoration:none; color:var(--text); background:rgba(53,242,255,.12); }
+      .button.gold { border-color:var(--gold); background:rgba(216,198,143,.12); }
+      li { margin:8px 0; }
+      .muted { color:var(--muted); }
+      footer { margin-top:52px; color:var(--muted); font-size:13px; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p class="eyebrow">MARBLE ALCHEMY FIELD GUIDE</p>
+      <h1>A browser roguelite where the AI writes today’s question.</h1>
+      <p class="lead">Play without a download or account. GLM-5.3 Flash writes a bounded daily challenge; Matter physics executes it locally, so the AI has a visible role without taking control of every collision.</p>
+      <div class="actions"><a class="button gold" data-track="guide_gpt6" href="gpt6/?utm_source=guide&amp;utm_campaign=ai_director_launch&amp;utm_content=guide_gpt6">Play the AI Director</a><a class="button" data-track="guide_home" href="./">Compare both builds</a></div>
+
+      <h2>1. What changes each day?</h2>
+      <div class="card"><p>The model chooses one of three bounded mechanics: double the first hit, restore one life after a winning settlement, or begin as a glass cannon with two lives. The validator rejects invented mechanics before the challenge reaches the browser.</p></div>
+
+      <h2>2. How to play a run</h2>
+      <ol>
+        <li>Aim with mouse, touch or arrow keys, then launch.</li>
+        <li>Let every marble settle. Damage is released after the volley, so a dense collision path matters.</li>
+        <li>After a victory, choose one of three upgrades: power, fire, lightning, split, critical or heal.</li>
+        <li>Finish five escalating stages. The result screen combines the model-authored guidance with your measured shots, damage and remaining life.</li>
+      </ol>
+
+      <h2>3. What is measured?</h2>
+      <p class="muted">The site records anonymous product events such as page views, starts, AI challenge loads, rule triggers, completions, restarts and shares. Browser progress stays local. No name, email, payment data, file content or model key is collected.</p>
+
+      <h2>4. Why compare the baseline?</h2>
+      <p>The fable 5.1 build keeps the same five-stage marble structure without the AI Director. Comparing it with the AI build helps separate the value of model-authored challenge design from the value of the underlying physics and upgrade loop.</p>
+
+      <h2>5. Open evidence</h2>
+      <p>Source, tests, release checks and the complete recording are available in the <a href="https://github.com/convee/marble-alchemy">public repository</a>. Read the <a href="privacy.html">privacy note</a> before playing.</p>
+
+      <footer><a href="./">Back to Marble Alchemy</a> · MIT License</footer>
+    </main>
+    <script src="monetization-config.js"></script>
+    <script src="analytics.js"></script>
+    <script src="monetization.js"></script>
+  </body>
+</html>

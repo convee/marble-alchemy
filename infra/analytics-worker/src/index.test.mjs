@@ -79,6 +79,31 @@ test('accepts the AI challenge loop events', async () => {
   ]);
 });
 
+test('accepts attributable landing-page calls to action', async () => {
+  const DB = fakeDb();
+  const response = await worker.fetch(
+    new Request('https://analytics.example/events', {
+      method: 'POST',
+      headers: { origin: 'https://chaoschemy.com', 'content-type': 'application/json' },
+      body: JSON.stringify({
+        name: 'cta_click',
+        props: { app: 'landing', target: 'gpt6' },
+        ts: '2026-09-26T00:00:00Z',
+        path: '/',
+        session_id: 'landing-session',
+        utm_source: 'x',
+        utm_campaign: 'ai_director_launch',
+        utm_content: 'gpt6',
+      }),
+    }),
+    { DB },
+  );
+  assert.deepEqual(await response.json(), { accepted: 1 });
+  assert.equal(DB.rows[0].values[0], 'cta_click');
+  assert.equal(DB.rows[0].values[5], 'x');
+  assert.equal(DB.rows[0].values[7], 'gpt6');
+});
+
 test('rejects another origin before touching storage', async () => {
   const DB = fakeDb();
   const response = await worker.fetch(

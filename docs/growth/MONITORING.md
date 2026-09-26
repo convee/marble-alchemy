@@ -4,9 +4,10 @@
 
 - Cloudflare Web Analytics：覆盖 `chaoschemy.com/`、`/gpt6/`、`/fable5.1/`，统计页面访问、设备/地区和性能指标。
 - 入口页、两个游戏页都加载官方 beacon；隐私说明位于 `/privacy.html`。
-- 2026-09-25 23:38（GMT+8）现场回读 Cloudflare 站点列表：`chaoschemy.com` 显示最近 24 小时 3 次 page views、3 次 visits。这是本次上线验证流量，不是自然获客样本。
+- 2026-09-26（GMT+8）现场回读 Cloudflare 站点列表：`chaoschemy.com` 显示最近 24 小时 37 次 page views、35 次 visits；包含验证和未知来源流量，不能当作自然获客样本。
 - 第一方事件接收 Worker 已部署在 `https://chaoschemy-analytics.convee-cn.workers.dev/events`，D1 数据库绑定为 `chaoschemy-analytics`；GitHub Pages 构建变量 `VITE_ANALYTICS_ENDPOINT` 已配置。
-- 2026-09-26 10:31（GMT+8）用正式站点真实浏览器链路回读到 `page_view`、`game_start`、`shot_attempt`、`level_complete`，两个版本都带有 `utm_source=x` 和 `utm_campaign=launch_thread`。这些是发布验证流量，不是自然用户 cohort。
+- 2026-09-26（GMT+8）用正式站点真实浏览器链路回读到 `page_view`、`game_start`、`shot_attempt`、`level_complete`，两个版本都带有 `utm_source=x` 和 `utm_campaign=launch_thread`。这些是发布验证流量，不是自然用户 cohort。
+- 当前第一方 D1 回读为 23 events / 9 sessions / 2 starts / 0 completions；这同样是混合验证样本，不能推导真实转化率。
 
 ## 游戏事件协议
 
@@ -27,6 +28,8 @@
 | `ai_rule_triggered` | `app`, `challenge`, `effect`, `level` | AI 规则是否实际触发，而不是只展示文案 |
 | `daily_challenge_completed` | `app`, `challenge`, `source`, `streak` | 每日命题完成与连续回访 |
 | `share_attempt` / `share_completed` | `app`, `challenge`, `result`, `score` | 结果分享与自然传播意愿 |
+| `landing_view` | `app`, 三段 UTM | 首页真实到达量与来源分层 |
+| `cta_click` | `app`, `target`, 三段 UTM | 首页到游戏/指南/支持入口的点击归因 |
 
 ## 本地复盘工具
 

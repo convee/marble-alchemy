@@ -7,10 +7,10 @@ CREATE TABLE IF NOT EXISTS events (
   app TEXT NOT NULL DEFAULT '',
   utm_source TEXT NOT NULL DEFAULT '',
   utm_campaign TEXT NOT NULL DEFAULT '',
+  utm_content TEXT NOT NULL DEFAULT '',
   payload TEXT NOT NULL DEFAULT '{}'
 );
 
 CREATE INDEX IF NOT EXISTS events_occurred_at_idx ON events (occurred_at);
 CREATE INDEX IF NOT EXISTS events_session_id_idx ON events (session_id);
 CREATE INDEX IF NOT EXISTS events_name_idx ON events (name);
-
