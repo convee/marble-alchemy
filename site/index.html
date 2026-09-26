@@ -13,7 +13,7 @@
     <meta property="og:url" content="https://chaoschemy.com/" />
     <meta property="og:image" content="https://chaoschemy.com/media/gpt6-cover-en.jpg" />
     <script type="application/ld+json">
-      {"@context":"https://schema.org","@type":["VideoGame","WebApplication"],"name":"Marble Alchemy","url":"https://chaoschemy.com/","description":"A free AI-directed browser roguelite with deterministic marble physics.","genre":["Roguelite","Browser game"],"gamePlatform":"Web browser","operatingSystem":"Any","isAccessibleForFree":true,"applicationCategory":"GameApplication","offers":{"@type":"Offer","price":0,"priceCurrency":"USD"}}
+      {"@context":"https://schema.org","@type":["VideoGame","WebApplication"],"name":"Marble Alchemy","url":"https://chaoschemy.com/","description":"A free AI-directed browser roguelite with deterministic marble physics.","genre":["Roguelite","Browser game"],"gamePlatform":"Web browser","operatingSystem":"Any","isAccessibleForFree":true,"applicationCategory":"GameApplication","offers":{"@type":"Offer","price":0,"priceCurrency":"USD"},"hasPart":{"@type":"CollectionPage","name":"Kids Game Garden","url":"https://chaoschemy.com/kids-games/"}}
     </script>
     <title>Marble Alchemy · AI-Directed Browser Roguelite</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='12' fill='%2335f2ff'/%3E%3Ccircle cx='12' cy='12' r='4' fill='white'/%3E%3C/svg%3E" />
@@ -63,6 +63,9 @@
       .card.gpt6:hover { border-color: var(--gold); box-shadow: 0 0 30px rgba(216, 198, 143, 0.28); }
       .card.fable:hover { border-color: var(--cyan); box-shadow: 0 0 30px rgba(53, 242, 255, 0.3); }
       .card img { width: 100%; height: clamp(180px, 28vw, 300px); aspect-ratio: 16 / 9; object-fit: cover; display: block; background: #05070f; }
+      .card-art { width: 100%; height: clamp(180px, 28vw, 300px); display: grid; place-items: center; font-size: clamp(72px, 12vw, 132px); background: radial-gradient(circle at 35% 25%, rgba(255,255,255,.75), transparent 15%), linear-gradient(135deg, #d9d4ff, #ffd8eb 62%, #ffecc5); }
+      .card.kids:hover { border-color: #f06ca5; box-shadow: 0 0 30px rgba(240,108,165,.28); }
+      .card.kids h2 { color: #f06ca5; }
       .card .body { padding: 18px 20px 22px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
       .card h2 { margin: 0; font-size: 21px; letter-spacing: 2px; }
       .card.gpt6 h2 { color: var(--gold); }
@@ -145,6 +148,24 @@
             <div class="actions">
               <a class="btn play" data-track="fable5.1" href="fable5.1/?utm_source=landing&amp;utm_campaign=homepage_cta&amp;utm_content=fable5.1">Play the baseline</a>
               <a class="btn" href="https://github.com/convee/marble-alchemy/tree/main/fable5.1">Source</a>
+            </div>
+          </div>
+        </section>
+
+        <section class="card kids">
+          <div class="card-art" role="img" aria-label="Kids Game Garden collection">🎪</div>
+          <div class="body">
+            <h2>Kids Game Garden</h2>
+            <p>Six quick browser games with an AI companion</p>
+            <ul class="facts">
+              <li>Sweet, history, school, builder, platform and match-3 games</li>
+              <li>English-first pages with optional Chinese labels</li>
+              <li>Local progress, daily quests and bounded AI coaching</li>
+              <li>No install and no account wall</li>
+            </ul>
+            <div class="actions">
+              <a class="btn play" data-track="kids-game-garden" href="kids-games/?lang=en&amp;utm_source=landing&amp;utm_campaign=homepage_cta&amp;utm_content=kids-game-garden">Open the game garden</a>
+              <a class="btn" href="games/kids-game-garden/">Collection details</a>
             </div>
           </div>
         </section>
