@@ -433,6 +433,10 @@ function showEnd() {
     track('cta_click', { app: 'gpt6', target: 'post_run_support', result: won ? 'won' : 'lost' });
   $('share-result').onclick = async () => {
     const text = `I just scored ${scene.run.totalDamage} damage in Marble Alchemy${challenge ? ` during ${challenge.title}` : ''}. Can you beat it?`;
+    const shareUrl = new URL(window.location.href);
+    shareUrl.searchParams.set('utm_source', 'player_share');
+    shareUrl.searchParams.set('utm_campaign', 'viral_loop');
+    shareUrl.searchParams.set('utm_content', won ? 'gpt6_won' : 'gpt6_lost');
     track('share_attempt', {
       app: 'gpt6',
       result: won ? 'won' : 'lost',
@@ -441,9 +445,9 @@ function showEnd() {
     });
     try {
       if (navigator.share)
-        await navigator.share({ title: 'Marble Alchemy', text, url: window.location.href });
+        await navigator.share({ title: 'Marble Alchemy', text, url: shareUrl.href });
       else {
-        await navigator.clipboard.writeText(`${text} ${window.location.href}`);
+        await navigator.clipboard.writeText(`${text} ${shareUrl.href}`);
         $('notice').textContent = 'Result copied · share it with another alchemist';
       }
       track('share_completed', {

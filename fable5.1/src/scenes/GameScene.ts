@@ -306,7 +306,9 @@ export class GameScene extends Phaser.Scene {
     this.board.setReadyMarbleVisible(true);
     this.hud.setCharge(this.state.volley, false);
     this.hud.setHint(
-      this.state.stats.launches === 0 ? "Drag inside the board to aim, then release to launch" : "",
+      this.state.stats.launches === 0
+        ? "Drag inside the board to aim, then release to launch"
+        : "",
     );
     this.aim.draw(this.board.pegs);
   }
@@ -745,7 +747,11 @@ export class GameScene extends Phaser.Scene {
     this.sfx.play("lose");
     this.aim.clear();
     this.time.delayedCall(800, () =>
-      this.overlay.showGameOver(this.summary(), () => this.restart()),
+      this.overlay.showGameOver(
+        this.summary(),
+        () => this.restart(),
+        () => void this.shareResult("lost"),
+      ),
     );
   }
 
@@ -759,8 +765,45 @@ export class GameScene extends Phaser.Scene {
     this.sfx.play("win");
     this.effects.flash(255, 211, 107, 420);
     this.time.delayedCall(900, () =>
-      this.overlay.showVictory(this.summary(), () => this.restart()),
+      this.overlay.showVictory(
+        this.summary(),
+        () => this.restart(),
+        () => void this.shareResult("won"),
+      ),
     );
+  }
+
+  private async shareResult(result: "won" | "lost"): Promise<void> {
+    const summary = this.summary();
+    const text = `I just scored ${summary.totalDamage} damage in Marble Alchemy's deterministic baseline. Can you beat it?`;
+    const shareUrl = new URL(window.location.href);
+    shareUrl.searchParams.set("utm_source", "player_share");
+    shareUrl.searchParams.set("utm_campaign", "viral_loop");
+    shareUrl.searchParams.set(
+      "utm_content",
+      result === "won" ? "fable5_1_won" : "fable5_1_lost",
+    );
+    track("share_attempt", {
+      app: "fable5.1",
+      result,
+      score: summary.totalDamage,
+    });
+    try {
+      if (navigator.share)
+        await navigator.share({
+          title: "Marble Alchemy",
+          text,
+          url: shareUrl.href,
+        });
+      else await navigator.clipboard.writeText(`${text} ${shareUrl.href}`);
+      track("share_completed", {
+        app: "fable5.1",
+        result,
+        score: summary.totalDamage,
+      });
+    } catch {
+      // Dismissing the share sheet should not affect the run.
+    }
   }
 
   /* ------------------------------ 暂停 / 帮助 / 重开 ------------------------------ */
