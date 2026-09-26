@@ -67,15 +67,15 @@
 <body>
 <noscript><main><h1>Kids Game Garden</h1><p>Play six free kids browser games with no install: Sweet Adventure, History Time Quest, A Day at School, Block Park, Platform Adventure, and Sweet Match.</p><p><a href="guide.html">Read the parent guide</a> · <a href="sweet-match/">Play Sweet Match</a></p></main></noscript>
 <main class="wrap">
-  <nav class="top"><a class="brand" href="./"><span class="brand-mark">🎪</span><span>小小游戏乐园</span></a><button class="parent-link" id="parentLink" type="button">家长入口</button></nav>
+  <nav class="top"><a class="brand" href="./"><span class="brand-mark">🎪</span><span>Kids Game Garden</span></a><button class="parent-link" id="parentLink" type="button">Parent area</button></nav>
   <section class="hero">
-    <div><div class="eyebrow">每天一个小任务 · 每局都有新发现</div><h1>玩得开心，<br><em style="color:#e86da2;font-style:normal">也在慢慢变厉害。</em></h1><p>六款轻量小游戏，一个会给提示、出任务、记住连续天数的 AI 小伙伴。打开就能玩，想停就停。</p><div class="hero-actions"><a class="primary" href="#games">开始今天的游戏</a><button class="secondary" id="questBtn" type="button">🤖 让 AI 出今日任务</button></div></div>
-    <div class="hero-art"><div class="orb"></div><div class="orb-face">🤖</div><div class="float one">✨ 我会记住你的进步</div><div class="float two">🌟 今天也来一局</div></div>
+    <div><div class="eyebrow">A tiny quest every day · A new discovery every round</div><h1>Play with joy,<br><em style="color:#e86da2;font-style:normal">grow a little every day.</em></h1><p>Six light games and an AI companion who gives hints, sets quests, and remembers your streak. Open, play, pause whenever you like.</p><div class="hero-actions"><a class="primary" href="#games">Play today's game</a><button class="secondary" id="questBtn" type="button">🤖 Ask AI for a quest</button></div></div>
+    <div class="hero-art"><div class="orb"></div><div class="orb-face">🤖</div><div class="float one">✨ I remember your progress</div><div class="float two">🌟 One round today</div></div>
   </section>
-  <section id="games"><div class="section-head"><div><h2>挑一款开始</h2><p>每款游戏都接入 AI 小伙伴和独立进度。</p></div><p id="progressText"></p></div><div class="games" id="gameGrid"></div><nav class="crawlable-games" aria-label="Game links"><a href="sweet-adventure/?lang=en">Sweet Adventure</a><a href="mxq-history/?lang=en">History Time Quest</a><a href="mxq-school/?lang=en">A Day at School</a><a href="block-park/?lang=en">Block Park</a><a href="mxq-platform/?lang=en">Platform Adventure</a><a href="sweet-match/?lang=en">Sweet Match</a></nav></section>
-  <section class="mission"><div><strong>🤖 今日 AI 小任务</strong><span id="missionText">正在读取你的今日任务…</span></div><button id="missionBtn" type="button">去完成</button></section>
-  <section class="trust"><article><b>🔒 儿童友好</b><span>AI 只接收当前游戏状态，不索要姓名、照片、语音或联系方式。</span></article><article><b>⚡ 轻量打开</b><span>原生 HTML 游戏，无需安装、无广告打断游戏过程。</span></article><article><b>👨‍👩‍👧 家长可控</b><span>支持入口经过家长算术确认，付费功能按配置开启。</span></article></section>
-  <footer><span>小小游戏乐园 · 个人创作项目</span><span><a href="guide.html">家长指南</a></span><span class="support" id="supportLink" data-track="support_click" data-parent-url="">支持开发者</span></footer>
+  <section id="games"><div class="section-head"><div><h2>Pick a game</h2><p>Every game has its own progress and AI companion.</p></div><p id="progressText"></p></div><div class="games" id="gameGrid"></div><nav class="crawlable-games" aria-label="Game links"><a href="sweet-adventure/?lang=en">Sweet Adventure</a><a href="mxq-history/?lang=en">History Time Quest</a><a href="mxq-school/?lang=en">A Day at School</a><a href="block-park/?lang=en">Block Park</a><a href="mxq-platform/?lang=en">Platform Adventure</a><a href="sweet-match/?lang=en">Sweet Match</a></nav></section>
+  <section class="mission"><div><strong>🤖 Today's AI quest</strong><span id="missionText">Play one round and tell AI what you liked most.</span></div><button id="missionBtn" type="button">Play now</button></section>
+  <section class="trust"><article><b>🔒 Child-friendly</b><span>AI only receives game state. It never asks for names, photos, voice, or contact details.</span></article><article><b>⚡ Lightweight</b><span>Native HTML games with no install and no interruptions.</span></article><article><b>👨‍👩‍👧 Parent-controlled</b><span>Support links use a parent math gate and stay off until configured.</span></article></section>
+  <footer><span>Kids Game Garden · An independent project</span><span><a href="guide.html">Parent guide</a></span><span class="support" id="supportLink" data-track="support_click" data-parent-url="">Support the creator</span></footer>
 </main>
 <script src="shared/locale.js?v=2"></script>
 <script src="shared/parent-gate.js"></script>
@@ -111,6 +111,31 @@
     document.querySelectorAll('.trust span')[2].textContent = 'Support links use a parent math gate and stay off until configured.';
     document.querySelector('footer span').textContent = 'Kids Game Garden · An independent project';
   }
+  if (!english) {
+    document.querySelector('.brand span:last-child').textContent = '小小游戏乐园';
+    document.querySelector('#parentLink').textContent = '家长入口';
+    document.querySelector('.eyebrow').textContent = '每天一个小任务 · 每局都有新发现';
+    document.querySelector('h1').innerHTML = '玩得开心，<br><em style="color:#e86da2;font-style:normal">也在慢慢变厉害。</em>';
+    document.querySelector('.hero p').textContent = '六款轻量小游戏，一个会给提示、出任务、记住连续天数的 AI 小伙伴。打开就能玩，想停就停。';
+    document.querySelector('.primary').textContent = '开始今天的游戏';
+    document.getElementById('questBtn').textContent = '🤖 让 AI 出今日任务';
+    document.querySelector('.float.one').textContent = '✨ 我会记住你的进步';
+    document.querySelector('.float.two').textContent = '🌟 今天也来一局';
+    document.querySelector('#games h2').textContent = '挑一款开始';
+    document.querySelector('#games .section-head p').textContent = '每款游戏都接入 AI 小伙伴和独立进度。';
+    document.querySelector('.mission strong').textContent = '🤖 今日 AI 小任务';
+    document.getElementById('missionText').textContent = '玩一局并告诉 AI 你最喜欢的部分。';
+    document.getElementById('missionBtn').textContent = '去完成';
+    document.querySelectorAll('.trust b')[0].textContent = '🔒 儿童友好';
+    document.querySelectorAll('.trust span')[0].textContent = 'AI 只接收当前游戏状态，不索要姓名、照片、语音或联系方式。';
+    document.querySelectorAll('.trust b')[1].textContent = '⚡ 轻量打开';
+    document.querySelectorAll('.trust span')[1].textContent = '原生 HTML 游戏，无需安装、无广告打断游戏过程。';
+    document.querySelectorAll('.trust b')[2].textContent = '👨‍👩‍👧 家长可控';
+    document.querySelectorAll('.trust span')[2].textContent = '支持入口经过家长算术确认，付费功能按配置开启。';
+    document.querySelector('footer span').textContent = '小小游戏乐园 · 个人创作项目';
+    document.querySelector('footer span:nth-child(2) a').textContent = '家长指南';
+    document.getElementById('supportLink').textContent = '支持开发者';
+  }
   var profile = {};
   try { profile = JSON.parse(localStorage.getItem('kids-games-ai-profile-v1') || '{}') || {}; } catch (e) {}
   var grid = document.getElementById('gameGrid');
@@ -128,7 +153,7 @@
   document.getElementById('parentLink').onclick = function () { alert(english ? 'The parent area will show data and support options. Progress stays on this device.' : '家长入口会展示数据和支持选项。孩子可以继续玩，进度保存在本设备。'); };
   var supportUrl = window.KIDS_SUPPORT_URL || 'https://chaoschemy.com/support.html';
   var support = document.getElementById('supportLink');
-  if (supportUrl) support.setAttribute('data-parent-url', supportUrl); else support.textContent = '支持开发者（即将开放）';
+  if (supportUrl) support.setAttribute('data-parent-url', supportUrl); else support.textContent = english ? 'Support the creator (coming soon)' : '支持开发者（即将开放）';
 }());
 </script>
 <script>if (/^(www\.)?chaoschemy\.com$/.test(location.hostname)) { const beacon = document.createElement('script'); beacon.type = 'module'; beacon.src = 'https://static.cloudflareinsights.com/beacon.min.js'; beacon.dataset.cfBeacon = '{"token":"0f3c50f57d6d46eb95641c93b4c7781d"}'; document.body.append(beacon); }</script>

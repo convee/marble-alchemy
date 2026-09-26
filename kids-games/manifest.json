@@ -1,6 +1,8 @@
 {
-  "name": "小小游戏乐园",
-  "short_name": "小游戏乐园",
+  "name": "Kids Game Garden",
+  "short_name": "Kids Garden",
+  "description": "Six free browser games with local progress and an optional AI companion.",
+  "lang": "en",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#f7ecff",
