@@ -14,6 +14,15 @@
     if (typeof data?.name !== 'string') return;
     window.dispatchEvent(new CustomEvent('chaoschemy:paddle-event', { detail: { name: data.name } }));
   };
+  window.addEventListener('chaoschemy:paddle-event', (event) => {
+    const name = event.detail?.name;
+    if (name !== 'checkout.error' && name !== 'checkout.payment.error' && name !== 'checkout.warning') return;
+    document.querySelectorAll('[data-support-slot]').forEach((slot) => {
+      const message = document.createElement('p');
+      message.innerHTML = '<strong>Checkout is temporarily unavailable.</strong><br><span>Please try again later.</span>';
+      slot.replaceChildren(message);
+    });
+  });
 
   if (paymentLink) {
     document.querySelectorAll('[data-support-slot]').forEach((slot) => {

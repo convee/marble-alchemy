@@ -21,7 +21,7 @@
     <main>
       <h1>Support the Workshop</h1>
       <p>A one-time contribution helps keep Chaoschemy browser experiments online.</p>
-      <div class="status" id="checkout-status">Opening secure checkout…</div>
+      <div class="status" id="checkout-status" aria-live="polite">Opening secure checkout…</div>
       <p><a href="./">Return to Chaoschemy</a> · <a href="terms.html">Terms</a> · <a href="refund.html">Refund policy</a> · <a href="privacy.html">Privacy</a></p>
     </main>
     <script src="monetization-config.js"></script>
@@ -35,12 +35,17 @@
       const reportPaddleEvent = (data) => {
         if (typeof data?.name !== 'string') return;
         window.dispatchEvent(new CustomEvent('chaoschemy:paddle-event', { detail: { name: data.name } }));
-        if (/complete|paid|success/i.test(data.name)) {
+        if (data.name === 'checkout.error' || data.name === 'checkout.payment.error' || data.name === 'checkout.warning') {
+          status.textContent = 'Checkout is temporarily unavailable. Please try again later.';
+        } else if (/complete|paid|success/i.test(data.name)) {
           status.textContent = 'Thank you — your support was received. The workshop stays open.';
         } else if (/close|cancel/i.test(data.name)) {
           status.textContent = 'Checkout closed. You can return to the game whenever you like.';
         }
       };
+      const checkoutTimeout = window.setTimeout(() => {
+        if (status.textContent === 'Opening secure checkout…') status.textContent = 'Checkout is temporarily unavailable. Please try again later.';
+      }, 8000);
       if (token.startsWith('live_') && window.Paddle) {
         window.Paddle.Initialize({ token, eventCallback: reportPaddleEvent, checkout: { settings: { displayMode: 'overlay', theme: 'dark', locale: 'en' } } });
         if (transactionId) {
