@@ -24,7 +24,8 @@
 | Roguelite.org | 玩法目录/评测入口 | submitted-by-email：已发至 `contact@roguelite.org`，等待回复 |
 | Product Hunt | 产品发布和讨论 | blocked-by-environment：`https://www.producthunt.com/launch` 进入 Cloudflare 安全验证 |
 | Reddit 相关社区 | 体验帖、开发记录、反馈 | not-submitted：先读版规，暂不批量投放 |
-| Dev.to / Hashnode | AI 游戏工程拆解 | blocked-by-account：发布入口要求登录，当前未登录 |
+| DEV Community | AI 游戏工程拆解 | published：英文文章已发布，`https://dev.to/kang_wang_375088cb68739bf/building-an-ai-directed-browser-roguelite-with-a-deterministic-baseline-2848`（2026-09-26，Google 账号 `convee.cn@gmail.com`，AI-assisted 已声明） |
+| Hashnode / Chaoschemy | AI 游戏工程拆解 | published：英文文章已发布，`https://chaoschemy.hashnode.dev/building-an-ai-directed-browser-roguelite-with-a-deterministic-baseline`（2026-09-26，Google 账号 `convee.cn@gmail.com`）；公开页回读被 Cloudflare 安全验证拦截 |
 
 ## 发送前检查
 
