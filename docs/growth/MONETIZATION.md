@@ -21,6 +21,7 @@
 ## 当前技术状态
 
 - 首页和 `guide.html` 已加载 `monetization-config.js` 与 `monetization.js`。配置为空时不会加载 AdSense、不显示支持按钮，也不会产生第三方支付请求。
+- 支持入口由 `monetization.js` 动态插入；`analytics.js` 现在使用事件委托捕获动态入口的 `cta_click(target=support_click)`，因此启用支付后可以归因支持按钮点击。
 - GitHub Pages 构建会从 repository variables 读取 `STRIPE_PAYMENT_LINK`、`ADSENSE_CLIENT`、`ADSENSE_SLOT`，生成公开配置文件；这些值不是秘密，但只能在账号持有人完成审核后写入。
 - Stripe Payment Link 仅接受 `https://buy.stripe.com/` 前缀；AdSense 仅接受 `ca-pub-` publisher ID 和广告位 ID，避免误把测试地址或任意脚本注入生产页。
 

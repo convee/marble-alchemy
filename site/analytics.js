@@ -33,5 +33,8 @@
 
   track('page_view');
   track('landing_view');
-  document.querySelectorAll('[data-track]').forEach((link) => link.addEventListener('click', () => track('cta_click', { target: link.dataset.track })));
+  document.addEventListener('click', (event) => {
+    const target = event.target instanceof Element ? event.target.closest('[data-track]') : null;
+    if (target) track('cta_click', { target: target.dataset.track });
+  });
 })();
