@@ -54,7 +54,7 @@ export class Hud {
     this.hpText = scene.add.text(L.enemyHpBar.x, L.enemyHpBar.y, '', style(14, '#ffffff')).setOrigin(0.5).setDepth(51);
     this.intentText = scene.add.text(L.intent.x, L.intent.y, '', style(15, '#ffb0d9')).setOrigin(0.5).setDepth(50);
 
-    scene.add.text(L.charge.x, L.charge.y - 30, '本轮蓄能', style(14, '#8ea2c8')).setOrigin(0.5).setDepth(50);
+    scene.add.text(L.charge.x, L.charge.y - 30, 'VOLLEY CHARGE', style(14, '#8ea2c8')).setOrigin(0.5).setDepth(50);
     this.chargeValue = scene.add.text(L.charge.x, L.charge.y + 6, '0', style(40, '#ffffff')).setOrigin(0.5).setDepth(50);
     this.chargeValue.setShadow(0, 0, '#ffd36b', 16, false, true);
     this.chargeDetail = scene.add
@@ -67,12 +67,12 @@ export class Hud {
       .setDepth(50)
       .setVisible(!!L.flavor);
 
-    scene.add.text(L.playerHp.x, L.playerHp.y, '生命', style(15, '#ff9fcf')).setOrigin(0, 0.5).setDepth(50);
+    scene.add.text(L.playerHp.x, L.playerHp.y, 'HEALTH', style(15, '#ff9fcf')).setOrigin(0, 0.5).setDepth(50);
     for (let i = 0; i < 5; i++) {
       const img = scene.add.image(L.playerHp.x + 62 + i * 36, L.playerHp.y, 'flask-full').setDepth(50);
       this.flasks.push(img);
     }
-    scene.add.text(L.upgrades.x, L.upgrades.y, '炼成', style(15, '#9df7ff')).setOrigin(0, 0.5).setDepth(50);
+    scene.add.text(L.upgrades.x, L.upgrades.y, 'FORMULAS', style(15, '#9df7ff')).setOrigin(0, 0.5).setDepth(50);
     this.badgeLayer = scene.add.container(L.upgrades.x + 62, L.upgrades.y).setDepth(50);
 
     this.hintText = scene.add
@@ -153,7 +153,7 @@ export class Hud {
   }
 
   setLevel(level: number, total: number, name: string): void {
-    this.levelText.setText(`第 ${level} 关 / ${total}`);
+    this.levelText.setText(`STAGE ${level} / ${total}`);
     this.nameText.setText(name);
   }
 
@@ -200,18 +200,18 @@ export class Hud {
   }
 
   setIntent(atk: number, alive: boolean): void {
-    this.intentText.setText(alive ? `存活则反击 ${atk} 点生命` : '已被击败');
+    this.intentText.setText(alive ? `Retaliates for ${atk} health` : 'Defeated');
   }
 
   setCharge(t: VolleyTally, pop: boolean): void {
     const total = tallyTotal(t);
     this.chargeValue.setText(String(total));
     const parts: string[] = [];
-    if (t.hit > 0) parts.push(`打击 ${t.hit}`);
-    if (t.fire > 0) parts.push(`火焰 ${t.fire}`);
-    if (t.lightning > 0) parts.push(`闪电 ${t.lightning}`);
-    if (t.crits > 0) parts.push(`暴击 ${t.crits} 次`);
-    this.chargeDetail.setText(parts.length ? parts.join(' · ') : '弹珠每撞一个钉子累计 1 点');
+    if (t.hit > 0) parts.push(`Hits ${t.hit}`);
+    if (t.fire > 0) parts.push(`Fire ${t.fire}`);
+    if (t.lightning > 0) parts.push(`Lightning ${t.lightning}`);
+    if (t.crits > 0) parts.push(`Criticals ${t.crits}`);
+    this.chargeDetail.setText(parts.length ? parts.join(' · ') : 'Each peg hit adds 1');
     if (pop) {
       this.scene.tweens.killTweensOf(this.chargeValue);
       this.chargeValue.setScale(1.3);
@@ -256,7 +256,7 @@ export class Hud {
       const count = ownedCount(owned, id);
       if (count <= 0) continue;
       const def = UPGRADES[id];
-      const stack = def.tag === '可叠加' ? ` ×${count}` : '';
+      const stack = def.tag === 'Stackable' ? ` ×${count}` : '';
       const label = `${def.short}${stack}`;
       const t = this.scene.add.text(0, 0, label, { fontFamily: FONT, fontSize: '14px', color: def.color, fontStyle: 'bold' }).setOrigin(0.5);
       const w = t.width + 16;

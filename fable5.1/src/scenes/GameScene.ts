@@ -293,7 +293,7 @@ export class GameScene extends Phaser.Scene {
       def.enemyKey,
       this.layout.enemyScale,
     );
-    this.hud.banner(`第 ${def.level} 关`, def.name);
+    this.hud.banner(`STAGE ${def.level}`, def.name);
     this.time.delayedCall(300, () => this.enemy?.enter());
     this.time.delayedCall(1250, () => {
       if (this.phase === "transition") this.readyForLaunch();
@@ -306,7 +306,7 @@ export class GameScene extends Phaser.Scene {
     this.board.setReadyMarbleVisible(true);
     this.hud.setCharge(this.state.volley, false);
     this.hud.setHint(
-      this.state.stats.launches === 0 ? "在弹盘内按住拖动瞄准，松开发射" : "",
+      this.state.stats.launches === 0 ? "Drag inside the board to aim, then release to launch" : "",
     );
     this.aim.draw(this.board.pegs);
   }
@@ -428,7 +428,7 @@ export class GameScene extends Phaser.Scene {
       this.effects.floatText(
         peg.x,
         peg.y - 30,
-        n > 0 ? `回充 ${n} 钉` : "回充",
+        n > 0 ? `Recharged ${n} pegs` : "Recharge",
         { color: "#5dff9a", size: 18, rise: 42, delay: 120 },
       );
     }
@@ -466,7 +466,7 @@ export class GameScene extends Phaser.Scene {
     this.effects.floatText(
       peg.x,
       peg.y - 10,
-      r.crit ? `${r.hitDamage} 暴击` : `${r.hitDamage}`,
+      r.crit ? `${r.hitDamage} CRIT` : `${r.hitDamage}`,
       {
         color: r.crit ? "#ffd36b" : "#ffffff",
         size: r.crit ? 26 : 19,
@@ -513,7 +513,7 @@ export class GameScene extends Phaser.Scene {
     }
     this.sfx.play("split");
     this.effects.ring(m.x, m.y, 0x5dff9a, 54, 260);
-    this.effects.floatText(m.x, m.y - 30, "分裂", {
+    this.effects.floatText(m.x, m.y - 30, "SPLIT", {
       color: "#5dff9a",
       size: 18,
       rise: 40,
@@ -580,7 +580,7 @@ export class GameScene extends Phaser.Scene {
     const total = tallyTotal(this.state.volley);
     if (total <= 0) {
       const p = this.hud.chargePos;
-      this.effects.floatText(p.x, p.y - 44, "本轮没有命中", {
+      this.effects.floatText(p.x, p.y - 44, "No peg hits this volley", {
         color: "#8ea2c8",
         size: 16,
         rise: 30,
@@ -717,7 +717,7 @@ export class GameScene extends Phaser.Scene {
     this.sfx.play(id === "heal" ? "heal" : "upgrade");
     this.hud.setUpgrades(this.state.upgrades);
     this.hud.setPlayerHp(this.state.playerHp, this.state.maxHp, false);
-    this.overlay.toast(`炼成「${UPGRADES[id].name}」`);
+    this.overlay.toast(`Transmuted “${UPGRADES[id].name}”`);
     advanceLevel(this.state);
     this.board.buildLevel(this.state.level);
     this.startLevelIntro();

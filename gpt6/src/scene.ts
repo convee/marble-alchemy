@@ -149,7 +149,7 @@ export class AlchemyScene extends Phaser.Scene {
     this.synth.unlock();
     this.synth.tone('launch');
     this.spawn(260, 76, Math.sin(this.aim) * 9, Math.cos(this.aim) * 9, false);
-    this.hooks.notice('炼成中 · 碰撞伤害将在所有弹珠回收后结算');
+    this.hooks.notice('Transmuting · damage settles when all marbles are recovered');
     this.hooks.change();
     return true;
   }
@@ -172,7 +172,7 @@ export class AlchemyScene extends Phaser.Scene {
     if (result.aiTrigger) {
       this.hooks.aiTriggered?.(result.aiTrigger);
       this.hooks.notice(
-        `AI 命题生效 · ${result.aiTrigger === 'double_first_hit' ? '首击伤害翻倍' : '规则已触发'}`,
+        `AI challenge active · ${result.aiTrigger === 'double_first_hit' ? 'first-hit damage doubled' : 'rule triggered'}`,
       );
     }
     peg.flash = 1;
@@ -181,7 +181,7 @@ export class AlchemyScene extends Phaser.Scene {
     this.float(
       peg.x,
       peg.y - 14,
-      `${result.critical ? '暴击 ' : '+'}${result.direct}`,
+      `${result.critical ? 'CRIT ' : '+'}${result.direct}`,
       result.critical ? '#ff93bb' : this.run.build.fire ? '#ffb47c' : '#e4d8ff',
     );
     if (result.chain) {
@@ -258,7 +258,7 @@ export class AlchemyScene extends Phaser.Scene {
     for (const point of this.splitQueue.splice(0)) {
       this.spawn(Phaser.Math.Clamp(point.x - 15, 27, 493), point.y - 15, -4.5, -3.5, true);
       this.spawn(Phaser.Math.Clamp(point.x + 15, 27, 493), point.y - 15, 4.5, -3.5, true);
-      this.float(point.x, point.y - 36, '分裂 +2', '#8df0cd');
+      this.float(point.x, point.y - 36, 'SPLIT +2', '#8df0cd');
     }
     for (const [id, ball] of this.balls) {
       ball.age += activeDelta;
@@ -271,7 +271,7 @@ export class AlchemyScene extends Phaser.Scene {
         y < -90 ||
         ball.age > 16000
       ) {
-        if (ball.age > 16000) this.hooks.notice('回收装置已接回滞留弹珠 · 已累计伤害保留');
+        if (ball.age > 16000) this.hooks.notice('Recovery pulled in a stalled marble · stored damage kept');
         this.removeBall(id, ball);
         continue;
       }
@@ -284,7 +284,7 @@ export class AlchemyScene extends Phaser.Scene {
         this.nudgeCount++;
         this.matter.body.setVelocity(ball.body, { x: (x < 260 ? 1 : -1) * 3.5, y: -4 });
         ball.stuck = 0;
-        this.float(x, y - 15, '轻推', '#8df0cd');
+        this.float(x, y - 15, 'NUDGE', '#8df0cd');
       }
       const speed = Math.hypot(ball.body.velocity.x, ball.body.velocity.y);
       if (speed > 13)
@@ -299,7 +299,7 @@ export class AlchemyScene extends Phaser.Scene {
       this.splitQueue.length === 0 &&
       this.run.beginSettlement()
     ) {
-      this.hooks.notice(`炼成完毕 · ${this.run.damage} 点伤害即将释放`);
+      this.hooks.notice(`Transmutation complete · ${this.run.damage} damage will be released`);
       this.hooks.change();
       this.settlementAt = this.elapsed + 650;
     }
@@ -475,7 +475,7 @@ export class AlchemyScene extends Phaser.Scene {
     this.activePointer = null;
     this.aim = 0.3;
     this.resumeGame();
-    this.hooks.notice('新的实验开始了 · 瞄准钉子，炼成你的第一击');
+    this.hooks.notice('A new experiment begins · aim at a peg and make your first strike');
     this.hooks.change();
   }
   snapshot() {

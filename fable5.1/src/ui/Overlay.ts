@@ -89,7 +89,7 @@ export class Overlay {
     const btn = el.querySelector<HTMLButtonElement>('[data-testid="sound-toggle"]');
     if (!btn) return;
     const render = (muted: boolean) => {
-      btn.textContent = muted ? '音效：关' : '音效：开';
+      btn.textContent = muted ? 'Sound: off' : 'Sound: on';
     };
     render(ctl.muted);
     btn.addEventListener('click', () => render(ctl.onToggleSound()));
@@ -98,27 +98,27 @@ export class Overlay {
   private rulesHtml(): string {
     return `
       <div class="rules">
-        <h3>怎么玩</h3>
+        <h3>How to play</h3>
         <ul>
-          <li>在弹盘里<b>按住拖动</b>瞄准，<b>松开</b>发射弹珠（鼠标、触屏都行；键盘空格按当前瞄准线发射）。</li>
-          <li>弹珠每撞到一个钉子累计 <span class="k">1 点</span>伤害，被撞过的钉子会暂时熄灭，下一次发射前全部点亮。</li>
-          <li><b>绿色回充石</b>被撞到时，会立刻点亮所有熄灭的钉子。</li>
-          <li>所有弹珠落到底部后统一结算：累计伤害一次性打在敌人身上。</li>
-          <li>敌人没死就会<b>反击</b>，你失去它攻击力那么多生命。生命归零，炼金失败。</li>
-          <li>击败敌人后从 3 张升级里选 1 张，然后进入下一关。共 <span class="k">5 关</span>，打倒炉心魔像即胜利。</li>
+          <li><b>Drag and hold</b> inside the board to aim, then <b>release</b> to launch (mouse and touch both work; Space launches along the current aim line).</li>
+          <li>Each peg hit adds <span class="k">1 damage</span>. Hit pegs go dark and relight before the next launch.</li>
+          <li>Hitting a <b>green recharge stone</b> immediately relights every dark peg.</li>
+          <li>When all marbles land, the stored damage is dealt to the enemy at once.</li>
+          <li>If the enemy survives, it <b>retaliates</b> and removes its attack value from your health. At zero health, the run ends.</li>
+          <li>After defeating an enemy, choose 1 of 3 upgrades and enter the next stage. There are <span class="k">5 stages</span>; defeat the Core Golem to win.</li>
         </ul>
-        <h3>升级</h3>
+        <h3>Upgrades</h3>
         <ul>
-          <li><b>强化</b>（可叠加）：每次碰撞基础伤害 +1，基础伤害会被暴击翻倍。</li>
-          <li><b>火焰</b>（可叠加）：每次碰撞额外累计 1 点火焰伤害，不受暴击影响。</li>
-          <li><b>闪电</b>：每次碰撞对最近的另外两个钉子各触发 1 点伤害，连锁不再连锁。</li>
-          <li><b>分裂</b>：每次发射的首次碰撞额外分出 2 颗弹珠，分出的不再分裂。</li>
-          <li><b>暴击</b>：每次碰撞 20% 概率让本次碰撞伤害翻倍。</li>
-          <li><b>治疗</b>：立刻恢复 2 点生命，上限 ${RULES.maxHp} 点。</li>
+          <li><b>Strengthen</b> (stackable): +1 base damage per collision; critical hits double base damage.</li>
+          <li><b>Fire</b> (stackable): +1 fire damage per collision, unaffected by critical hits.</li>
+          <li><b>Lightning</b>: each collision deals 1 damage to the two nearest other pegs; chains do not chain.</li>
+          <li><b>Split</b>: the first collision of each shot creates 2 extra marbles; new marbles do not split.</li>
+          <li><b>Critical</b>: each collision has a 20% chance to double its damage.</li>
+          <li><b>Heal</b>: restore 2 health immediately, up to ${RULES.maxHp}.</li>
         </ul>
-        <h3>快捷键</h3>
+        <h3>Shortcuts</h3>
         <ul>
-          <li>Esc / P 暂停或继续，M 切换音效，空格发射，升级时按 1 / 2 / 3 选牌。</li>
+          <li>Esc / P pauses or resumes, M toggles sound, Space launches, and 1 / 2 / 3 choose an upgrade.</li>
         </ul>
       </div>`;
   }
@@ -127,11 +127,11 @@ export class Overlay {
     const el = this.mount(
       'start',
       `<div class="panel">
-        <h1 class="title">弹珠炼金工坊</h1>
-        <p class="subtitle">瞄准 · 发射 · 累计 · 结算 · 升级</p>
+        <h1 class="title">Marble Alchemy</h1>
+        <p class="subtitle">Aim · Launch · Charge · Settle · Upgrade</p>
         ${this.rulesHtml()}
         <div class="btn-row">
-          <button class="btn primary" data-testid="start-btn">开始炼金</button>
+          <button class="btn primary" data-testid="start-btn">Start alchemy</button>
           <button class="btn ghost" data-testid="sound-toggle"></button>
         </div>
       </div>`,
@@ -144,9 +144,9 @@ export class Overlay {
     const el = this.mount(
       'help',
       `<div class="panel">
-        <h1 class="title">玩法说明</h1>
+        <h1 class="title">How to play</h1>
         ${this.rulesHtml()}
-        <div class="btn-row"><button class="btn primary" data-testid="help-close">知道了</button></div>
+        <div class="btn-row"><button class="btn primary" data-testid="help-close">Got it</button></div>
       </div>`,
     );
     this.bind(el, 'help-close', onClose);
@@ -157,13 +157,13 @@ export class Overlay {
     const el = this.mount(
       'pause',
       `<div class="panel">
-        <h1 class="title">已暂停</h1>
-        <p class="subtitle">炉火暂歇，弹珠停在半空</p>
+        <h1 class="title">Paused</h1>
+        <p class="subtitle">The furnace rests; the marbles hang in midair</p>
         <div class="btn-row">
-          <button class="btn primary" data-testid="pause-resume">继续</button>
-          <button class="btn" data-testid="pause-help">玩法说明</button>
+          <button class="btn primary" data-testid="pause-resume">Resume</button>
+          <button class="btn" data-testid="pause-help">How to play</button>
           <button class="btn" data-testid="sound-toggle"></button>
-          <button class="btn ghost" data-testid="pause-restart">重新开始</button>
+          <button class="btn ghost" data-testid="pause-restart">Restart</button>
         </div>
       </div>`,
     );
@@ -179,8 +179,8 @@ export class Overlay {
       .map((c, i) => {
         const def = UPGRADES[c.id];
         let owned = '';
-        if (def.tag === '可叠加') owned = c.owned > 0 ? `当前 ${c.owned} 层，选后 ${c.owned + 1} 层` : '尚未获得';
-        else if (def.tag === '即时') owned = `当前生命 ${hp} / ${RULES.maxHp}`;
+        if (def.tag === 'Stackable') owned = c.owned > 0 ? `${c.owned} stacks now, ${c.owned + 1} after picking` : 'Not owned yet';
+        else if (def.tag === 'Instant') owned = `Health ${hp} / ${RULES.maxHp}`;
         return `<button class="card" style="--c:${def.color}" data-testid="card-${def.id}" data-id="${def.id}">
           <span class="key">${i + 1}</span>
           <div class="icon">${ICONS[def.id]}</div>
@@ -194,10 +194,10 @@ export class Overlay {
     const el = this.mount(
       'upgrade',
       `<div class="panel wide">
-        <h1 class="title gold">炼成一项升级</h1>
-        <p class="subtitle">三选一，选择后进入下一关</p>
+        <h1 class="title gold">Transmute an upgrade</h1>
+        <p class="subtitle">Choose 1 of 3, then enter the next stage</p>
         <div class="cards">${cardHtml}</div>
-        <p class="note">升级会真实改变弹珠的行为，试试看</p>
+        <p class="note">Upgrades change how the marbles behave. Try one.</p>
       </div>`,
     );
     let picked = false;
@@ -218,12 +218,12 @@ export class Overlay {
 
   private summaryHtml(s: RunSummary): string {
     return `<div class="stats">
-      <div class="stat"><span class="v">${s.level}</span><span class="l">到达关卡</span></div>
-      <div class="stat"><span class="v">${s.totalDamage}</span><span class="l">总伤害</span></div>
-      <div class="stat"><span class="v">${s.bestVolley}</span><span class="l">最高单轮</span></div>
-      <div class="stat"><span class="v">${s.launches}</span><span class="l">发射次数</span></div>
-      <div class="stat"><span class="v">${s.hits}</span><span class="l">碰撞次数</span></div>
-      <div class="stat"><span class="v">${s.crits}</span><span class="l">暴击次数</span></div>
+      <div class="stat"><span class="v">${s.level}</span><span class="l">Stage reached</span></div>
+      <div class="stat"><span class="v">${s.totalDamage}</span><span class="l">Total damage</span></div>
+      <div class="stat"><span class="v">${s.bestVolley}</span><span class="l">Best volley</span></div>
+      <div class="stat"><span class="v">${s.launches}</span><span class="l">Launches</span></div>
+      <div class="stat"><span class="v">${s.hits}</span><span class="l">Collisions</span></div>
+      <div class="stat"><span class="v">${s.crits}</span><span class="l">Critical hits</span></div>
     </div>`;
   }
 
@@ -231,10 +231,10 @@ export class Overlay {
     const el = this.mount(
       'gameover',
       `<div class="panel">
-        <h1 class="title danger">炼金失败</h1>
-        <p class="subtitle">坩埚炸了。整理思路，再来一炉。</p>
+        <h1 class="title danger">Alchemy failed</h1>
+        <p class="subtitle">The crucible blew. Regroup and try another run.</p>
         ${this.summaryHtml(s)}
-        <div class="btn-row"><button class="btn primary" data-testid="restart-btn">重新开始</button></div>
+        <div class="btn-row"><button class="btn primary" data-testid="restart-btn">Restart</button></div>
       </div>`,
     );
     this.bind(el, 'restart-btn', onRestart);
@@ -245,10 +245,10 @@ export class Overlay {
     const el = this.mount(
       'victory',
       `<div class="panel">
-        <h1 class="title gold">炼金大成</h1>
-        <p class="subtitle">炉心魔像化为灰烬，工坊重归安宁。</p>
+        <h1 class="title gold">Alchemy complete</h1>
+        <p class="subtitle">The Core Golem turns to ash and the workshop is at peace.</p>
         ${this.summaryHtml(s)}
-        <div class="btn-row"><button class="btn primary" data-testid="restart-btn">再来一局</button></div>
+        <div class="btn-row"><button class="btn primary" data-testid="restart-btn">Play again</button></div>
       </div>`,
     );
     this.bind(el, 'restart-btn', onRestart);

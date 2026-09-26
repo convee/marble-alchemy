@@ -14,7 +14,7 @@ describe('AI director debrief', () => {
       { won: true, levelsCleared: 5, totalDamage: 123, shots: 9, hp: 2 },
     );
     expect(text).toContain('Aim for a dense cluster.');
-    expect(text).toContain('本局五关完成');
+    expect(text).toContain('All five stages cleared');
     expect(text).toContain('123');
   });
 
@@ -26,6 +26,6 @@ describe('AI director debrief', () => {
         prophecy: 'Glass.',
         effect: 'glass_cannon',
       }),
-    ).toContain('两点生命');
+    ).toContain('Two health');
   });
 });

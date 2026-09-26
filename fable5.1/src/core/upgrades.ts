@@ -8,7 +8,7 @@ export interface UpgradeDef {
   id: UpgradeId;
   name: string;
   /** 卡片标签：可叠加 / 被动 / 即时 */
-  tag: '可叠加' | '被动' | '即时';
+  tag: 'Stackable' | 'Passive' | 'Instant';
   /** HUD 徽章用的单字 */
   short: string;
   desc: string;
@@ -21,55 +21,55 @@ export interface UpgradeDef {
 export const UPGRADES: Record<UpgradeId, UpgradeDef> = {
   strengthen: {
     id: 'strengthen',
-    name: '强化',
-    tag: '可叠加',
-    short: '强',
-    desc: '每次碰撞的基础伤害 +1。基础伤害会被暴击翻倍。',
+    name: 'Strengthen',
+    tag: 'Stackable',
+    short: 'S',
+    desc: 'Each collision adds +1 base damage. Base damage is doubled by critical hits.',
     color: '#35f2ff',
     tint: 0x35f2ff,
   },
   fire: {
     id: 'fire',
-    name: '火焰',
-    tag: '可叠加',
-    short: '火',
-    desc: '每次碰撞额外累计 1 点火焰伤害。火焰伤害独立结算，不受暴击影响。',
+    name: 'Fire',
+    tag: 'Stackable',
+    short: 'F',
+    desc: 'Each collision adds 1 fire damage. Fire damage settles independently and is not affected by critical hits.',
     color: '#ff8a3d',
     tint: 0xff8a3d,
   },
   lightning: {
     id: 'lightning',
-    name: '闪电',
-    tag: '被动',
-    short: '雷',
-    desc: '每次碰撞向最近的另外两个钉子各放出 1 点闪电伤害。连锁不会再触发连锁。',
+    name: 'Lightning',
+    tag: 'Passive',
+    short: 'L',
+    desc: 'Each collision deals 1 lightning damage to the two nearest other pegs. Lightning does not chain.',
     color: '#c58bff',
     tint: 0xc58bff,
   },
   split: {
     id: 'split',
-    name: '分裂',
-    tag: '被动',
-    short: '裂',
-    desc: '每次发射的首次碰撞额外分出 2 颗弹珠。分出的弹珠不会再分裂。',
+    name: 'Split',
+    tag: 'Passive',
+    short: 'Sp',
+    desc: 'The first collision of each shot creates 2 extra marbles. New marbles do not split.',
     color: '#5dff9a',
     tint: 0x5dff9a,
   },
   crit: {
     id: 'crit',
-    name: '暴击',
-    tag: '被动',
-    short: '暴',
-    desc: '每次碰撞有 20% 概率让本次碰撞伤害翻倍。',
+    name: 'Critical',
+    tag: 'Passive',
+    short: 'C',
+    desc: 'Each collision has a 20% chance to double its damage.',
     color: '#ffd36b',
     tint: 0xffd36b,
   },
   heal: {
     id: 'heal',
-    name: '治疗',
-    tag: '即时',
-    short: '愈',
-    desc: '立即恢复 2 点生命，最多恢复到 5 点。',
+    name: 'Heal',
+    tag: 'Instant',
+    short: 'H',
+    desc: 'Restore 2 health immediately, up to 5.',
     color: '#ff5fa2',
     tint: 0xff5fa2,
   },

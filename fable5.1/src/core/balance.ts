@@ -56,9 +56,9 @@ export interface LevelDef {
 }
 
 export const LEVELS: LevelDef[] = [
-  { level: 1, name: '酸液史莱姆', hp: 24, atk: 1, enemyKey: 'slime', flavor: '从废弃坩埚里爬出来的东西，会腐蚀一切。' },
-  { level: 2, name: '废料哥布林', hp: 50, atk: 1, enemyKey: 'goblin', flavor: '偷走了工坊的贤者之石碎片，正在得意地嚼着。' },
-  { level: 3, name: '符文石像鬼', hp: 95, atk: 1, enemyKey: 'gargoyle', flavor: '被错误的符文唤醒，坚硬且愤怒。' },
-  { level: 4, name: '暗影术士', hp: 150, atk: 1, enemyKey: 'warlock', flavor: '前任工坊主。他的每次反击都带着诅咒。' },
-  { level: 5, name: '炉心魔像', hp: 230, atk: 2, enemyKey: 'golem', flavor: '整座工坊的炉火凝成的巨兽。击败它，炼金大成。' },
+  { level: 1, name: 'Acid Slime', hp: 24, atk: 1, enemyKey: 'slime', flavor: 'A thing that crawled from an abandoned crucible and corrodes everything.' },
+  { level: 2, name: 'Scrap Goblin', hp: 50, atk: 1, enemyKey: 'goblin', flavor: 'It stole a philosopher’s stone shard and is chewing it proudly.' },
+  { level: 3, name: 'Rune Gargoyle', hp: 95, atk: 1, enemyKey: 'gargoyle', flavor: 'Awakened by a flawed rune, hard and furious.' },
+  { level: 4, name: 'Shadow Warlock', hp: 150, atk: 1, enemyKey: 'warlock', flavor: 'The former workshop master. Every counterattack carries a curse.' },
+  { level: 5, name: 'Core Golem', hp: 230, atk: 2, enemyKey: 'golem', flavor: 'A beast forged from the workshop’s fire. Defeat it and complete the alchemy.' },
 ];

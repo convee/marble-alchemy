@@ -18,7 +18,7 @@ test('AUDIT-01: cancelled touch must not launch a marble', async ({ browser }) =
   });
   await session.send('Input.dispatchTouchEvent', { type: 'touchCancel', touchPoints: [] });
   await page.waitForTimeout(150);
-  await expect(page.locator('#phase-label')).toHaveText('等待发射');
+  await expect(page.locator('#phase-label')).toHaveText('Ready to launch');
   await context.close();
 });
 
@@ -28,7 +28,7 @@ test('AUDIT-02: Space should launch after returning from help', async ({ page })
   await page.locator('#help').click();
   await page.locator('#help-close').click();
   await page.keyboard.press('Space');
-  await expect(page.locator('#phase-label')).toHaveText('炼成进行中');
+  await expect(page.locator('#phase-label')).toHaveText('Transmuting');
 });
 
 test('AUDIT-03: landscape playfield should fit the visible viewport', async ({ browser }) => {
@@ -56,7 +56,7 @@ test('AUDIT-04: right mouse click must not fire', async ({ page }) => {
   const box = (await page.locator('canvas').boundingBox())!;
   await page.mouse.click(box.x + box.width * 0.6, box.y + box.height * 0.4, { button: 'right' });
   await page.waitForTimeout(150);
-  await expect(page.locator('#phase-label')).toHaveText('等待发射');
+  await expect(page.locator('#phase-label')).toHaveText('Ready to launch');
 });
 
 for (const [width, height] of [
@@ -104,8 +104,8 @@ test('cancelled gesture is cleared, then a normal touch still launches', async (
   await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y }] });
   await session.send('Input.dispatchTouchEvent', { type: 'touchCancel', touchPoints: [] });
   await page.touchscreen.tap(box.x + box.width / 2, box.y + (76 / 660) * box.height);
-  await expect(page.locator('#phase-label')).toHaveText('等待发射');
+  await expect(page.locator('#phase-label')).toHaveText('Ready to launch');
   await page.touchscreen.tap(x, y);
-  await expect(page.locator('#phase-label')).toHaveText('炼成进行中');
+  await expect(page.locator('#phase-label')).toHaveText('Transmuting');
   await context.close();
 });
