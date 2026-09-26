@@ -55,6 +55,7 @@ site/games.json Single catalog registry for published games and build variants
 site/games/    Public multi-game catalog page
 infra/         First-party analytics Worker and D1 schema
 docs/growth/   Acquisition, monitoring, and monetization records
+docs/architecture/ Multi-game, account, and integration boundaries
 ```
 
 Pushing `main` runs CI and assembles the two builds into `/gpt6/` and `/fable5.1/` on GitHub Pages.

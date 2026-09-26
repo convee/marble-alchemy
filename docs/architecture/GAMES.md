@@ -8,6 +8,6 @@ To add a game in phase one:
 
 1. Add a new top-level entry to `site/games.json` with a stable `slug`, title, description, status, source path and one or more variants.
 2. Add the build directory and its explicit Pages workflow copy/check step. The workflow validates every registry path, source URL and cover image at build time.
-3. Add the canonical catalog URL to `site/sitemap.xml` and verify the public path, canonical, image and analytics app.
+3. Run `node scripts/generate-sitemap.mjs` to include the registry's playable paths, then verify the public path, canonical, image and analytics app.
 
-Game telemetry now includes `game_id` and `variant` alongside the existing `app` field. `scripts/analyze-events.mjs` keeps the overall funnel and adds `breakdown_by_game` so new games can be compared without relying on path names. The Pages workflow and sitemap are still explicit files; registry-driven generation remains a later cleanup.
+Game telemetry now includes `game_id` and `variant` alongside the existing `app` field. `scripts/analyze-events.mjs` keeps the overall funnel and adds `breakdown_by_game` so new games can be compared without relying on path names. The Pages workflow regenerates the sitemap from the registry during every build.

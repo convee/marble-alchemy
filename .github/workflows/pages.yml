@@ -43,6 +43,7 @@ jobs:
           npm run build
       - name: Assemble site
         run: |
+          node scripts/generate-sitemap.mjs
           rm -rf dist
           mkdir -p dist
           cp -r site/. dist/
