@@ -44,6 +44,15 @@ export function renderGamePage(game, baseUrl = BASE_URL) {
   };
   if (image) structuredData.image = `${base}${image}`;
   const structuredJson = JSON.stringify(structuredData).replace(/</g, '\\u003c');
+  const breadcrumbJson = JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Chaoschemy', item: `${base}/` },
+      { '@type': 'ListItem', position: 2, name: 'Game Catalog', item: `${base}/games/` },
+      { '@type': 'ListItem', position: 3, name: game.title, item: canonical },
+    ],
+  }).replace(/</g, '\\u003c');
   return `<!doctype html>
 <html lang="en">
   <head>
@@ -55,7 +64,11 @@ export function renderGamePage(game, baseUrl = BASE_URL) {
     <meta property="og:title" content="${title} · Chaoschemy" />
     <meta property="og:description" content="${description}" />
     <meta property="og:url" content="${escapeHtml(canonical)}" />
-${image ? `    <meta property="og:image" content="${escapeHtml(`${base}${image}`)}" />\n` : ''}    <script type="application/ld+json">${structuredJson}</script>
+${image ? `    <meta property="og:image" content="${escapeHtml(`${base}${image}`)}" />\n` : ''}    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="${title} · Chaoschemy" />
+    <meta name="twitter:description" content="${description}" />
+${image ? `    <meta name="twitter:image" content="${escapeHtml(`${base}${image}`)}" />\n` : ''}    <script type="application/ld+json">${structuredJson}</script>
+    <script type="application/ld+json">${breadcrumbJson}</script>
     <title>${title} · Chaoschemy</title>
     <style>
       :root { color-scheme: dark; --bg: #080c18; --panel: rgba(14, 20, 40, .88); --text: #e8f4ff; --muted: #9aabd0; --cyan: #35f2ff; --gold: #d8c68f; }
