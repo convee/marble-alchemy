@@ -16,13 +16,17 @@
 |---|---|---|
 | `page_view` | `app` | 入口到游戏的漏斗起点 |
 | `game_start` | `app` | 首次进入有效游戏 |
-| `shot_attempt` | `app`, `level` | 首次操作和操作深度 |
+| `shot_attempt` | `app`, `level`, `ai_challenge`, `ai_effect` | 首次操作和命题下的操作深度 |
 | `level_complete` | `app`, `level` | 中途完成度 |
 | `volley_settled` | `app`, `level`, `killed` | 单轮结算 |
 | `run_complete` / `run_won` | `app`, `level`, `shots` | 通关率 |
 | `run_lost` | `app`, `level`, `shots` | 失败位置 |
 | `upgrade_selected` | `app`, `upgrade`, `level` | 玩法偏好 |
 | `run_restart` | `app` | 复玩意愿 |
+| `ai_challenge_loaded` | `app`, `challenge`, `effect`, `source`, `generated_by` | 模型命题是否成功进入真实玩法 |
+| `ai_rule_triggered` | `app`, `challenge`, `effect`, `level` | AI 规则是否实际触发，而不是只展示文案 |
+| `daily_challenge_completed` | `app`, `challenge`, `source`, `streak` | 每日命题完成与连续回访 |
+| `share_attempt` / `share_completed` | `app`, `challenge`, `result`, `score` | 结果分享与自然传播意愿 |
 
 ## 本地复盘工具
 

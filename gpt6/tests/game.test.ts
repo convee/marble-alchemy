@@ -125,3 +125,46 @@ describe('run lifecycle', () => {
     expect(run.launch()).toBe(false);
   });
 });
+
+describe('AI challenge modifiers', () => {
+  it('doubles only the first peg contact of each shot', async () => {
+    const { Run } = await import('../src/game');
+    const run = new Run(Math.random, {
+      id: 'twin',
+      title: 'Twin',
+      prophecy: 'Twin.',
+      effect: 'double_first_hit',
+    });
+    run.launch();
+    expect(run.hit(0)?.total).toBe(2);
+    expect(run.hit(0)?.total).toBe(1);
+  });
+
+  it('heals after a successful settlement and caps at five', async () => {
+    const { Run } = await import('../src/game');
+    const run = new Run(Math.random, {
+      id: 'dew',
+      title: 'Dew',
+      prophecy: 'Dew.',
+      effect: 'heal_after_settlement',
+    });
+    run.hp = 3;
+    run.enemyHp = 1;
+    run.launch();
+    run.damage = 1;
+    run.beginSettlement();
+    run.settle();
+    expect(run.hp).toBe(4);
+  });
+
+  it('starts glass-cannon challenges with two lives', async () => {
+    const { Run } = await import('../src/game');
+    const run = new Run(Math.random, {
+      id: 'glass',
+      title: 'Glass',
+      prophecy: 'Glass.',
+      effect: 'glass_cannon',
+    });
+    expect(run.hp).toBe(2);
+  });
+});

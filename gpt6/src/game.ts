@@ -1,5 +1,17 @@
 export type UpgradeId = 'power' | 'fire' | 'lightning' | 'split' | 'critical' | 'heal';
 export type Phase = 'aiming' | 'flying' | 'settling' | 'upgrade' | 'won' | 'lost';
+export type AiEffect = 'double_first_hit' | 'heal_after_settlement' | 'glass_cannon';
+export type AiChallengeSource = 'model' | 'fallback';
+export interface AiChallenge {
+  id: string;
+  title: string;
+  prophecy: string;
+  effect: AiEffect;
+  source?: AiChallengeSource;
+  generatedBy?: string;
+  generatedAt?: string;
+  debrief?: string;
+}
 export interface Upgrade {
   id: UpgradeId;
   name: string;
@@ -112,6 +124,7 @@ export interface HitResult {
   chain: number;
   total: number;
   critical: boolean;
+  aiTrigger?: AiEffect;
 }
 export function collisionDamage(build: Build, otherPegs: number, random = Math.random): HitResult {
   const critical = build.critical && random() < 0.2;
@@ -133,25 +146,37 @@ export class Run {
   build: Build = { power: 0, fire: 0, lightning: false, split: false, critical: false };
   offers: UpgradeId[] = [];
   history: UpgradeId[] = [];
-  constructor(public random: () => number = Math.random) {}
+  lastAiTrigger?: AiEffect;
+  constructor(
+    public random: () => number = Math.random,
+    public challenge?: AiChallenge,
+  ) {
+    if (challenge?.effect === 'glass_cannon') this.hp = 2;
+  }
   launch() {
     if (this.phase !== 'aiming') return false;
     this.phase = 'flying';
     this.damage = 0;
     this.hits = 0;
     this.splitUsed = false;
+    this.lastAiTrigger = undefined;
     this.shots++;
     return true;
   }
   hit(otherPegs: number): (HitResult & { split: boolean }) | undefined {
     if (this.phase !== 'flying') return;
-    const result = collisionDamage(this.build, otherPegs, this.random);
+    const base = collisionDamage(this.build, otherPegs, this.random);
+    const firstHitBoost = this.challenge?.effect === 'double_first_hit' && this.hits === 0;
+    const result = firstHitBoost
+      ? { ...base, direct: base.direct * 2, total: base.total + base.direct }
+      : base;
+    if (firstHitBoost) this.lastAiTrigger = 'double_first_hit';
     this.damage += result.total;
     this.hits++;
     this.totalHits++;
     const split = this.build.split && !this.splitUsed;
     if (split) this.splitUsed = true;
-    return { ...result, split };
+    return { ...result, split, aiTrigger: firstHitBoost ? 'double_first_hit' : undefined };
   }
   beginSettlement() {
     if (this.phase !== 'flying') return false;
@@ -163,6 +188,10 @@ export class Run {
     this.enemyHp = Math.max(0, this.enemyHp - this.damage);
     this.totalDamage += this.damage;
     if (this.enemyHp === 0) {
+      if (this.challenge?.effect === 'heal_after_settlement') {
+        this.hp = Math.min(5, this.hp + 1);
+        this.lastAiTrigger = 'heal_after_settlement';
+      }
       this.phase = 'upgrade';
       this.offers = this.rollOffers();
     } else {

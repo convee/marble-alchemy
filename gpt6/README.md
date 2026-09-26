@@ -9,12 +9,12 @@
 
 ![弹珠炼金工坊真实运行片段](docs/media/demo.gif)
 
-一个完整的单人浏览器小游戏。TypeScript + Phaser 3.90 + Phaser 内置 Matter 物理，Vite 构建。游戏运行时的图形通过 Phaser Graphics、内联 SVG 和 CSS 绘制，音效通过 Web Audio 合成。无后端、无在线 AI、无外部图片请求、无字体 CDN、无付费素材。项目使用 MIT 许可，运行时依赖声明见 [`THIRD_PARTY_NOTICES.txt`](public/THIRD_PARTY_NOTICES.txt)。
+一个以 AI 为内容导演的单人浏览器小游戏。TypeScript + Phaser 3.90 + Phaser 内置 Matter 物理，Vite 构建。GLM-5.3 Flash 在发布前生成每日挑战的预言、受限规则和通关复盘，浏览器端用确定性物理执行规则，不暴露密钥，也不让模型参与每一帧碰撞。程序绘制图形、Web Audio 合成音效，项目使用 MIT 许可。
 
 <details>
 <summary>English overview</summary>
 
-**Marble Alchemy Workshop** is a five-stage neon pachinko roguelite. Aim a marble, bank damage through real Matter collisions, resolve the shot after every marble drains, then choose one of three upgrades. It runs entirely in the browser with procedural art and synthesized audio. No backend, online AI, external runtime image requests, font CDN, or paid material.
+**Marble Alchemy Workshop** is a five-stage neon pachinko roguelite with an AI Director. GLM-5.3 Flash creates the daily prophecy, selects one of three bounded mechanics, and writes the post-run debrief; the browser executes the mechanic locally and deterministically. Finish a run to build a streak and return for the next daily experiment. No browser-exposed key or runtime model call is required.
 
 </details>
 
@@ -28,14 +28,19 @@ npm ci
 npm run dev
 ```
 
-打开终端显示的地址，通常是 http://127.0.0.1:5173/ 。首次安装依赖需要联网；游戏运行时不请求外部服务。
+打开终端显示的地址，通常是 http://127.0.0.1:5173/ 。首次安装依赖需要联网；游戏运行时只读取站点内的命题 JSON，并按部署配置发送匿名第一方事件。
 
 ```sh
 npm run build       # 严格 TypeScript 检查 + 生产构建
 npm run preview     # 本地预览 dist/，通常是 http://127.0.0.1:4173/
+npm run ai:scenarios # 使用 ZHIPU_API_KEY 生成并校验下一组每日 AI 挑战
 ```
 
 发布时将 `dist/` 作为站点根目录交给任意静态 HTTP 服务器。不应直接双击 `dist/index.html`，浏览器的 ES module 加载需要 HTTP。当前资源路径按站点根目录构建；部署到子目录时用 `npm run build -- --base=/你的子目录/`。
+
+### AI Director 与留存闭环
+
+每日挑战由 `scripts/generate-ai-scenarios.mjs` 在构建环境调用 GLM-5.3 Flash 生成，经过长度、枚举和唯一性校验后写入 `public/ai/scenarios.json`；失败时回退到 `glm-5.3`，站点无法读取命题时再使用离线命题。游戏展示 AI 的预言、实际规则和连续完成天数；通关页回放模型写下的复盘建议，并记录 `ai_challenge_loaded`、`ai_rule_triggered`、`daily_challenge_completed`、`run_complete`、`run_restart`、`share_completed` 等匿名漏斗事件。挑战只改变首击伤害、胜利回血或初始生命三种受限规则，基础玩法始终可玩。
 
 ## 怎么玩
 
@@ -87,8 +92,8 @@ npm run preview     # 本地预览 dist/，通常是 http://127.0.0.1:4173/
 ## 测试
 
 ```sh
-npm test              # 10 项纯规则测试
-npm run test:e2e       # 启动独立的 5174 测试服务器，运行浏览器边界与 UI 测试
+npm test              # 13 项纯规则测试
+npm run test:e2e       # 启动独立的 5174 测试服务器，运行浏览器边界、AI 闭环与 UI 测试
 ```
 
 浏览器测试默认使用本机 Google Chrome。没有 Chrome 时：

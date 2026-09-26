@@ -4,18 +4,18 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#080c18" />
-    <meta name="description" content="同一份需求，两个模型各自实现的浏览器弹珠 Roguelite：Codex GPT-6 版与 Claude Code fable 5.1 版，可直接试玩对比。" />
+    <meta name="description" content="一个由 GLM-5.3 Flash 提出每日命题、由确定性物理执行的 AI 弹珠 Roguelite，并附 Claude Code fable 5.1 对照版。" />
     <meta name="keywords" content="free browser roguelite, marble game, no download web game, 弹珠 roguelite" />
     <link rel="canonical" href="https://chaoschemy.com/" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="弹珠炼金工坊 · 双版本对比" />
-    <meta property="og:description" content="同一份需求，两个模型各自实现的浏览器弹珠 Roguelite，可直接试玩对比。" />
+    <meta property="og:title" content="弹珠炼金工坊 · AI 游戏闭环" />
+    <meta property="og:description" content="GLM-5.3 Flash 提出每日炼金命题并写下复盘建议，玩家用真实 Matter 碰撞完成五关试炼。" />
     <meta property="og:url" content="https://chaoschemy.com/" />
     <meta property="og:image" content="https://chaoschemy.com/media/gpt6-cover.jpg" />
     <script type="application/ld+json">
       {"@context":"https://schema.org","@type":"VideoGame","name":"Marble Alchemy","url":"https://chaoschemy.com/","genre":["Roguelite","Browser game"],"gamePlatform":"Web browser","isAccessibleForFree":true}
     </script>
-    <title>弹珠炼金工坊 · 双版本对比</title>
+    <title>弹珠炼金工坊 · AI 游戏闭环</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='12' fill='%2335f2ff'/%3E%3Ccircle cx='12' cy='12' r='4' fill='white'/%3E%3C/svg%3E" />
     <style>
       :root {
@@ -100,10 +100,10 @@
   <body>
     <div class="wrap">
       <header>
-        <h1>弹珠炼金工坊 · 双版本对比</h1>
+        <h1>弹珠炼金工坊 · AI 游戏闭环</h1>
         <p class="lead">
-          同一份中文需求，交给两个模型各自从零实现的浏览器弹珠 Roguelite。两版都用 TypeScript + Phaser 3.90 + Matter 物理 + Vite，
-          都不接后端与在线 AI，美术与音效全部程序生成。代码、测试与证据分别放在同一个仓库的两个目录里，可以直接对照阅读。
+          这是一个让 AI 参与玩法的浏览器弹珠 Roguelite。GPT-6 版由 GLM-5.3 Flash 提出每日命题、写下受限规则和通关复盘，
+          玩家用真实 Matter 碰撞回应命题并累积连续天数；fable 5.1 版保留为确定性对照。代码、测试与证据都可直接阅读。
         </p>
       </header>
 
@@ -114,7 +114,8 @@
             <h2>Codex · GPT-6</h2>
             <p>目录 <code>gpt6/</code></p>
             <ul class="facts">
-              <li>规则测试 10 项、浏览器测试 16 项（该版自测口径）</li>
+              <li>GLM-5.3 Flash 提出命题与复盘，三种规则均在本地确定性执行</li>
+              <li>模型命题 → 真实碰撞 → AI 复盘 → 连续完成记录</li>
               <li>完整无剪辑通关录屏，含 SHA-256 校验清单</li>
               <li>Prettier 格式检查与 npm audit 进 CI</li>
             </ul>
@@ -150,16 +151,22 @@
         其中强化与火焰可重复获得。具体数值、弹盘布局、视觉与音效由各自设计。
       </p>
 
+      <h3>AI 导演如何参与</h3>
+      <p class="note">
+        模型先写下带叙事的每日命题，校验器把它限制在首击翻倍、击败回血或玻璃炮三种规则内；玩家随后选择配方、完成五场真实碰撞，
+        结束页回放模型给出的下一步建议。完成记录、规则触发和分享分别进入匿名事件账本，下一次访问继续面对新的命题。
+      </p>
+
       <h3>两版自测数据</h3>
       <table>
         <thead>
           <tr><th>项目</th><th>Codex · GPT-6</th><th>Claude Code · fable 5.1</th></tr>
         </thead>
         <tbody>
-          <tr><td>自动化测试</td><td>规则 10 项、浏览器 16 项</td><td>单元 24 项、端到端 18 项</td></tr>
+          <tr><td>自动化测试</td><td>规则 13 项、浏览器 20 项</td><td>单元 24 项、端到端 18 项</td></tr>
           <tr><td>录屏方式</td><td>真实 UI 操作，完整无剪辑，附 SHA-256</td><td>停主循环逐帧合成，与帧率无关</td></tr>
           <tr><td>通关证据</td><td>一局五关胜利，58.7 秒，5/5 生命</td><td>12 局随机瞄准机器人对局，胜 5 局</td></tr>
-          <tr><td>额外检查</td><td>Prettier、npm audit、外部请求为 0</td><td>逐关命中数实测、卡死看门狗单测</td></tr>
+          <tr><td>额外检查</td><td>Prettier、npm audit、模型命题校验与 AI 闭环回归</td><td>逐关命中数实测、卡死看门狗单测</td></tr>
         </tbody>
       </table>
       <p class="note">

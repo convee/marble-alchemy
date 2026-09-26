@@ -1,21 +1,20 @@
-# 弹珠炼金工坊 · 双版本对比
+# 弹珠炼金工坊 · AI 游戏闭环
 
 [![CI](https://github.com/convee/marble-alchemy/actions/workflows/ci.yml/badge.svg)](https://github.com/convee/marble-alchemy/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-c3a6fb.svg)](LICENSE)
 
-同一份中文需求，交给两个模型各自从零实现的浏览器弹珠 Roguelite。两版都用 TypeScript + Phaser 3.90 + Matter 物理 + Vite，
-都不接后端与在线 AI 接口，美术与音效全部程序生成。代码、测试与证据分别放在两个目录里，可以直接对照阅读。
+这是一个让 AI 真正参与玩法的浏览器弹珠 Roguelite：GPT-6 版由 GLM-5.3 Flash 在发布前提出每日命题、写下规则与复盘建议，玩家用五场真实 Matter 碰撞回应命题并积累连续完成天数。模型密钥只在构建环境使用，浏览器端不请求模型；规则在本地确定性执行，避免把关键操作交给不可审计的黑箱。Fable 5.1 版保留为确定性对照基线，美术与音效全部程序生成。
 
 | 版本 | 目录 | 在线试玩 | 说明 |
 |---|---|---|---|
-| Codex · GPT-6 | [`gpt6/`](gpt6/) | https://chaoschemy.com/gpt6/ | [README](gpt6/README.md) · [测评材料](gpt6/evaluation/README.md) |
+| Codex · GPT-6 AI Director | [`gpt6/`](gpt6/) | https://chaoschemy.com/gpt6/ | [README](gpt6/README.md) · [测评材料](gpt6/evaluation/README.md) |
 | Claude Code · fable 5.1 | [`fable5.1/`](fable5.1/) | https://chaoschemy.com/fable5.1/ | [README](fable5.1/README.md) · [测试报告](fable5.1/docs/TEST-REPORT.md) |
 
 对比首页：https://chaoschemy.com/
 
 增长闭环材料：[`docs/growth/KEYWORD-RESEARCH.md`](docs/growth/KEYWORD-RESEARCH.md) · [`docs/growth/MONITORING.md`](docs/growth/MONITORING.md) · [`docs/growth/LOOP-STATUS.md`](docs/growth/LOOP-STATUS.md) · [`docs/growth/MONETIZATION.md`](docs/growth/MONETIZATION.md) · [隐私说明](https://chaoschemy.com/privacy.html)
 
-首页与两个游戏入口已接入 Cloudflare Web Analytics。游戏事件协议已落地；在配置 `VITE_ANALYTICS_ENDPOINT` 前，事件只保存在浏览器本地，不把行为数据发送到第三方。第一方 Worker+D1 的部署骨架位于 [`infra/analytics-worker/`](infra/analytics-worker/)，导出后可用 [`scripts/analyze-events.mjs`](scripts/analyze-events.mjs) 做来源、漏斗和复玩分析。
+首页与两个游戏入口已接入 Cloudflare Web Analytics。游戏事件协议已落地；在配置 `VITE_ANALYTICS_ENDPOINT` 前，事件只保存在浏览器本地，不把行为数据发送到第三方。GPT-6 版的 AI 命题、规则触发、完成和分享都使用匿名事件记录。第一方 Worker+D1 的部署骨架位于 [`infra/analytics-worker/`](infra/analytics-worker/)，导出后可用 [`scripts/analyze-events.mjs`](scripts/analyze-events.mjs) 做来源、漏斗和复玩分析。
 
 ## 需求里两版一致的部分
 
@@ -29,14 +28,18 @@
 
 弹盘布局、具体数值、视觉风格、音效设计、工程结构由各版自行决定。
 
+## AI 导演闭环
+
+GPT-6 版的完整路径是：模型提出带叙事的每日命题 → 校验器把它压缩到三种可审计规则 → 玩家在五关中选择配方并用真实碰撞回应 → 结算页展示模型复盘建议 → 完成记录和分享把玩家带回下一次命题。规则执行仍在浏览器本地，因此可以分别验证模型内容、物理规则、留存记录和匿名事件，不把其中任何一项冒充成另一项。
+
 ## 两版自测数据
 
 | 项目 | Codex · GPT-6 | Claude Code · fable 5.1 |
 |---|---|---|
-| 自动化测试 | 规则测试 10 项、浏览器测试 16 项 | 单元测试 24 项、端到端 18 项 |
+| 自动化测试 | 规则测试 13 项、浏览器测试 20 项 | 单元测试 24 项、端到端 18 项 |
 | 录屏方式 | 真实 UI 操作，完整无剪辑，附源码提交与 SHA-256 | 停主循环逐帧合成，画面与运行环境帧率无关 |
 | 通关证据 | 一局五关胜利，58.7 秒，结束时 5/5 生命 | 12 局随机瞄准机器人对局，胜 5 局（42%），0 局卡死 |
-| 额外检查 | Prettier、npm audit、运行期外部请求为 0 | 逐关无升级命中数实测、弹珠卡住看门狗单测 |
+| 额外检查 | Prettier、npm audit、模型命题校验与 AI 闭环回归 | 逐关无升级命中数实测、弹珠卡住看门狗单测 |
 
 两列口径不同，都是各自版本自己跑出来的结果，不能直接相减比较，本仓库也不给裁判分数。原始报告见各自目录。
 

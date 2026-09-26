@@ -113,3 +113,7 @@ export function track(name: string, props: Record<string, Value> = {}): void {
 }
 
 if (endpoint) flushQueue();
+
+export function localTelemetryEnabled(): boolean {
+  return !endpoint;
+}

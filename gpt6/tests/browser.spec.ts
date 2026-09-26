@@ -7,6 +7,14 @@ async function ready(page: Page) {
   await page.locator('canvas').waitFor();
   await expect(page.locator('#phase-label')).toHaveText('等待发射');
 }
+
+async function readyWithAi(page: Page) {
+  await page.goto('/?ai=1');
+  await page.locator('canvas').waitFor();
+  await expect(page.locator('#ai-source')).toContainText('模型命题');
+  await expect(page.locator('#ai-effect')).not.toHaveText('AI 规则载入中');
+  await expect(page.locator('#launch')).toBeEnabled();
+}
 async function restart(page: Page) {
   await page.locator('#restart').click();
   await page.locator('#confirm-restart').click();
@@ -48,6 +56,50 @@ test('real mouse shot, live feedback, deferred settlement and restart cleanup', 
     pendingSplit: 0,
   });
   expect(errors).toEqual([]);
+});
+
+test('AI model challenge is applied before play and changes the run contract', async ({ page }) => {
+  await page.route('**/ai/scenarios.json', async (route) => {
+    await new Promise((resolve) => setTimeout(resolve, 250));
+    await route.continue();
+  });
+  await page.goto('/?ai=1');
+  await page.locator('canvas').waitFor();
+  await expect(page.locator('#launch')).toBeDisabled();
+  await page.locator('#game').focus();
+  await page.keyboard.press('Space');
+  expect((await snapshot(page)).shots).toBe(0);
+  await readyWithAi(page);
+  const state = await snapshot(page);
+  expect(state.challenge).toMatchObject({ source: 'model', generatedBy: 'glm-5.3-flash' });
+  expect(['double_first_hit', 'heal_after_settlement', 'glass_cannon']).toContain(
+    state.challenge.effect,
+  );
+  if (state.challenge.effect === 'glass_cannon') expect(state.hp).toBe(2);
+  await page.screenshot({ path: 'artifacts/ai-challenge.png', fullPage: true });
+  await page.locator('#launch').click();
+  expect((await snapshot(page)).shots).toBe(1);
+});
+
+test('AI challenge completion records the daily return loop', async ({ page }) => {
+  await page.goto('/?ai=1');
+  await page.locator('canvas').waitFor();
+  await readyWithAi(page);
+  for (let level = 0; level < 5; level++) {
+    await fixture(page, { enemyHp: 1 });
+    await page.locator('#launch').click();
+    await expect.poll(async () => (await snapshot(page)).hits).toBeGreaterThan(0);
+    await page.evaluate(() => (window as any).__alchemyTest.recall());
+    await expect(page.locator('[data-upgrade]')).toHaveCount(3);
+    await page.locator('[data-upgrade]').first().click();
+  }
+  await expect(page.locator('#modal-title')).toContainText('属于自己的奇迹');
+  await expect(page.locator('#ai-streak')).toContainText('COMPLETE');
+  await expect(page.locator('.ai-debrief')).toContainText('AI 导演复盘');
+  const retention = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem('marble-alchemy:retention:v1') ?? 'null'),
+  );
+  expect(retention).toMatchObject({ streak: 1, lastChallenge: expect.any(String) });
 });
 
 test('pause freezes Matter, shot age, and settlement timer; restart cancels old work', async ({

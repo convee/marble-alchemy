@@ -1,9 +1,11 @@
 import Phaser from 'phaser';
 import './style.css';
 import { AlchemyScene, WIDTH, HEIGHT } from './scene';
-import { LEVELS, UPGRADES, type UpgradeId } from './game';
+import { LEVELS, UPGRADES, type AiChallenge, type UpgradeId } from './game';
 import { Synth } from './audio';
-import { track } from './analytics';
+import { localTelemetryEnabled, track } from './analytics';
+import { debriefFor, effectLabel, loadDailyChallenge } from './ai';
+import { completeDailyChallenge, dailyProgress } from './retention';
 
 const star =
   '<svg viewBox="0 0 40 40" fill="none" aria-hidden="true"><path d="M20 3 35 29H5L20 3Z" stroke="currentColor"/><path d="m20 37 15-26H5l15 26Z" stroke="currentColor"/><circle cx="20" cy="20" r="7" stroke="currentColor"/><circle cx="20" cy="20" r="2" fill="currentColor"/></svg>';
@@ -17,7 +19,8 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
     <nav class="controls" aria-label="游戏控制"><button id="help" class="quiet"><span>?</span><i>玩法说明</i></button><button id="sound" class="quiet" aria-label="关闭音效"></button><button id="pause" class="quiet"><span>Ⅱ</span><i>暂停</i></button><button id="restart" class="quiet" aria-label="重新开始"><span>↻</span></button></nav>
   </header>
   <main>
-    <section class="intro"><div><p class="eyebrow">THE TRANSMUTATION CHAMBER</p><h1>每一次碰撞，<em>皆是炼金。</em></h1></div><p class="intro-note">瞄准微光，让混沌化为力量。<br>五场试炼，一颗贤者之石。</p></section>
+    <section class="intro"><div><p class="eyebrow">THE TRANSMUTATION CHAMBER</p><h1>每一次碰撞，<em>皆是炼金。</em></h1></div><p class="intro-note">AI 导演每天写下一条命题，<br>你用五场试炼把它变成结果。</p></section>
+    <section class="ai-director" aria-labelledby="ai-director-title"><div class="ai-director-badge"><span>✦</span> AI 导演</div><div><p class="ai-director-label">今日模型命题 · TODAY’S ALCHEMY PROTOCOL</p><h2 id="ai-director-title">等待 AI 导演写下命题…</h2><p id="ai-prophecy">命题载入后，它会改变本局的一条真实规则。</p></div><div class="ai-director-status"><span id="ai-effect" class="ai-effect">AI 规则载入中</span><span id="ai-source" class="ai-streak">MODEL PENDING</span><span id="ai-streak" class="ai-streak">STREAK 0</span></div></section>
     <div class="journey" aria-label="五关进度">${LEVELS.map((l, i) => `<div class="stage" data-stage="${i}"><span class="stage-dot">${i + 1}</span><span>${l.name}</span>${i === 4 ? '<small>终章</small>' : ''}</div>`).join('')}</div>
     <div class="workbench">
       <aside class="left-column">
@@ -33,17 +36,32 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
       </aside>
     </div>
     <div class="action-row"><p id="notice" role="status" aria-live="polite">新的实验开始了 · 瞄准钉子，炼成你的第一击</p><button id="launch" class="primary">发射弹珠 <span>↗</span></button></div>
+    <section class="seo-panel" aria-labelledby="about-title">
+      <div><p class="eyebrow">ABOUT THE GAME</p><h2 id="about-title">A free physics roguelite for one focused minute.</h2></div>
+      <p>Marble Alchemy is an original browser game built around aim, real collisions, and meaningful upgrade choices. Play without an account, finish a five-stage run, then try a new build. The game is lightweight, touch-friendly, and free to play.</p>
+    </section>
   </main>
-  <footer><span>✦ 一间小工坊，无限种可能。</span><span>程序绘制 · 纯粹碰撞 <b>EST. 2026</b></span></footer>
+  <footer><span>✦ 一间小工坊，无限种可能。</span><span><a href="../privacy.html">Privacy</a> · 程序绘制 · 纯粹碰撞 <b>EST. 2026</b></span></footer>
 </div>
 <dialog id="modal" aria-labelledby="modal-title"><div id="modal-content"></div></dialog>`;
-track('page_view', { app: 'gpt6' });
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
+const escapeHtml = (value: string) =>
+  value.replace(
+    /[&<>'"]/g,
+    (character) =>
+      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[character]!,
+  );
 const sound = new Synth();
 let paused = false;
+let firstShotTracked = false;
 let lastScrolledShot = 0;
 let modalKind: 'help' | 'pause' | 'restart' | 'upgrade' | 'end' | null = null;
+const aiEnabled =
+  import.meta.env.VITE_TEST_MODE !== 'true' ||
+  new URLSearchParams(window.location.search).get('ai') === '1';
+let aiChallenge: AiChallenge | undefined;
+let challengeReady = !aiEnabled;
 const modal = $<HTMLDialogElement>('modal');
 const scene = new AlchemyScene(
   {
@@ -52,27 +70,58 @@ const scene = new AlchemyScene(
       $('notice').textContent = message;
     },
     settled: (killed) => {
+      track('volley_settled', {
+        app: 'gpt6',
+        level: scene.run.level + 1,
+        killed,
+        damage: scene.run.damage,
+        hp: scene.run.hp,
+        shots: scene.run.shots,
+        ai_challenge: aiChallenge?.id ?? 'none',
+      });
+      if (killed && scene.run.lastAiTrigger === 'heal_after_settlement')
+        track('ai_rule_triggered', {
+          app: 'gpt6',
+          challenge: aiChallenge?.id ?? 'none',
+          effect: scene.run.lastAiTrigger,
+          level: scene.run.level + 1,
+        });
       $('enemy-art').classList.remove('shaken');
       void $('enemy-art').offsetWidth;
       $('enemy-art').classList.add('shaken');
       $('notice').textContent = killed
         ? `${LEVELS[scene.run.level].name}已净化 · 选择一份新的炼金配方`
         : `释放 ${scene.run.damage} 点伤害 · 敌人反击，失去 ${LEVELS[scene.run.level].attack} 点生命`;
-      track(
-        killed && scene.run.level === 4
-          ? 'run_complete'
-          : killed
-            ? 'level_complete'
-            : 'volley_settled',
-        {
+    },
+    launched: () => {
+      track('shot_attempt', {
+        app: 'gpt6',
+        level: scene.run.level + 1,
+        shot: scene.run.shots,
+        ai_challenge: aiChallenge?.id ?? 'none',
+        ai_effect: aiChallenge?.effect ?? 'none',
+      });
+      if (!firstShotTracked) {
+        firstShotTracked = true;
+        track('game_start', {
           app: 'gpt6',
           level: scene.run.level + 1,
-          killed,
-        },
-      );
+          ai_challenge: aiChallenge?.id ?? 'none',
+        });
+      }
     },
+    aiTriggered: (effect) => {
+      track('ai_rule_triggered', {
+        app: 'gpt6',
+        challenge: aiChallenge?.id ?? 'none',
+        effect,
+        level: scene.run.level + 1,
+      });
+    },
+    readyToLaunch: () => challengeReady,
   },
   sound,
+  aiChallenge,
 );
 const game = new Phaser.Game({
   type: Phaser.AUTO,
@@ -96,6 +145,57 @@ const game = new Phaser.Game({
   audio: { noAudio: true },
   banner: false,
 });
+
+track('page_view', { app: 'gpt6' });
+track('game_ready', {
+  app: 'gpt6',
+  version: '1.0.0',
+  stages: LEVELS.length,
+  ai_enabled: aiEnabled,
+});
+track('landing_view', {
+  app: 'gpt6',
+  version: '1.0.0',
+  stages: LEVELS.length,
+  ai_enabled: aiEnabled,
+});
+if (localTelemetryEnabled()) {
+  document
+    .querySelector<HTMLElement>('footer')
+    ?.insertAdjacentHTML('beforeend', '<span class="telemetry-badge">Telemetry: local only</span>');
+}
+
+function renderAiChallenge(challenge: AiChallenge) {
+  $('ai-director-title').textContent = challenge.title;
+  $('ai-prophecy').textContent = challenge.prophecy;
+  $('ai-effect').textContent = effectLabel(challenge.effect);
+  $('ai-source').textContent =
+    challenge.source === 'model'
+      ? `${challenge.generatedBy ?? 'AI'} · 模型命题`
+      : 'LOCAL FALLBACK · 离线命题';
+  const progress = dailyProgress();
+  $('ai-streak').textContent = progress.completedToday
+    ? `STREAK ${progress.streak} · COMPLETE`
+    : `STREAK ${progress.streak}`;
+}
+
+if (aiEnabled) {
+  void loadDailyChallenge().then((challenge) => {
+    if (!scene.setChallenge(challenge)) return;
+    aiChallenge = challenge;
+    challengeReady = true;
+    renderAiChallenge(challenge);
+    track('ai_challenge_loaded', {
+      app: 'gpt6',
+      challenge: challenge.id,
+      effect: challenge.effect,
+      source: challenge.source ?? 'fallback',
+      generated_by: challenge.generatedBy ?? 'local-fallback',
+      generated_at: challenge.generatedAt ?? 'none',
+    });
+    render();
+  });
+}
 
 function render() {
   const run = scene.run,
@@ -160,7 +260,7 @@ function render() {
       : run.phase === 'aiming'
         ? '移动瞄准 · 点击或松手发射'
         : '每一次碰撞，皆是炼金';
-  $<HTMLButtonElement>('launch').disabled = paused || run.phase !== 'aiming';
+  $<HTMLButtonElement>('launch').disabled = paused || run.phase !== 'aiming' || !challengeReady;
   $('launch').innerHTML =
     run.phase === 'aiming'
       ? '发射弹珠 <span>↗</span>'
@@ -212,9 +312,16 @@ function resume() {
   render();
 }
 function reset() {
+  track('run_restart', {
+    app: 'gpt6',
+    from_phase: scene.run.phase,
+    level: scene.run.level + 1,
+    ai_challenge: aiChallenge?.id ?? 'none',
+  });
   closeModal();
   paused = false;
   lastScrolledShot = 0;
+  firstShotTracked = false;
   $('board-paused').hidden = true;
   scene.resetRun();
 }
@@ -260,11 +367,15 @@ function showUpgrade() {
   );
   document.querySelectorAll<HTMLButtonElement>('[data-upgrade]').forEach((button) => {
     button.onclick = () => {
+      const levelBefore = scene.run.level + 1;
       if (!scene.run.choose(button.dataset.upgrade as UpgradeId)) return;
       track('upgrade_selected', {
         app: 'gpt6',
-        upgrade: button.dataset.upgrade ?? 'unknown',
-        level: scene.run.level + 1,
+        challenge: aiChallenge?.id ?? 'none',
+        level_before: levelBefore,
+        level_after: scene.run.level + 1,
+        upgrade: button.dataset.upgrade || 'unknown',
+        history_length: scene.run.history.length,
       });
       sound.unlock();
       sound.tone('upgrade');
@@ -276,16 +387,66 @@ function showUpgrade() {
 }
 function showEnd() {
   const won = scene.run.phase === 'won';
-  track(won ? 'run_won' : 'run_lost', {
+  const challenge = aiChallenge;
+  const daily =
+    won && challenge
+      ? completeDailyChallenge(challenge.id)
+      : challenge
+        ? dailyProgress()
+        : undefined;
+  if (daily && challenge && won) {
+    $('ai-streak').textContent = `STREAK ${daily.streak} · COMPLETE`;
+    track('daily_challenge_completed', {
+      app: 'gpt6',
+      challenge: challenge.id,
+      result: won ? 'won' : 'lost',
+      streak: daily.streak,
+      source: challenge.source ?? 'fallback',
+    });
+  }
+  track('run_complete', {
     app: 'gpt6',
-    level: scene.run.level + 1,
+    result: won ? 'won' : 'lost',
+    level: won ? LEVELS.length : scene.run.level + 1,
+    total_damage: scene.run.totalDamage,
     shots: scene.run.shots,
+    upgrades: scene.run.history.join(','),
+    ai_challenge: challenge?.id ?? 'none',
+    ai_source: challenge?.source ?? 'none',
   });
+  const aiDebrief = challenge
+    ? debriefFor(challenge)
+    : 'AI 命题尚未载入；下一次实验会从这里重新开始。';
   openModal(
     'end',
-    `<p class="eyebrow">${won ? 'THE PHILOSOPHER’S STONE' : 'EVERY EXPERIMENT TEACHES'}</p><div class="modal-emblem">${won ? star : '◇'}</div><h2 id="modal-title">${won ? '你炼成了，属于自己的奇迹。' : '火种暂熄，灵感未尽。'}</h2><p class="modal-copy">${won ? '五场试炼全部完成。贤者之石在你的工坊里熠熠生辉。' : '生命已归零。这一次的碰撞，会成为下一次的灵感。'}</p><div class="end-stats"><div><b>${won ? 5 : scene.run.level}</b><span>净化试炼</span></div><div><b>${scene.run.totalDamage}</b><span>累计伤害</span></div><div><b>${scene.run.shots}</b><span>发射次数</span></div></div><button class="primary" id="play-again">再来一次实验 <span>↻</span></button>`,
+    `<p class="eyebrow">${won ? 'THE PHILOSOPHER’S STONE' : 'EVERY EXPERIMENT TEACHES'}</p><div class="modal-emblem">${won ? star : '◇'}</div><h2 id="modal-title">${won ? '你炼成了，属于自己的奇迹。' : '火种暂熄，灵感未尽。'}</h2><p class="modal-copy">${won ? '五场试炼全部完成。贤者之石在你的工坊里熠熠生辉。' : '生命已归零。这一次的碰撞，会成为下一次的灵感。'}</p><div class="ai-debrief"><small>AI 导演复盘 · ${escapeHtml(challenge?.title ?? '未载入命题')}</small><p>${escapeHtml(aiDebrief)}</p></div><div class="end-stats"><div><b>${won ? 5 : scene.run.level}</b><span>净化试炼</span></div><div><b>${scene.run.totalDamage}</b><span>累计伤害</span></div><div><b>${scene.run.shots}</b><span>发射次数</span></div></div><div class="modal-actions"><button class="primary" id="play-again">再来一次实验 <span>↻</span></button><button class="secondary" id="share-result">分享结果 <span>↗</span></button></div>`,
   );
   $('play-again').onclick = reset;
+  $('share-result').onclick = async () => {
+    const text = `I just scored ${scene.run.totalDamage} damage in Marble Alchemy${challenge ? ` during ${challenge.title}` : ''}. Can you beat it?`;
+    track('share_attempt', {
+      app: 'gpt6',
+      result: won ? 'won' : 'lost',
+      score: scene.run.totalDamage,
+      challenge: challenge?.id || 'none',
+    });
+    try {
+      if (navigator.share)
+        await navigator.share({ title: 'Marble Alchemy', text, url: window.location.href });
+      else {
+        await navigator.clipboard.writeText(`${text} ${window.location.href}`);
+        $('notice').textContent = '结果已复制 · 分享给下一位炼金师';
+      }
+      track('share_completed', {
+        app: 'gpt6',
+        result: won ? 'won' : 'lost',
+        score: scene.run.totalDamage,
+        challenge: challenge?.id || 'none',
+      });
+    } catch {
+      // The user can dismiss a native share sheet without affecting the run.
+    }
+  };
 }
 function updateSound() {
   $('sound').innerHTML = `<span>${sound.enabled ? '♫' : '♪'}</span>`;
@@ -297,7 +458,6 @@ $('help').onclick = showHelp;
 $('pause').onclick = showPause;
 $('restart').onclick = showRestart;
 $('launch').onclick = () => {
-  track('shot_attempt', { app: 'gpt6' });
   scene.launch();
 };
 $('sound').onclick = () => {

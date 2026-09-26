@@ -47,6 +47,38 @@ test('accepts only known anonymous events and writes a D1 batch', async () => {
   assert.equal(DB.rows[0].values[0], 'game_start');
 });
 
+test('accepts the AI challenge loop events', async () => {
+  const DB = fakeDb();
+  const response = await worker.fetch(
+    new Request('https://analytics.example/events', {
+      method: 'POST',
+      headers: { origin: 'https://chaoschemy.com', 'content-type': 'application/json' },
+      body: JSON.stringify([
+        {
+          name: 'ai_challenge_loaded',
+          props: { app: 'gpt6', challenge: 'daily_one', source: 'model' },
+          ts: '2026-09-26T00:00:00Z',
+          path: '/gpt6/',
+          session_id: 'ai-session',
+        },
+        {
+          name: 'daily_challenge_completed',
+          props: { app: 'gpt6', challenge: 'daily_one', streak: 1 },
+          ts: '2026-09-26T00:01:00Z',
+          path: '/gpt6/',
+          session_id: 'ai-session',
+        },
+      ]),
+    }),
+    { DB },
+  );
+  assert.deepEqual(await response.json(), { accepted: 2 });
+  assert.deepEqual(DB.rows.map((row) => row.values[0]), [
+    'ai_challenge_loaded',
+    'daily_challenge_completed',
+  ]);
+});
+
 test('rejects another origin before touching storage', async () => {
   const DB = fakeDb();
   const response = await worker.fetch(
@@ -60,4 +92,3 @@ test('rejects another origin before touching storage', async () => {
   assert.equal(response.status, 403);
   assert.equal(DB.rows.length, 0);
 });
-

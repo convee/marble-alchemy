@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { Run } from './game';
+import { Run, type AiChallenge, type AiEffect } from './game';
 import { Synth } from './audio';
 
 export const WIDTH = 520,
@@ -38,6 +38,9 @@ export interface SceneHooks {
   change: () => void;
   notice: (message: string) => void;
   settled: (killed: boolean) => void;
+  launched?: () => void;
+  aiTriggered?: (effect: AiEffect) => void;
+  readyToLaunch?: () => boolean;
 }
 export class AlchemyScene extends Phaser.Scene {
   run: Run;
@@ -59,9 +62,10 @@ export class AlchemyScene extends Phaser.Scene {
   constructor(
     private hooks: SceneHooks,
     public synth: Synth,
+    challenge?: AiChallenge,
   ) {
     super('workshop');
-    this.run = new Run();
+    this.run = new Run(Math.random, challenge);
   }
   create() {
     this.ink = this.add.graphics();
@@ -134,12 +138,20 @@ export class AlchemyScene extends Phaser.Scene {
     if (this.run.phase === 'aiming') this.aim = Phaser.Math.Clamp(this.aim + delta, -1.1, 1.1);
   }
   launch() {
-    if (!this.ready || this.scene.isPaused() || !this.run.launch()) return;
+    if (
+      !this.ready ||
+      this.scene.isPaused() ||
+      (this.hooks.readyToLaunch && !this.hooks.readyToLaunch()) ||
+      !this.run.launch()
+    )
+      return false;
+    this.hooks.launched?.();
     this.synth.unlock();
     this.synth.tone('launch');
     this.spawn(260, 76, Math.sin(this.aim) * 9, Math.cos(this.aim) * 9, false);
     this.hooks.notice('炼成中 · 碰撞伤害将在所有弹珠回收后结算');
     this.hooks.change();
+    return true;
   }
   private spawn(x: number, y: number, vx: number, vy: number, child: boolean) {
     const body = this.matter.add.circle(x, y, 6, {
@@ -157,6 +169,12 @@ export class AlchemyScene extends Phaser.Scene {
   private hitPeg(ball: Ball, peg: Peg) {
     const result = this.run.hit(this.pegs.length - 1);
     if (!result) return;
+    if (result.aiTrigger) {
+      this.hooks.aiTriggered?.(result.aiTrigger);
+      this.hooks.notice(
+        `AI 命题生效 · ${result.aiTrigger === 'double_first_hit' ? '首击伤害翻倍' : '规则已触发'}`,
+      );
+    }
     peg.flash = 1;
     const color = result.critical ? 0xff93bb : this.run.build.fire ? 0xffb47c : 0xbba5ff;
     this.burst(peg.x, peg.y, color, result.critical ? 16 : 8);
@@ -432,6 +450,13 @@ export class AlchemyScene extends Phaser.Scene {
   resumeGame() {
     if (this.ready) this.sys.resume();
   }
+  setChallenge(challenge: AiChallenge) {
+    if (this.run.shots > 0 || this.run.phase !== 'aiming') return false;
+    this.run.challenge = challenge;
+    this.run.hp = challenge.effect === 'glass_cannon' ? 2 : 5;
+    this.hooks.change();
+    return true;
+  }
   resetRun() {
     this.settlementAt = undefined;
     for (const ball of this.balls.values()) this.matter.world.remove(ball.body);
@@ -443,7 +468,7 @@ export class AlchemyScene extends Phaser.Scene {
     for (const text of this.floating) text.destroy();
     this.floating.clear();
     this.pegs.forEach((p) => (p.flash = 0));
-    this.run = new Run();
+    this.run = new Run(this.run.random, this.run.challenge);
     this.elapsed = 0;
     this.lastUi = 0;
     this.nudgeCount = 0;
@@ -475,6 +500,7 @@ export class AlchemyScene extends Phaser.Scene {
       paused: this.scene.isPaused(),
       pendingSplit: this.splitQueue.length,
       nudgeCount: this.nudgeCount,
+      challenge: this.run.challenge ? { ...this.run.challenge } : undefined,
     };
   }
   // Boundary controls are reachable only through the opt-in development test bridge.

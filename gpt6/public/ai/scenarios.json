@@ -1,0 +1,27 @@
+{
+  "generated_by": "glm-5.3-flash",
+  "generated_at": "2026-09-26T03:38:14.597Z",
+  "scenarios": [
+    {
+      "id": "daily_one",
+      "title": "Twin First Contact",
+      "prophecy": "The first stone you loose strikes twice. Let every shot's opening kiss be thunder against the pegs.",
+      "effect": "double_first_hit",
+      "debrief": "Aim tomorrow's opening shot at the densest peg cluster; the doubling only pays when the first touch sparks a chain."
+    },
+    {
+      "id": "daily_two",
+      "title": "The Cauldron's Mercy",
+      "prophecy": "Slay a foe at settlement and the cauldron gives back a life. Mercy flows to those who clear the board.",
+      "effect": "heal_after_settlement",
+      "debrief": "Push one settlement deeper than feels safe next run; each enemy defeated refills a life before the boss appears."
+    },
+    {
+      "id": "daily_three",
+      "title": "Brittle Brilliance",
+      "prophecy": "You begin with only two lives, yet your aim knows no such limit. Walk fragile, strike true.",
+      "effect": "glass_cannon",
+      "debrief": "With two lives, scout the first three boards without spending rerolls, then commit once the leaky lane is known."
+    }
+  ]
+}

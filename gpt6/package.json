@@ -14,7 +14,8 @@
     "format:check": "prettier --check src tests scripts *.ts *.json",
     "record": "node scripts/record-gameplay.mjs",
     "record:package": "node scripts/package-recording.mjs",
-    "record:export": "node scripts/export-evidence.mjs"
+    "record:export": "node scripts/export-evidence.mjs",
+    "ai:scenarios": "node scripts/generate-ai-scenarios.mjs"
   },
   "dependencies": {
     "phaser": "3.90.0"

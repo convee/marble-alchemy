@@ -3,6 +3,8 @@ const MAX_EVENTS = 50;
 const MAX_BODY_BYTES = 16 * 1024;
 const EVENT_NAMES = new Set([
   'page_view',
+  'game_ready',
+  'landing_view',
   'game_start',
   'shot_attempt',
   'level_complete',
@@ -12,6 +14,11 @@ const EVENT_NAMES = new Set([
   'run_lost',
   'upgrade_selected',
   'run_restart',
+  'ai_challenge_loaded',
+  'ai_rule_triggered',
+  'daily_challenge_completed',
+  'share_attempt',
+  'share_completed',
 ]);
 
 function headers() {
