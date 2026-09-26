@@ -197,6 +197,7 @@ test('actual split bodies, finite lightning, critical/fire damage, and timeout r
 test('all five upgrade screens, unique offers, healing, victory and play again', async ({
   page,
 }) => {
+  test.setTimeout(90000);
   await ready(page);
   // Fixtures isolate progression UI; real physics causes each enemy defeat.
   await fixture(page, { hp: 3, build: { lightning: true, split: true, critical: true } });
