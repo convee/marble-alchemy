@@ -1,5 +1,5 @@
-/* Lightweight source-level locale switch. Chinese remains the default; adding
-   ?lang=en gives English labels where the shared shell owns the copy. */
+/* Lightweight source-level locale switch. English is the default; add
+   ?lang=zh to switch shared labels to Simplified Chinese. */
 (function () {
   'use strict';
   var params = new URLSearchParams(location.search);

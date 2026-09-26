@@ -18,6 +18,9 @@ test('renders an English canonical game page with playable variants', () => {
   });
   assert.match(html, /<html lang="en">/);
   assert.match(html, /https:\/\/chaoschemy\.com\/games\/marble-alchemy\//);
+  assert.match(html, /property="og:title"/);
+  assert.match(html, /"@type":\["VideoGame","WebApplication"\]/);
+  assert.match(html, /"applicationCategory":"GameApplication"/);
   assert.match(html, /href="\/gpt6\/">Play/);
   assert.match(html, /href="https:\/\/github\.com\/convee\/marble-alchemy\/tree\/main\/gpt6">Source/);
 });

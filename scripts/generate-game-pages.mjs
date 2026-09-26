@@ -18,6 +18,7 @@ function escapeHtml(value) {
 export function renderGamePage(game, baseUrl = BASE_URL) {
   const title = escapeHtml(game.title);
   const description = escapeHtml(game.description);
+  const base = String(baseUrl).replace(/\/$/, '');
   const lobbyLink = game.lobbyPath
     ? `<p><a class="button" href="${escapeHtml(game.lobbyPath)}">Open collection lobby</a></p>`
     : '';
@@ -27,7 +28,22 @@ export function renderGamePage(game, baseUrl = BASE_URL) {
           <p>${escapeHtml(variant.description)}</p>
           <p><a class="button primary" href="${escapeHtml(variant.playPath)}">Play</a> <a class="button" href="${escapeHtml(variant.sourcePath)}">Source</a></p>
         </article>`).join('');
-  const canonical = `${String(baseUrl).replace(/\/$/, '')}/games/${game.slug}/`;
+  const canonical = `${base}/games/${game.slug}/`;
+  const image = game.variants?.find((variant) => variant.image)?.image;
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@type': ['VideoGame', 'WebApplication'],
+    name: game.title,
+    url: canonical,
+    description: game.description,
+    applicationCategory: 'GameApplication',
+    operatingSystem: 'Any',
+    gamePlatform: 'Web browser',
+    isAccessibleForFree: true,
+    offers: { '@type': 'Offer', price: 0, priceCurrency: 'USD' },
+  };
+  if (image) structuredData.image = `${base}${image}`;
+  const structuredJson = JSON.stringify(structuredData).replace(/</g, '\\u003c');
   return `<!doctype html>
 <html lang="en">
   <head>
@@ -35,6 +51,11 @@ export function renderGamePage(game, baseUrl = BASE_URL) {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="${description}" />
     <link rel="canonical" href="${escapeHtml(canonical)}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="${title} · Chaoschemy" />
+    <meta property="og:description" content="${description}" />
+    <meta property="og:url" content="${escapeHtml(canonical)}" />
+${image ? `    <meta property="og:image" content="${escapeHtml(`${base}${image}`)}" />\n` : ''}    <script type="application/ld+json">${structuredJson}</script>
     <title>${title} · Chaoschemy</title>
     <style>
       :root { color-scheme: dark; --bg: #080c18; --panel: rgba(14, 20, 40, .88); --text: #e8f4ff; --muted: #9aabd0; --cyan: #35f2ff; --gold: #d8c68f; }
