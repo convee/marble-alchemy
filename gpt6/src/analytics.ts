@@ -12,6 +12,7 @@ type EventRecord = {
 
 const QUEUE_KEY = 'chaoschemy:analytics:v1';
 const SESSION_KEY = 'chaoschemy:session:v1';
+const GAME_PROPS = { game_id: 'marble-alchemy', variant: 'gpt6', app: 'gpt6' } as const;
 const endpoint = (import.meta.env.VITE_ANALYTICS_ENDPOINT as string | undefined)?.trim();
 
 function sessionId(): string {
@@ -99,7 +100,7 @@ function attribution(): Pick<EventRecord, 'utm_source' | 'utm_campaign' | 'utm_c
 export function track(name: string, props: Record<string, Value> = {}): void {
   const event: EventRecord = {
     name,
-    props,
+    props: { ...GAME_PROPS, ...props },
     ts: new Date().toISOString(),
     path: location.pathname,
     session_id: sessionId(),

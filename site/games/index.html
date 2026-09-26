@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#080c18" />
+    <meta name="description" content="Browse Chaoschemy browser games and playable variants." />
+    <link rel="canonical" href="https://chaoschemy.com/games/" />
+    <title>Game Catalog · Chaoschemy</title>
+    <style>
+      :root { color-scheme: dark; --bg: #080c18; --panel: rgba(14, 20, 40, .88); --text: #e8f4ff; --muted: #9aabd0; --cyan: #35f2ff; --gold: #d8c68f; }
+      * { box-sizing: border-box; }
+      body { min-height: 100vh; margin: 0; padding: 42px 20px; background: radial-gradient(900px 560px at 18% 8%, rgba(195,166,251,.16), transparent 60%), var(--bg); color: var(--text); font: 16px/1.7 system-ui, -apple-system, sans-serif; }
+      main { width: min(1080px, 100%); margin: 0 auto; }
+      header { max-width: 720px; margin-bottom: 32px; }
+      h1 { margin: 0 0 8px; color: var(--cyan); letter-spacing: 3px; text-shadow: 0 0 18px rgba(53,242,255,.35); }
+      h2 { margin: 0; color: var(--gold); letter-spacing: 1px; }
+      h3 { margin: 0; font-size: 18px; }
+      p { color: var(--muted); }
+      .catalog { display: grid; gap: 22px; }
+      .game { padding: 24px; border: 1px solid rgba(142,162,200,.3); border-radius: 18px; background: var(--panel); }
+      .game-head { display: flex; justify-content: space-between; gap: 18px; align-items: start; }
+      .status { padding: 4px 10px; border: 1px solid rgba(53,242,255,.35); border-radius: 99px; color: var(--cyan); font-size: 12px; letter-spacing: 1px; text-transform: uppercase; }
+      .variants { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin-top: 18px; }
+      .variant { overflow: hidden; border: 1px solid rgba(142,162,200,.22); border-radius: 14px; background: rgba(5,7,15,.45); }
+      .variant img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; }
+      .variant-body { padding: 15px; }
+      .variant-body p { margin: 7px 0 12px; font-size: 14px; }
+      .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+      a.button { display: inline-block; padding: 8px 13px; border: 1px solid rgba(53,242,255,.45); border-radius: 9px; color: var(--text); text-decoration: none; }
+      a.button.primary { border-color: var(--gold); background: rgba(216,198,143,.14); }
+      a.button:hover { background: rgba(255,255,255,.1); }
+      .error { padding: 18px; border: 1px solid rgba(255,120,120,.4); border-radius: 12px; color: #ffc4c4; }
+      footer { margin-top: 38px; color: var(--muted); text-align: center; font-size: 13px; }
+      footer a { color: var(--cyan); }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>Game Catalog</h1>
+        <p>Playable browser experiments from Chaoschemy. Each game can carry multiple builds or variants while keeping one stable catalog entry.</p>
+      </header>
+      <section class="catalog" id="catalog" aria-live="polite"><p>Loading games…</p></section>
+      <footer><a href="../">Chaoschemy home</a> · <a href="../guide.html">Field guide</a> · <a href="../privacy.html">Privacy</a> · <a href="../terms.html">Terms</a></footer>
+    </main>
+    <script src="../analytics.js"></script>
+    <script>
+      const catalog = document.querySelector('#catalog');
+      const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
+      const renderVariant = (game, variant) => `
+        <article class="variant">
+          <img src="${escapeHtml(variant.image || '')}" alt="${escapeHtml(variant.title)} gameplay" loading="lazy" />
+          <div class="variant-body">
+            <h3>${escapeHtml(variant.title)}</h3>
+            <p>${escapeHtml(variant.description)}</p>
+            <div class="actions">
+              <a class="button primary" data-track="catalog_play" data-game-id="${escapeHtml(game.slug)}" data-variant="${escapeHtml(variant.slug)}" href="${escapeHtml(variant.playPath)}">Play</a>
+              <a class="button" href="${escapeHtml(variant.sourcePath)}">Source</a>
+            </div>
+          </div>
+        </article>`;
+      const renderGame = (game) => `
+        <article class="game">
+          <div class="game-head"><div><h2>${escapeHtml(game.title)}</h2><p>${escapeHtml(game.tagline)}<br />${escapeHtml(game.description)}</p></div><span class="status">${escapeHtml(game.status)}</span></div>
+          <div class="variants">${(game.variants || []).map((variant) => renderVariant(game, variant)).join('')}</div>
+        </article>`;
+      fetch('../games.json', { cache: 'no-store' })
+        .then((response) => { if (!response.ok) throw new Error('catalog_unavailable'); return response.json(); })
+        .then((catalogData) => { catalog.innerHTML = catalogData.games.map(renderGame).join(''); })
+        .catch(() => { catalog.innerHTML = '<p class="error">The catalog is temporarily unavailable. <a href="../">Return to the homepage.</a></p>'; });
+    </script>
+  </body>
+</html>

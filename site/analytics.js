@@ -39,6 +39,11 @@
   });
   document.addEventListener('click', (event) => {
     const target = event.target instanceof Element ? event.target.closest('[data-track]') : null;
-    if (target) track('cta_click', { target: target.dataset.track });
+    if (target) {
+      const props = { target: target.dataset.track };
+      if (target.dataset.gameId) props.game_id = target.dataset.gameId;
+      if (target.dataset.variant) props.variant = target.dataset.variant;
+      track('cta_click', props);
+    }
   });
 })();

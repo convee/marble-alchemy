@@ -11,6 +11,7 @@ Marble Alchemy is an open-source browser roguelite built around real marble coll
 | Claude Code · fable 5.1 | [`fable5.1/`](fable5.1/) | https://chaoschemy.com/fable5.1/ | Deterministic baseline |
 
 Comparison home: https://chaoschemy.com/
+Game catalog: https://chaoschemy.com/games/
 
 ## What is shared
 
@@ -50,6 +51,8 @@ Run checks with `npm test`, `npm run test:e2e`, and `npm run build` inside eithe
 gpt6/          Codex GPT-6 build, tests, and evaluation evidence
 fable5.1/      Claude Code fable 5.1 build, tests, and report
 site/          English comparison home and SEO pages
+site/games.json Single catalog registry for published games and build variants
+site/games/    Public multi-game catalog page
 infra/         First-party analytics Worker and D1 schema
 docs/growth/   Acquisition, monitoring, and monetization records
 ```

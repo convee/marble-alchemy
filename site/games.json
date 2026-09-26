@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "games": [
+    {
+      "slug": "marble-alchemy",
+      "title": "Marble Alchemy",
+      "tagline": "AI-directed browser roguelite",
+      "description": "A free, no-download marble roguelite with an AI Director build and a deterministic comparison build.",
+      "genre": ["Roguelite", "Browser game"],
+      "status": "published",
+      "sourcePath": "https://github.com/convee/marble-alchemy",
+      "variants": [
+        {
+          "slug": "gpt6",
+          "title": "Codex · GPT-6 AI Director",
+          "description": "A model-authored daily challenge is validated into a bounded local rule before each run.",
+          "playPath": "/gpt6/",
+          "sourcePath": "https://github.com/convee/marble-alchemy/tree/main/gpt6",
+          "image": "/media/gpt6-cover-en.jpg",
+          "analyticsApp": "gpt6"
+        },
+        {
+          "slug": "fable5.1",
+          "title": "Claude Code · fable 5.1",
+          "description": "A deterministic baseline for comparing the underlying marble physics and upgrade loop.",
+          "playPath": "/fable5.1/",
+          "sourcePath": "https://github.com/convee/marble-alchemy/tree/main/fable5.1",
+          "image": "/media/fable5.1-cover-en.jpg",
+          "analyticsApp": "fable5.1"
+        }
+      ]
+    }
+  ]
+}

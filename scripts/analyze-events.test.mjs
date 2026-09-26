@@ -18,6 +18,16 @@ test('builds a funnel and replay report from event records', () => {
   assert.equal(report.funnel.replay_sessions, 1);
   assert.equal(report.funnel.replay_rate, 0.5);
   assert.deepEqual(report.attribution.x, { page_views: 1, sessions: 1 });
+  assert.equal(report.breakdown_by_game['(unattributed)/(all)'].sessions, 2);
+});
+
+test('breaks down game and variant telemetry without losing legacy app data', () => {
+  const report = analyze([
+    { name: 'page_view', session_id: 'gpt', ts: '2026-09-01T00:00:00Z', props: { game_id: 'marble-alchemy', variant: 'gpt6' } },
+    { name: 'game_start', session_id: 'gpt', ts: '2026-09-01T00:01:00Z', props: { app: 'gpt6' } },
+    { name: 'run_complete', session_id: 'gpt', ts: '2026-09-01T00:02:00Z', props: { game_id: 'marble-alchemy', variant: 'gpt6' } },
+  ]);
+  assert.equal(report.breakdown_by_game['marble-alchemy/gpt6'].funnel.completed_sessions, 1);
 });
 
 test('accepts NDJSON-compatible alternate event keys', () => {

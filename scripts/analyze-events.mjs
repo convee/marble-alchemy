@@ -71,8 +71,7 @@ function ratio(numerator, denominator) {
   return denominator ? Number((numerator / denominator).toFixed(4)) : null;
 }
 
-export function analyze(values) {
-  const events = values.map(normalize).filter(Boolean).sort((a, b) => a.timestamp - b.timestamp);
+function summarizeScope(events) {
   const byName = Object.fromEntries(
     [...new Set(events.map((event) => event.name))]
       .sort()
@@ -90,6 +89,31 @@ export function analyze(values) {
     items.filter((event) => event.name === 'game_start').length > 1,
   );
   const completed = started.filter((items) => items.some((event) => COMPLETION_EVENTS.has(event.name)));
+  return {
+    events: events.length,
+    sessions: sessions.size,
+    event_counts: byName,
+    funnel: {
+      page_views: byName.page_view ?? 0,
+      game_start_sessions: started.length,
+      start_rate: ratio(started.length, byName.page_view ?? 0),
+      completed_sessions: completed.length,
+      completion_rate: ratio(completed.length, started.length),
+      replay_sessions: replayed.length,
+      replay_rate: ratio(replayed.length, started.length),
+    },
+  };
+}
+
+export function analyze(values) {
+  const events = values.map(normalize).filter(Boolean).sort((a, b) => a.timestamp - b.timestamp);
+  const summary = summarizeScope(events);
+  const sessions = new Map();
+  for (const event of events) {
+    const current = sessions.get(event.sessionId) ?? [];
+    current.push(event);
+    sessions.set(event.sessionId, current);
+  }
   const firstDay = new Map(
     [...sessions].map(([id, items]) => [id, utcDay(items[0].timestamp)]),
   );
@@ -115,21 +139,28 @@ export function analyze(values) {
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([source, value]) => [source, { page_views: value.page_views, sessions: value.sessions.size }]),
   );
+  const gameGroups = new Map();
+  for (const sessionEvents of sessions.values()) {
+    const identity = sessionEvents.find((event) => event.props.game_id || event.props.gameId) ?? sessionEvents.find((event) => event.props.app);
+    const gameId = String(identity?.props.game_id ?? identity?.props.gameId ?? identity?.props.app ?? '').trim() || '(unattributed)';
+    const variant = String(
+      sessionEvents.find((event) => event.props.variant)?.props.variant ?? '',
+    ).trim() || '(all)';
+    const key = `${gameId}/${variant}`;
+    const current = gameGroups.get(key) ?? { game_id: gameId, variant, events: [] };
+    current.events.push(...sessionEvents);
+    gameGroups.set(key, current);
+  }
+  const breakdownByGame = Object.fromEntries(
+    [...gameGroups.entries()]
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([key, group]) => [key, { game_id: group.game_id, variant: group.variant, ...summarizeScope(group.events) }]),
+  );
   return {
     generated_at: new Date().toISOString(),
-    events: events.length,
-    sessions: sessions.size,
-    event_counts: byName,
-    funnel: {
-      page_views: byName.page_view ?? 0,
-      game_start_sessions: started.length,
-      start_rate: ratio(started.length, byName.page_view ?? 0),
-      completed_sessions: completed.length,
-      completion_rate: ratio(completed.length, started.length),
-      replay_sessions: replayed.length,
-      replay_rate: ratio(replayed.length, started.length),
-    },
+    ...summary,
     attribution: attributionSummary,
+    breakdown_by_game: breakdownByGame,
     cohort_days: {
       first_seen_utc_days: [...new Set(firstDay.values())].sort(),
       d1: retention(1),

@@ -52,6 +52,30 @@ jobs:
           test -f dist/gpt6/index.html
           test -f dist/fable5.1/index.html
 
+      - name: Validate game registry
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const path = require('node:path');
+          const registry = JSON.parse(fs.readFileSync('dist/games.json', 'utf8'));
+          if (!Array.isArray(registry.games) || registry.games.length === 0) throw new Error('games.json must contain games');
+          const slugs = new Set();
+          for (const game of registry.games) {
+            if (!game.slug || slugs.has(game.slug)) throw new Error(`duplicate game slug: ${game.slug}`);
+            slugs.add(game.slug);
+            if (!Array.isArray(game.variants) || game.variants.length === 0) throw new Error(`game has no variants: ${game.slug}`);
+            const variantSlugs = new Set();
+            for (const variant of game.variants) {
+              if (!variant.slug || variantSlugs.has(variant.slug)) throw new Error(`duplicate variant slug: ${game.slug}/${variant.slug}`);
+              variantSlugs.add(variant.slug);
+              if (!variant.playPath?.startsWith('/') || !variant.playPath.endsWith('/')) throw new Error(`invalid playPath: ${variant.playPath}`);
+              if (!/^https:\/\//.test(variant.sourcePath || '')) throw new Error(`invalid sourcePath: ${variant.sourcePath}`);
+              if (!fs.existsSync(path.join('dist', variant.playPath, 'index.html'))) throw new Error(`missing build output: ${variant.playPath}`);
+              if (variant.image && !fs.existsSync(path.join('dist', variant.image))) throw new Error(`missing cover image: ${variant.image}`);
+            }
+          }
+          NODE
+
       - name: Write public monetization config
         env:
           STRIPE_PAYMENT_LINK: ${{ vars.STRIPE_PAYMENT_LINK }}
