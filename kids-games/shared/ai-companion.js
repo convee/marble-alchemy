@@ -235,7 +235,6 @@
     var node = ev.target && ev.target.closest ? ev.target.closest('button,a') : null;
     if (!node) return;
     var id = node.id || '';
-    if (/^(btnStart|btnGo|startBtn|btnRetry|againBtn)$/.test(id)) event('round_start');
     if (/^(btnNext|btnNextLv|btnNextEra|btnFinish)$/.test(id)) event('progress');
   }, true);
   window.addEventListener('kids-game-event', function (ev) { if (ev.detail) event(ev.detail.type || 'progress', ev.detail); });

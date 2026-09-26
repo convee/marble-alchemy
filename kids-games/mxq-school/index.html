@@ -961,6 +961,9 @@ $('startBtn').onclick = function(){
   } else {
     resetGame();
   }
+  window.KidsAI && window.KidsAI.event('round_start', {
+    scene: G.idx + 1, stars: G.stars, completed: G.done.length
+  });
   goStage();
 };
 $('homeBtn').onclick = function(){
@@ -970,7 +973,11 @@ $('homeBtn').onclick = function(){
 };
 $('finHome').onclick = function(){ location.href = '../'; };
 $('coverHome').onclick = function(){ location.href = '../'; };
-$('againBtn').onclick = function(){ resetGame(); goStage(); };
+$('againBtn').onclick = function(){
+  resetGame();
+  window.KidsAI && window.KidsAI.event('round_start', { scene: 1, stars: 0, completed: 0 });
+  goStage();
+};
 
 initCast();
 </script>
