@@ -1,0 +1,8 @@
+[
+  {"id":"sweet-adventure","icon":"🎀","name":"甜心乐园大冒险","type":"点跳跑酷","description":"收集甜品，躲开障碍，冲向彩虹门。","color":"pink","quest":"收集 8 颗糖果"},
+  {"id":"mxq-history","icon":"📜","name":"米小圈历史大冒险","type":"益智答题","description":"穿越 8 个时代，答题集齐历史宝物。","color":"orange","quest":"答对 3 道题"},
+  {"id":"mxq-school","icon":"🎒","name":"米小圈上学记","type":"剧情养成","description":"一起上课、游戏、吃午餐，写下今天的日记。","color":"blue","quest":"完成 2 个场景"},
+  {"id":"block-park","icon":"⛏️","name":"方块乐园","type":"沙盒建造","description":"挖方块、盖房子，打造自己的小角落。","color":"purple","quest":"放置 6 个方块"},
+  {"id":"mxq-platform","icon":"🚩","name":"米小圈闯关大冒险","type":"平台跳跃","description":"跳过平台、收集课本，安全抵达学校。","color":"green","quest":"收集 3 本课本"},
+  {"id":"sweet-match","icon":"🍓","name":"甜甜消消乐","type":"三消","description":"组合特殊糖果，完成每关的甜品目标。","color":"rose","quest":"完成 2 次四连"}
+]

@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#bfe3ff">
+<title>三丽鸥方块乐园</title>
+<meta name="kids-game" content="block-park" data-name="方块乐园" data-name-en="Block Park" data-icon="⛏️">
+<meta name="kids-ai-endpoint" content="https://kids-games-ai.convee-cn.workers.dev">
+<link rel="stylesheet" href="../shared/ai-companion.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⛏️</text></svg>">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; }
+  html,body { width:100%; height:100%; overflow:hidden;
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif; }
+  body { background:#bfe3ff; }
+
+  .screen { position:fixed; left:0; top:0; right:0; bottom:0; display:flex; flex-direction:column;
+    align-items:center; overflow-y:auto; overflow-x:hidden; padding:16px 12px 30px; }
+  .hidden { display:none !important; }
+
+  /* ===== 封面 ===== */
+  #cover { justify-content:center; text-align:center; background:linear-gradient(#bfe3ff,#e8d7ff 60%,#ffe3f0); }
+  .big-title { font-size:clamp(30px,8.5vw,50px); font-weight:900; color:#8a5fd0; letter-spacing:2px;
+    text-shadow:0 3px 0 #fff, 0 6px 14px rgba(138,95,208,.3); margin:6px 0 2px; }
+  .sub-title { font-size:clamp(13px,3.8vw,16px); color:#7a6a9a; font-weight:700; margin-bottom:14px; }
+  .story-box { background:rgba(255,255,255,.92); border:3px dashed #c9a9f0; border-radius:18px;
+    padding:12px 16px; max-width:480px; color:#5d4a7a; font-size:clamp(13px,3.8vw,15px); line-height:1.9;
+    text-align:left; margin:4px 0 14px; }
+  .story-box b { color:#c052a0; }
+  .char-pick { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin:4px 0 16px; }
+  .cp { display:flex; flex-direction:column; align-items:center; gap:4px; background:#fff; border-radius:18px;
+    padding:10px 12px; cursor:pointer; border:3px solid transparent; box-shadow:0 5px 14px rgba(138,95,208,.18);
+    transition:.12s; width:88px; }
+  .cp:active { transform:scale(.95); }
+  .cp.sel { border-color:#8a5fd0; background:#f3ebff; transform:scale(1.06); }
+  .cp canvas { width:56px; height:56px; }
+  .cp span { font-size:12px; font-weight:900; color:#6a5a8a; }
+  .go-btn { padding:15px 50px; font-size:clamp(18px,5.2vw,23px); font-weight:900; letter-spacing:3px; color:#fff;
+    background:linear-gradient(#b085e8,#8a5fd0); border:none; border-radius:999px; cursor:pointer;
+    box-shadow:0 6px 0 #6a43a8, 0 10px 24px rgba(138,95,208,.4); transition:.1s; }
+  .go-btn:active { transform:translateY(4px); box-shadow:0 2px 0 #6a43a8; }
+  .mini-note { margin-top:10px; font-size:12px; color:#9a86b8; }
+
+  /* ===== 游戏画布 ===== */
+  #game { position:fixed; left:0; top:0; right:0; bottom:0; overflow:hidden; background:#bfe3ff; }
+  #cv { position:absolute; left:0; top:0; display:block; }
+
+  /* 顶部条 */
+  .topbar { position:absolute; left:0; right:0; top:0; display:flex; align-items:center; gap:8px;
+    padding:8px max(10px, env(safe-area-inset-right)) 4px max(10px, env(safe-area-inset-left)); z-index:10; }
+  .tb-btn { border:none; background:rgba(255,255,255,.92); border-radius:999px; padding:7px 13px;
+    font-weight:900; color:#8a5fd0; cursor:pointer; box-shadow:0 3px 8px rgba(90,60,140,.25); font-size:14px; }
+  .mode-btn.dig  { color:#c0392b; }
+  .mode-btn.build{ color:#2e7d32; }
+  .tb-pill { background:rgba(255,255,255,.82); border-radius:999px; padding:6px 11px;
+    font-weight:900; color:#8a5fd0; font-size:13px; box-shadow:0 3px 8px rgba(90,60,140,.2);
+    pointer-events:none; white-space:nowrap; }
+  .tb-sp { flex:1; }
+
+  /* 方块选择栏 */
+  .palette { position:absolute; left:50%; transform:translateX(-50%);
+    bottom:calc(120px + env(safe-area-inset-bottom)); display:flex; gap:8px; z-index:10;
+    background:rgba(255,255,255,.85); border-radius:16px; padding:7px 9px; box-shadow:0 4px 14px rgba(90,60,140,.28);
+    max-width:94vw; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  .pal { flex:none; }
+  .pal { width:44px; height:44px; border-radius:11px; cursor:pointer; border:3px solid rgba(0,0,0,.12);
+    transition:.1s; position:relative; font-size:22px; display:flex; align-items:center; justify-content:center; }
+  .pal.sel { border-color:#8a5fd0; transform:scale(1.14); box-shadow:0 0 0 3px rgba(138,95,208,.3); }
+
+  /* 触控按钮 */
+  .ctrl { position:absolute; bottom:calc(18px + env(safe-area-inset-bottom)); z-index:10; display:flex; gap:12px; }
+  .ctrl.left { left:max(14px, env(safe-area-inset-left)); }
+  .ctrl.right { right:max(14px, env(safe-area-inset-right)); }
+  .cbtn { width:66px; height:66px; border-radius:50%; border:none; background:rgba(255,255,255,.9);
+    font-size:28px; font-weight:900; color:#8a5fd0; box-shadow:0 4px 12px rgba(90,60,140,.3); cursor:pointer;
+    touch-action:none; }
+  .cbtn:active { background:#e8d7ff; transform:scale(.94); }
+
+  #toast { position:fixed; left:50%; bottom:45%; transform:translateX(-50%); opacity:0;
+    background:rgba(90,60,140,.92); color:#fff; padding:10px 18px; border-radius:999px; font-weight:800;
+    font-size:14px; z-index:60; transition:.25s; pointer-events:none; max-width:88vw; text-align:center; }
+  #toast.show { opacity:1; }
+  #errbar { position:fixed; left:0; right:0; top:0; background:#c0392b; color:#fff; font-size:12px;
+    padding:6px 10px; z-index:999; display:none; word-break:break-all; }
+</style>
+</head>
+<body>
+<div id="errbar"></div>
+
+<!-- ===== 封面 ===== -->
+<div id="cover" class="screen">
+  <div class="big-title">⛏️ 三丽鸥方块乐园</div>
+  <div class="sub-title">像我的世界一样，挖方块、盖房子！</div>
+  <div class="story-box">
+    选一个小伙伴进入方块世界吧！<br>
+    · 左右走、跳一跳，探索草地和山洞<br>
+    · <b>挖掉</b>方块，或者<b>放上</b>喜欢的方块盖小房子<br>
+    · 你搭的世界会<b>自动保存</b>，下次接着玩～
+  </div>
+  <div class="char-pick" id="charPick"></div>
+  <button class="go-btn" id="startBtn">进入世界 ▶</button>
+  <div class="mini-note">🌍 世界会自动保存 · 「重开」可以生成新世界</div>
+  <button class="tb-btn" id="coverHome" style="margin-top:14px;">🎪 回游戏乐园</button>
+</div>
+
+<!-- ===== 游戏 ===== -->
+<div id="game" class="hidden">
+  <canvas id="cv"></canvas>
+  <div class="topbar">
+    <button class="tb-btn" id="homeBtn">🏠</button>
+    <button class="tb-btn mode-btn dig" id="modeBtn">⛏️ 挖掘</button>
+    <div class="tb-pill" id="statPill">🧱 0 · 💎 0</div>
+    <div class="tb-sp"></div>
+    <button class="tb-btn" id="resetBtn">🌱 重开</button>
+  </div>
+  <div class="palette" id="palette"></div>
+  <div class="ctrl left">
+    <button class="cbtn" id="btnL">◀</button>
+    <button class="cbtn" id="btnR">▶</button>
+  </div>
+  <div class="ctrl right">
+    <button class="cbtn" id="btnJ">⬆</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="../shared/locale.js"></script>
+<script src="../shared/ai-companion.js"></script>
+<script>
+"use strict";
+window.onerror = function(m, s, l){
+  var e = document.getElementById('errbar');
+  e.style.display = 'block'; e.textContent = '出错: ' + m + ' @' + l;
+  return false;
+};
+
+function $(id){ return document.getElementById(id); }
+function toast(msg){
+  var t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toast._t); toast._t = setTimeout(function(){ t.classList.remove('show'); }, 1400);
+}
+
+/* ================= 音效（WebAudio 合成，零外部资源） ================= */
+var actx = null;
+function audioCtx(){
+  if (actx) return actx;
+  try {
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (AC) actx = new AC();
+  } catch(e){ actx = null; }
+  return actx;
+}
+function tone(freq, dur, type, vol, delay){
+  var ac = audioCtx(); if (!ac) return;
+  var t0 = ac.currentTime + (delay || 0);
+  var o = ac.createOscillator(), g = ac.createGain();
+  o.type = type || 'sine'; o.frequency.value = freq;
+  g.gain.setValueAtTime(0.0001, t0);
+  g.gain.exponentialRampToValueAtTime(vol || 0.15, t0 + 0.012);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  o.connect(g); g.connect(ac.destination);
+  o.start(t0); o.stop(t0 + dur + 0.02);
+}
+function sfx(kind){
+  var ac = audioCtx(); if (!ac) return;
+  if (kind === 'jump'){ tone(520, 0.14, 'sine', 0.11); tone(780, 0.12, 'sine', 0.07, 0.05); }
+  else if (kind === 'dig'){ tone(190, 0.09, 'square', 0.07); }
+  else if (kind === 'place'){ tone(430, 0.09, 'triangle', 0.11); tone(650, 0.09, 'triangle', 0.07, 0.04); }
+  else if (kind === 'treasure'){ tone(660, 0.12, 'sine', 0.13); tone(880, 0.12, 'sine', 0.12, 0.1); tone(1180, 0.2, 'sine', 0.12, 0.2); }
+  else if (kind === 'select'){ tone(720, 0.06, 'triangle', 0.08); }
+}
+
+/* ================= 粒子（挖/放/宝石特效） ================= */
+var particles = [];
+function burst(wx, wy, color, n){
+  var i;
+  for (i = 0; i < n; i++){
+    var a = Math.random() * Math.PI * 2, sp = 1 + Math.random() * 3;
+    particles.push({ x: wx, y: wy, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp - 1.6,
+      life: 18 + Math.random()*12, max: 26, color: color, size: 3 + Math.random()*3 });
+  }
+  if (particles.length > 240) particles.splice(0, particles.length - 240);
+}
+function stepParticles(){
+  var i, p;
+  for (i = particles.length - 1; i >= 0; i--){
+    p = particles[i];
+    p.x += p.vx; p.y += p.vy; p.vy += 0.18; p.life--;
+    if (p.life <= 0) particles.splice(i, 1);
+  }
+}
+function drawParticles(){
+  var i, p;
+  for (i = 0; i < particles.length; i++){
+    p = particles[i];
+    ctx.globalAlpha = Math.max(0, Math.min(1, p.life / p.max));
+    ctx.fillStyle = p.color;
+    ctx.fillRect(p.x - camX - p.size/2, p.y - camY - p.size/2, p.size, p.size);
+  }
+  ctx.globalAlpha = 1;
+}
+
+/* ================= 小动物（纯装饰，天上飞来飞去） ================= */
+var critters = [];
+function initCritters(){
+  critters = [];
+  var kinds = ['🦋', '🦋', '🐦', '🦋', '🐝'];
+  var i;
+  for (i = 0; i < kinds.length; i++){
+    critters.push({
+      emoji: kinds[i],
+      x: (8 + Math.random()*100) * TILE,
+      baseY: (5 + Math.random()*11) * TILE,
+      spd: 0.3 + Math.random()*0.5,
+      dir: Math.random() < 0.5 ? 1 : -1,
+      phase: Math.random()*Math.PI*2,
+      size: 20 + Math.random()*8
+    });
+  }
+}
+function stepCritters(){
+  var i, cr;
+  for (i = 0; i < critters.length; i++){
+    cr = critters[i];
+    cr.x += cr.spd * cr.dir; cr.phase += 0.08;
+    if (cr.x < 2*TILE) cr.dir = 1;
+    if (cr.x > (COLS-2)*TILE) cr.dir = -1;
+  }
+}
+function drawCritters(){
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  var i, cr, x, y;
+  for (i = 0; i < critters.length; i++){
+    cr = critters[i];
+    x = cr.x - camX; y = cr.baseY + Math.sin(cr.phase)*10 - camY;
+    if (x < -30 || x > W + 30 || y < -30 || y > H + 30) continue;
+    ctx.font = cr.size + 'px serif';
+    ctx.save();
+    if (cr.dir < 0){ ctx.translate(x, 0); ctx.scale(-1, 1); ctx.translate(-x, 0); }
+    ctx.fillText(cr.emoji, x, y);
+    ctx.restore();
+  }
+  ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
+}
+
+/* ================= 建造统计 ================= */
+var stats = { built: 0, treasure: 0 };
+function updateStats(){
+  var p = $('statPill');
+  if (p) p.textContent = '🧱 ' + stats.built + ' · 💎 ' + stats.treasure;
+}
+
+/* ================= 角色（三丽鸥风原创手绘，canvas 绘制） ================= */
+var CHARS = [
+  { key:'melody',  name:'小美美', body:'#ffb3cd', hood:'#ff8fb0', ear:'long' },   // 美乐蒂风
+  { key:'kuromi',  name:'酷洛洛', body:'#f0f0f0', hood:'#3a3a4a', ear:'long' },   // 库洛米风
+  { key:'kitty',   name:'凯蒂咪', body:'#fff',    hood:'#ff5a76', ear:'cat'  },   // Kitty 风
+  { key:'cinna',   name:'桂桂狗', body:'#fff',    hood:'#bfe3ff', ear:'flop' }    // 玉桂狗风
+];
+
+// 把角色画到 ctx：以 (x,y) 为脚底中心，高约 h
+function drawChar(ctx, ch, x, y, h, face){
+  var w = h * 0.78, hx = x, hy = y - h;      // 头顶
+  var headR = w * 0.5;
+  var cx = hx, cy = hy + headR;              // 头圆心
+  ctx.save();
+  if (face < 0){ ctx.translate(cx, 0); ctx.scale(-1, 1); ctx.translate(-cx, 0); }
+  // 耳朵
+  ctx.fillStyle = ch.hood;
+  if (ch.ear === 'long'){ // 竖长耳（美乐蒂/库洛米）
+    ctx.beginPath(); ctx.ellipse(cx - headR*0.5, cy - headR*0.9, headR*0.28, headR*0.75, -0.25, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(cx + headR*0.5, cy - headR*0.9, headR*0.28, headR*0.75, 0.25, 0, Math.PI*2); ctx.fill();
+  } else if (ch.ear === 'cat'){ // 猫耳
+    ctx.beginPath(); ctx.moveTo(cx - headR*0.85, cy - headR*0.3);
+    ctx.lineTo(cx - headR*0.45, cy - headR*1.15); ctx.lineTo(cx - headR*0.1, cy - headR*0.75); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(cx + headR*0.85, cy - headR*0.3);
+    ctx.lineTo(cx + headR*0.45, cy - headR*1.15); ctx.lineTo(cx + headR*0.1, cy - headR*0.75); ctx.closePath(); ctx.fill();
+  } else { // 垂耳（玉桂狗）
+    ctx.beginPath(); ctx.ellipse(cx - headR*0.95, cy + headR*0.1, headR*0.3, headR*0.7, 0.5, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(cx + headR*0.95, cy + headR*0.1, headR*0.3, headR*0.7, -0.5, 0, Math.PI*2); ctx.fill();
+  }
+  // 头
+  ctx.fillStyle = ch.body;
+  ctx.beginPath(); ctx.arc(cx, cy, headR, 0, Math.PI*2); ctx.fill();
+  ctx.strokeStyle = 'rgba(90,60,80,.25)'; ctx.lineWidth = Math.max(1, h*0.02); ctx.stroke();
+  // 兜帽（库洛米黑帽）
+  if (ch.key === 'kuromi'){
+    ctx.fillStyle = ch.hood;
+    ctx.beginPath(); ctx.arc(cx, cy, headR, Math.PI*0.95, Math.PI*2.05); ctx.fill();
+    ctx.fillStyle = '#ff70a0';
+    ctx.beginPath(); ctx.arc(cx, cy - headR*0.75, headR*0.16, 0, Math.PI*2); ctx.fill();
+  }
+  if (ch.key === 'melody'){ // 美乐蒂粉帽
+    ctx.fillStyle = ch.hood;
+    ctx.beginPath(); ctx.arc(cx, cy, headR, Math.PI*1.05, Math.PI*1.95); ctx.fill();
+    ctx.fillStyle = '#ffd24d';
+    ctx.beginPath(); ctx.arc(cx - headR*0.55, cy - headR*0.35, headR*0.14, 0, Math.PI*2); ctx.fill();
+  }
+  if (ch.key === 'kitty'){ // 蝴蝶结
+    ctx.fillStyle = ch.hood;
+    ctx.beginPath(); ctx.arc(cx - headR*0.5, cy - headR*0.62, headR*0.2, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(cx - headR*0.72, cy - headR*0.62, headR*0.16, headR*0.11, 0.4, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(cx - headR*0.28, cy - headR*0.62, headR*0.16, headR*0.11, -0.4, 0, Math.PI*2); ctx.fill();
+  }
+  // 眼睛 & 嘴（朝向右）
+  var eyeY = cy + headR*0.05, eyeDx = headR*0.32;
+  ctx.fillStyle = '#3a2e3a';
+  ctx.beginPath(); ctx.arc(cx - eyeDx + headR*0.1, eyeY, h*0.035, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx + eyeDx + headR*0.1, eyeY, h*0.035, 0, Math.PI*2); ctx.fill();
+  if (ch.key === 'kitty'){ // 黄鼻子，无嘴
+    ctx.fillStyle = '#ffd24d';
+    ctx.beginPath(); ctx.ellipse(cx + headR*0.1, cy + headR*0.32, h*0.035, h*0.025, 0, 0, Math.PI*2); ctx.fill();
+  } else {
+    ctx.strokeStyle = '#c05a7a'; ctx.lineWidth = Math.max(1.5, h*0.022); ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(cx + headR*0.0, cy + headR*0.35);
+    ctx.quadraticCurveTo(cx + headR*0.14, cy + headR*0.48, cx + headR*0.3, cy + headR*0.33); ctx.stroke();
+  }
+  // 腮红
+  ctx.fillStyle = 'rgba(255,150,170,.55)';
+  ctx.beginPath(); ctx.ellipse(cx - headR*0.55, cy + headR*0.3, h*0.04, h*0.028, 0, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(cx + headR*0.62, cy + headR*0.3, h*0.04, h*0.028, 0, 0, Math.PI*2); ctx.fill();
+  // 身体（小圆身）
+  ctx.fillStyle = ch.key === 'kuromi' ? '#3a3a4a' : ch.hood;
+  ctx.beginPath(); ctx.ellipse(cx, y - h*0.14, w*0.34, h*0.16, 0, 0, Math.PI*2); ctx.fill();
+  // 小脚
+  ctx.fillStyle = ch.body;
+  ctx.beginPath(); ctx.ellipse(cx - w*0.16, y - h*0.02, w*0.13, h*0.045, 0, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(cx + w*0.16, y - h*0.02, w*0.13, h*0.045, 0, 0, Math.PI*2); ctx.fill();
+  ctx.restore();
+}
+
+/* ================= 方块 ================= */
+var BLOCKS = {
+  0: null, // 空气
+  1: { name:'草地', top:'#7ecf5e', side:'#9a6a42', deco:'grass' },
+  2: { name:'泥土', top:'#9a6a42', side:'#9a6a42' },
+  3: { name:'石头', top:'#9aa4b0', side:'#8a94a0' },
+  4: { name:'木头', top:'#c99a5e', side:'#b0854e', deco:'wood' },
+  5: { name:'树叶', top:'#6abf6a', side:'#5cb85c', deco:'leaf' },
+  6: { name:'粉砖', top:'#ffb3cd', side:'#ff9ebd', deco:'brick' },
+  7: { name:'紫砖', top:'#c9a9f0', side:'#b895e0', deco:'brick' },
+  8: { name:'糖果', top:'#fff', side:'#ffe3f0', deco:'candy' },
+  9: { name:'云朵', top:'#f5faff', side:'#e8f2fc', deco:'cloud' },
+  10:{ name:'树干', top:'#c9a06a', side:'#b58a55', deco:'wood' }, // 野生树干：可穿过可挖，不在方块栏
+  11:{ name:'宝石矿', top:'#8a94a0', side:'#7d8894', deco:'gem', treasure:true }, // 埋在石头里，挖到有惊喜，不在方块栏
+  12:{ name:'小花', top:'#8fd97a', side:'#7ecf5e', deco:'flower' },
+  13:{ name:'小灯', top:'#fff3c4', side:'#e8c860', deco:'lamp' },
+  14:{ name:'窗户', top:'#bfe3ff', side:'#9fc9ee', deco:'window' },
+  15:{ name:'蛋糕', top:'#ffe3b0', side:'#ffcf8a', deco:'cake' },
+  16:{ name:'彩虹', top:'#ffd1dc', side:'#ffc0cb', deco:'rainbow' }
+};
+var PALETTE_IDS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16];
+
+/* ================= 世界 ================= */
+var COLS = 120, ROWS = 36, TILE = 34;
+var SAVE_KEY = 'block_park_v1';
+var world = null, worldDirty = false;
+
+function genWorld(){
+  var w = [];
+  var groundY = 22, r, c;
+  for (r = 0; r < ROWS; r++){ w.push([]); for (c = 0; c < COLS; c++) w[r].push(0); }
+  // 起伏地形
+  var h = groundY;
+  var heights = [];
+  for (c = 0; c < COLS; c++){
+    if (c > 4 && Math.random() < 0.25) h += (Math.random() < 0.5 ? -1 : 1);
+    // 起伏限制±2：保证任何台阶跳一下就能上，全图无需挖掘即可通行
+    if (h < groundY - 2) h = groundY - 2;
+    if (h > groundY + 2) h = groundY + 2;
+    heights.push(h);
+    for (r = h; r < ROWS; r++){
+      w[r][c] = (r === h) ? 1 : (r < h + 4 ? 2 : 3);
+    }
+  }
+  // 树（只种在较高地面且树身固定4高：保证树冠悬在头顶之上，不挡走路）
+  for (c = 6; c < COLS - 4; c += 7 + Math.floor(Math.random()*6)){
+    var ty = heights[c];
+    if (ty > groundY - 1) continue;
+    var th = 4;
+    for (r = ty - th; r < ty; r++) w[r][c] = 10; // 野生树干可穿过，不挡路
+    var lr, lc;
+    for (lr = ty - th - 2; lr <= ty - th; lr++)
+      for (lc = c - 2; lc <= c + 2; lc++)
+        if (lr >= 0 && lc >= 0 && lc < COLS && Math.abs(lc - c) + Math.abs(lr - (ty - th - 1)) < 4 && w[lr][lc] === 0)
+          w[lr][lc] = 5;
+  }
+  // 云
+  for (c = 3; c < COLS - 6; c += 12 + Math.floor(Math.random()*8)){
+    var cy2 = 4 + Math.floor(Math.random()*5);
+    for (var k = 0; k < 3 + Math.floor(Math.random()*2); k++) w[cy2][c + k] = 9;
+  }
+  // 固定地标建筑群（往右走依次看到）
+  buildLandmarks(w, groundY);
+  seedTreasures(w);
+  return { grid: w, heights: heights };
+}
+
+// 在深层石头里随机埋宝石矿（挖到有惊喜）。只改石头(3)→宝石(11)，非破坏、可反复安全调用
+function seedTreasures(w){
+  var r, c;
+  for (r = 0; r < ROWS; r++)
+    for (c = 0; c < COLS; c++)
+      if (w[r][c] === 3 && Math.random() < 0.02) w[r][c] = 11;
+}
+
+// 地标版本号：新增建筑时 +1，旧存档会自动补建
+var LM_VERSION = 4;
+
+function buildLandmarks(w, gy){
+  buildCottage(w, gy, 14);    // 小木屋
+  buildCastle(w, gy, 38);     // 糖果城堡
+  buildShop(w, gy, 68);       // 糖果小店
+  buildTreehouse(w, gy, 84);  // 大树屋
+  buildRainbow(w, gy, 98);    // 彩虹拱门
+  buildSkyIsland(w, 110);     // 天空浮岛
+}
+
+// 清空上空并整平地面（建筑通用地基）
+function flattenArea(w, gy, c0, cw){
+  var r, c;
+  for (c = c0; c < c0 + cw; c++){
+    if (c < 0 || c >= COLS) continue;
+    for (r = 0; r < gy; r++) w[r][c] = 0;
+    for (r = gy; r < ROWS; r++) w[r][c] = (r === gy) ? 1 : (r < gy + 4 ? 2 : 3);
+  }
+}
+
+// 小木屋：木框+树叶尖顶，两侧开门可以走进去
+function buildCottage(w, gy, cs){
+  var cw = 8, wh = 4, r, c, i;
+  flattenArea(w, gy, cs - 1, cw + 2);
+  for (r = gy - wh; r < gy; r++){ w[r][cs] = 4; w[r][cs + cw - 1] = 4; }
+  for (c = cs; c < cs + cw; c++) w[gy - wh][c] = 4;
+  // 树叶尖顶（三层）
+  for (i = 0; i < 3; i++)
+    for (c = cs - 1 + i; c <= cs + cw - i; c++)
+      if (c >= 0 && c < COLS) w[gy - wh - 1 - i][c] = 5;
+  // 两侧门（2格高）
+  w[gy - 1][cs] = 0; w[gy - 2][cs] = 0;
+  w[gy - 1][cs + cw - 1] = 0; w[gy - 2][cs + cw - 1] = 0;
+  // 屋里的糖果小桌 + 挂窗
+  w[gy - 1][cs + 3] = 8;
+  w[gy - wh + 1][cs + 5] = 8;
+}
+
+// 糖果小店：粉白条纹屋顶+紫砖柜台，两侧开门
+function buildShop(w, gy, cs){
+  var cw = 9, wh = 5, r, c;
+  flattenArea(w, gy, cs - 1, cw + 2);
+  for (r = gy - wh; r < gy; r++){ w[r][cs] = 6; w[r][cs + cw - 1] = 6; }
+  // 条纹屋顶
+  for (c = cs - 1; c <= cs + cw; c++)
+    if (c >= 0 && c < COLS) w[gy - wh - 1][c] = (c % 2 === 0) ? 6 : 8;
+  for (c = cs; c < cs + cw; c++) w[gy - wh][c] = 8;
+  // 两侧门
+  w[gy - 1][cs] = 0; w[gy - 2][cs] = 0;
+  w[gy - 1][cs + cw - 1] = 0; w[gy - 2][cs + cw - 1] = 0;
+  // 柜台+陈列糖果
+  w[gy - 1][cs + 3] = 7; w[gy - 1][cs + 4] = 7;
+  w[gy - 2][cs + 4] = 8;
+}
+
+// 大树屋：粗树干托平台+树叶小屋，左侧实心土坡走上去（无悬空块，不会把人卡在下面）
+function buildTreehouse(w, gy, cs){
+  var cw = 9, r, c, k;
+  flattenArea(w, gy, cs - 6, cw + 8);
+  var top = gy - 7;
+  // 左侧上坡：6级台阶每级高1格，坡顶与平台同高
+  for (k = 0; k < 6; k++){
+    var rc2 = cs - 6 + k, sf = gy - 1 - k;
+    w[sf][rc2] = 1;
+    for (r = sf + 1; r <= gy; r++) w[r][rc2] = 2;
+  }
+  // 树干（2宽，用可穿过树干：地面路线不被堵）
+  for (r = top + 1; r < gy; r++){ w[r][cs + 4] = 10; w[r][cs + 5] = 10; }
+  // 平台
+  for (c = cs; c < cs + cw; c++) w[top][c] = 4;
+  // 树叶小屋：屋顶+两侧门楣（左右都开门，平台可以走通）
+  w[top - 3][cs + 1] = 5;
+  w[top - 3][cs + 7] = 5;
+  for (c = cs + 1; c <= cs + 7; c++) w[top - 4][c] = 5;
+  // 屋里糖果装饰（只吊在屋顶下，不落地：平台走道保持畅通）
+  w[top - 3][cs + 4] = 8;
+}
+
+// 彩虹拱门：三层彩色拱（粉/糖果白/紫），从下面走过去
+function buildRainbow(w, gy, cs){
+  var cw = 11, r, c, i;
+  flattenArea(w, gy, cs - 1, cw + 2);
+  var band = [6, 8, 7];
+  for (i = 0; i < 3; i++){
+    var lc = cs + i, rc = cs + cw - 1 - i, tr = gy - 7 + i;
+    for (c = lc; c <= rc; c++) w[tr][c] = band[i];
+    // 拱腿只垂到离地4格高：整条彩虹下方都能走过去
+    for (r = tr + 1; r <= gy - 4; r++){ w[r][lc] = band[i]; w[r][rc] = band[i]; }
+  }
+}
+
+// 天空浮岛：云朵托着的小岛，藏着糖果宝藏（自己搭方块爬上去）
+function buildSkyIsland(w, cs){
+  var r, c;
+  for (r = 6; r <= 13; r++)
+    for (c = cs - 1; c < cs + 9; c++)
+      if (c >= 0 && c < COLS) w[r][c] = 0;
+  for (c = cs; c < cs + 7; c++) w[10][c] = 1;
+  for (c = cs + 1; c < cs + 6; c++) w[11][c] = 2;
+  for (c = cs + 2; c < cs + 5; c++) w[12][c] = 9;
+  // 宝藏糖果堆
+  w[9][cs + 2] = 8; w[9][cs + 4] = 8; w[8][cs + 3] = 8;
+}
+
+// 在 (cs, gy) 处建一座粉紫城堡：两座塔+城墙+垛口+旗帜+可穿行大门
+function buildCastle(w, gy, cs){
+  var cw = 23, th = 10, wh = 7, r, c;
+  // 清空城堡上空（含两侧余量，把树/云清掉）
+  for (c = cs - 2; c < cs + cw + 2; c++)
+    for (r = 0; r < gy; r++)
+      if (c >= 0 && c < COLS) w[r][c] = 0;
+  // 整平地面
+  for (c = cs - 2; c < cs + cw + 2; c++){
+    if (c < 0 || c >= COLS) continue;
+    for (r = gy; r < ROWS; r++) w[r][c] = (r === gy) ? 1 : (r < gy + 4 ? 2 : 3);
+  }
+  // 城墙主体（粉砖）
+  for (c = cs; c < cs + cw; c++)
+    for (r = gy - wh; r < gy; r++) w[r][c] = 6;
+  // 城墙垛口
+  for (c = cs; c < cs + cw; c += 2) w[gy - wh - 1][c] = 7;
+  // 两座塔（紫砖，更高）
+  var tps = [cs, cs + cw - 3], t, tx;
+  for (t = 0; t < 2; t++){
+    tx = tps[t];
+    for (c = tx; c < tx + 3; c++)
+      for (r = gy - th; r < gy; r++) w[r][c] = 7;
+    // 塔顶垛口
+    w[gy - th - 1][tx] = 6; w[gy - th - 1][tx + 2] = 6;
+    // 塔窗（糖果）
+    w[gy - th + 2][tx + 1] = 8;
+    w[gy - th + 5][tx + 1] = 8;
+    // 旗杆+旗
+    w[gy - th - 2][tx + 1] = 4;
+    w[gy - th - 3][tx + 1] = 8;
+  }
+  // 城墙窗户
+  w[gy - wh + 2][cs + 6] = 8;
+  w[gy - wh + 2][cs + cw - 7] = 8;
+  // 底层大厅：整条 4 格高走廊，不用挖就能从左走到右
+  var gm = cs + Math.floor(cw / 2);
+  for (c = cs + 1; c < cs + cw - 1; c++)
+    for (r = gy - 4; r < gy; r++) w[r][c] = 0;
+  // 两端塔外墙开门（2格高）
+  w[gy - 1][cs] = 0; w[gy - 2][cs] = 0;
+  w[gy - 1][cs + cw - 1] = 0; w[gy - 2][cs + cw - 1] = 0;
+  // 大厅拱柱（吊在天花板上的半截柱，形成一个个门洞）
+  w[gy - 4][cs + 6] = 6; w[gy - 3][cs + 6] = 6;
+  w[gy - 4][cs + cw - 7] = 6; w[gy - 3][cs + cw - 7] = 6;
+  // 中央木拱门（上半截门框+门拱，下方通行）
+  w[gy - 4][gm - 2] = 4; w[gy - 3][gm - 2] = 4;
+  w[gy - 4][gm + 2] = 4; w[gy - 3][gm + 2] = 4;
+  w[gy - 5][gm - 1] = 4; w[gy - 5][gm] = 4; w[gy - 5][gm + 1] = 4;
+}
+
+function saveWorld(){
+  try {
+    var flat = [];
+    for (var r = 0; r < ROWS; r++) flat.push(world.grid[r].join(','));
+    localStorage.setItem(SAVE_KEY, JSON.stringify({
+      v: LM_VERSION, rows: flat, ch: curChar, px: Math.round(player.x), py: Math.round(player.y),
+      ts: 1, bc: stats.built, tc: stats.treasure
+    }));
+  } catch(e){}
+}
+function loadWorld(){
+  try {
+    var d = JSON.parse(localStorage.getItem(SAVE_KEY));
+    if (!d || !d.rows || d.rows.length !== ROWS) return null;
+    var g = [];
+    for (var r = 0; r < ROWS; r++){
+      var row = d.rows[r].split(',');
+      if (row.length !== COLS) return null;
+      for (var c = 0; c < COLS; c++) row[c] = parseInt(row[c], 10) || 0;
+      g.push(row);
+    }
+    // ts/bc/tc 为新增字段，旧存档没有时按未埋宝石/零统计处理
+    return { grid: g, ch: d.ch, px: d.px, py: d.py, v: d.v, ts: d.ts, bc: d.bc, tc: d.tc };
+  } catch(e){ return null; }
+}
+
+/* ================= 画布 & 相机 ================= */
+var cv = $('cv'), ctx = cv.getContext('2d');
+var W = 0, H = 0, camX = 0, camY = 0;
+
+function resize(){
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+  W = window.innerWidth; H = window.innerHeight;
+  cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+  // ⚠️ 必须显式设 CSS 尺寸（旧内核坑）
+  cv.style.width = W + 'px'; cv.style.height = H + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+window.addEventListener('resize', resize);
+
+/* ================= 玩家 ================= */
+var player = { x: 0, y: 0, vx: 0, vy: 0, w: TILE*0.6, h: TILE*1.5, face: 1, onGround: false };
+var curChar = 0;
+var input = { l: false, r: false };
+var mode = 'dig'; // dig | build
+var curBlock = 6;
+var running = false;
+
+function solidAt(px, py){
+  var c = Math.floor(px / TILE), r = Math.floor(py / TILE);
+  if (c < 0 || c >= COLS || r < 0) return true;
+  if (r >= ROWS) return true;
+  var b = world.grid[r][c];
+  return b !== 0 && b !== 9 && b !== 10; // 云和野生树干可以穿过
+}
+
+function physStep(){
+  var SPD = 3.2, JUMP = -9.4, GRAV = 0.5;
+  player.vx = 0;
+  if (input.l){ player.vx = -SPD; player.face = -1; }
+  if (input.r){ player.vx = SPD; player.face = 1; }
+  player.vy += GRAV; if (player.vy > 12) player.vy = 12;
+
+  // 水平
+  var nx = player.x + player.vx;
+  var hw = player.w / 2;
+  if (player.vx > 0){
+    // 采样脚/腰/头三点：玩家 1.5 格高，只测两端会漏掉胸口高度的单块
+    if (!solidAt(nx + hw, player.y - 2) && !solidAt(nx + hw, player.y - player.h/2) && !solidAt(nx + hw, player.y - player.h + 2)) player.x = nx;
+  } else if (player.vx < 0){
+    if (!solidAt(nx - hw, player.y - 2) && !solidAt(nx - hw, player.y - player.h/2) && !solidAt(nx - hw, player.y - player.h + 2)) player.x = nx;
+  }
+  // 垂直
+  var ny = player.y + player.vy;
+  player.onGround = false;
+  if (player.vy > 0){
+    if (solidAt(player.x - hw + 2, ny) || solidAt(player.x + hw - 2, ny)){
+      player.y = Math.floor(ny / TILE) * TILE - 0.01; player.vy = 0; player.onGround = true;
+    } else player.y = ny;
+  } else if (player.vy < 0){
+    if (solidAt(player.x - hw + 2, ny - player.h) || solidAt(player.x + hw - 2, ny - player.h)){
+      player.vy = 0;
+    } else player.y = ny;
+  }
+  // 边界
+  if (player.x < hw) player.x = hw;
+  if (player.x > COLS*TILE - hw) player.x = COLS*TILE - hw;
+  if (player.y > ROWS*TILE + 200){ spawnPlayer(); toast('掉下去啦，回到出生点～'); }
+
+  // 相机跟随
+  camX = player.x - W/2;
+  camY = player.y - H*0.58;
+  if (camX < 0) camX = 0;
+  if (camX > COLS*TILE - W) camX = Math.max(0, COLS*TILE - W);
+  if (camY < 0) camY = 0;
+  if (camY > ROWS*TILE - H) camY = Math.max(0, ROWS*TILE - H);
+}
+
+function jump(){
+  if (player.onGround){ player.vy = -9.4; player.onGround = false; sfx('jump'); }
+}
+
+function spawnPlayer(){
+  var c = 5;
+  for (var r = 0; r < ROWS; r++){
+    if (world.grid[r][c] !== 0 && world.grid[r][c] !== 9){ player.x = c*TILE + TILE/2; player.y = r*TILE - 0.01; player.vy = 0; return; }
+  }
+  player.x = c*TILE + TILE/2; player.y = 20*TILE;
+}
+
+/* ================= 渲染 ================= */
+function drawBlock(bx, by, id){
+  var b = BLOCKS[id]; if (!b) return;
+  var x = bx - camX, y = by - camY;
+  ctx.fillStyle = b.side; ctx.fillRect(x, y, TILE, TILE);
+  ctx.fillStyle = b.top; ctx.fillRect(x, y, TILE, id === 1 ? 8 : TILE);
+  if (b.deco === 'grass'){
+    ctx.fillStyle = '#6abf4e';
+    ctx.fillRect(x + 4, y + 2, 3, 6); ctx.fillRect(x + 14, y + 1, 3, 7); ctx.fillRect(x + 25, y + 3, 3, 5);
+  } else if (b.deco === 'wood'){
+    ctx.strokeStyle = 'rgba(90,60,30,.35)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(x + 8, y); ctx.lineTo(x + 8, y + TILE);
+    ctx.moveTo(x + 22, y); ctx.lineTo(x + 22, y + TILE); ctx.stroke();
+  } else if (b.deco === 'leaf'){
+    ctx.fillStyle = 'rgba(255,255,255,.25)';
+    ctx.fillRect(x + 6, y + 6, 4, 4); ctx.fillRect(x + 20, y + 16, 4, 4); ctx.fillRect(x + 12, y + 24, 4, 4);
+  } else if (b.deco === 'brick'){
+    ctx.strokeStyle = 'rgba(255,255,255,.5)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(x, y + TILE/2); ctx.lineTo(x + TILE, y + TILE/2);
+    ctx.moveTo(x + TILE/2, y); ctx.lineTo(x + TILE/2, y + TILE/2);
+    ctx.moveTo(x + TILE/4, y + TILE/2); ctx.lineTo(x + TILE/4, y + TILE);
+    ctx.moveTo(x + TILE*3/4, y + TILE/2); ctx.lineTo(x + TILE*3/4, y + TILE); ctx.stroke();
+  } else if (b.deco === 'candy'){
+    ctx.fillStyle = '#ff8fb0';
+    ctx.beginPath(); ctx.arc(x + TILE/2, y + TILE/2, TILE*0.28, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.arc(x + TILE/2, y + TILE/2, TILE*0.13, 0, Math.PI*2); ctx.fill();
+  } else if (b.deco === 'cloud'){
+    ctx.fillStyle = 'rgba(255,255,255,.85)';
+    ctx.beginPath(); ctx.arc(x + TILE*0.3, y + TILE*0.55, TILE*0.26, 0, Math.PI*2);
+    ctx.arc(x + TILE*0.62, y + TILE*0.42, TILE*0.3, 0, Math.PI*2);
+    ctx.arc(x + TILE*0.85, y + TILE*0.6, TILE*0.22, 0, Math.PI*2); ctx.fill();
+  } else if (b.deco === 'gem'){
+    var gxc = x + TILE/2, gyc = y + TILE*0.5;
+    ctx.fillStyle = '#ff5aa0';
+    ctx.beginPath(); ctx.moveTo(gxc, y + TILE*0.26);
+    ctx.lineTo(x + TILE*0.74, gyc); ctx.lineTo(gxc, y + TILE*0.76);
+    ctx.lineTo(x + TILE*0.26, gyc); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,.75)';
+    ctx.beginPath(); ctx.moveTo(gxc, y + TILE*0.26);
+    ctx.lineTo(x + TILE*0.6, gyc); ctx.lineTo(gxc, gyc); ctx.closePath(); ctx.fill();
+  } else if (b.deco === 'flower'){
+    var fx = x + TILE/2, fy = y + TILE*0.5, pa;
+    ctx.fillStyle = '#6abf4e';
+    ctx.fillRect(x + 4, y + 3, 3, 6); ctx.fillRect(x + 26, y + 4, 3, 5);
+    ctx.fillStyle = '#ff8fc0';
+    for (pa = 0; pa < 5; pa++){
+      var ang = pa * Math.PI*2/5 - Math.PI/2;
+      ctx.beginPath(); ctx.arc(fx + Math.cos(ang)*TILE*0.17, fy + Math.sin(ang)*TILE*0.17, TILE*0.12, 0, Math.PI*2); ctx.fill();
+    }
+    ctx.fillStyle = '#ffd24d';
+    ctx.beginPath(); ctx.arc(fx, fy, TILE*0.12, 0, Math.PI*2); ctx.fill();
+  } else if (b.deco === 'lamp'){
+    var lx = x + TILE/2, ly = y + TILE*0.46;
+    var gg = ctx.createRadialGradient(lx, ly, 2, lx, ly, TILE*0.6);
+    gg.addColorStop(0, 'rgba(255,240,150,.85)'); gg.addColorStop(1, 'rgba(255,240,150,0)');
+    ctx.fillStyle = gg; ctx.fillRect(x, y, TILE, TILE);
+    ctx.fillStyle = '#fff3a0';
+    ctx.beginPath(); ctx.arc(lx, ly, TILE*0.22, 0, Math.PI*2); ctx.fill();
+    ctx.strokeStyle = '#c9a83a'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = '#b98a3a'; ctx.fillRect(lx - TILE*0.1, ly + TILE*0.2, TILE*0.2, TILE*0.14);
+  } else if (b.deco === 'window'){
+    ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.fillRect(x + 3, y + 3, TILE - 6, TILE - 6);
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 3;
+    ctx.strokeRect(x + 3, y + 3, TILE - 6, TILE - 6);
+    ctx.beginPath(); ctx.moveTo(x + TILE/2, y + 3); ctx.lineTo(x + TILE/2, y + TILE - 3);
+    ctx.moveTo(x + 3, y + TILE/2); ctx.lineTo(x + TILE - 3, y + TILE/2); ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,255,255,.8)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(x + 7, y + TILE*0.4); ctx.lineTo(x + TILE*0.4, y + 7); ctx.stroke();
+  } else if (b.deco === 'cake'){
+    ctx.fillStyle = '#ffcf8a'; ctx.fillRect(x + 4, y + TILE*0.45, TILE - 8, TILE*0.5);
+    ctx.fillStyle = '#fff'; ctx.fillRect(x + 4, y + TILE*0.36, TILE - 8, TILE*0.14);
+    var wc;
+    for (wc = 0; wc < 3; wc++){
+      ctx.beginPath(); ctx.arc(x + 8 + wc*(TILE - 16)/2, y + TILE*0.36, TILE*0.09, 0, Math.PI*2); ctx.fill();
+    }
+    ctx.fillStyle = '#ff4d6d';
+    ctx.beginPath(); ctx.arc(x + TILE/2, y + TILE*0.26, TILE*0.1, 0, Math.PI*2); ctx.fill();
+  } else if (b.deco === 'rainbow'){
+    var rcols = ['#ff8fb0', '#ffd24d', '#7ecf5e', '#8fbcff', '#c9a9f0'], bi;
+    for (bi = 0; bi < rcols.length; bi++){
+      ctx.strokeStyle = rcols[bi]; ctx.lineWidth = TILE*0.12;
+      ctx.beginPath(); ctx.arc(x + TILE/2, y + TILE*1.05, TILE*(0.2 + bi*0.14), Math.PI, Math.PI*2); ctx.stroke();
+    }
+  }
+  // 描边
+  ctx.strokeStyle = 'rgba(60,40,80,.14)'; ctx.lineWidth = 1;
+  ctx.strokeRect(x + 0.5, y + 0.5, TILE - 1, TILE - 1);
+}
+
+function render(){
+  // 天空
+  var grd = ctx.createLinearGradient(0, 0, 0, H);
+  grd.addColorStop(0, '#aadcff'); grd.addColorStop(0.7, '#cfe8ff'); grd.addColorStop(1, '#ffe9f2');
+  ctx.fillStyle = grd; ctx.fillRect(0, 0, W, H);
+  // 太阳
+  ctx.fillStyle = '#ffe08a';
+  ctx.beginPath(); ctx.arc(W - 70 - camX*0.05, 70 - camY*0.05, 34, 0, Math.PI*2); ctx.fill();
+
+  var c0 = Math.max(0, Math.floor(camX / TILE)), c1 = Math.min(COLS - 1, Math.ceil((camX + W) / TILE));
+  var r0 = Math.max(0, Math.floor(camY / TILE)), r1 = Math.min(ROWS - 1, Math.ceil((camY + H) / TILE));
+  for (var r = r0; r <= r1; r++)
+    for (var c = c0; c <= c1; c++)
+      if (world.grid[r][c] !== 0) drawBlock(c*TILE, r*TILE, world.grid[r][c]);
+
+  drawCritters();
+  drawChar(ctx, CHARS[curChar], player.x - camX, player.y - camY, player.h, player.face);
+  drawParticles();
+}
+
+var rafId = null;
+function loop(){
+  if (!running) return;
+  physStep(); stepParticles(); stepCritters(); render();
+  rafId = requestAnimationFrame(loop);
+}
+
+/* ================= 挖 / 放 ================= */
+function tapWorld(sx, sy){
+  var c = Math.floor((sx + camX) / TILE), r = Math.floor((sy + camY) / TILE);
+  if (c < 0 || c >= COLS || r < 0 || r >= ROWS) return;
+  // 距离限制：角色周围 3 格内
+  var pc = Math.floor(player.x / TILE), pr = Math.floor((player.y - player.h/2) / TILE);
+  if (Math.abs(c - pc) > 3 || Math.abs(r - pr) > 3){ toast('太远啦，走近一点～'); return; }
+  var cxw = c*TILE + TILE/2, cyw = r*TILE + TILE/2;
+  if (mode === 'dig'){
+    var id = world.grid[r][c];
+    if (id === 0){ return; }
+    world.grid[r][c] = 0; worldDirty = true;
+    if (BLOCKS[id] && BLOCKS[id].treasure){
+      stats.treasure++; updateStats();
+      burst(cxw, cyw, '#ffd24d', 20); burst(cxw, cyw, '#ff5aa0', 8);
+      sfx('treasure');
+      toast('✨ 挖到宝石啦！这是第 ' + stats.treasure + ' 颗 💎');
+    } else {
+      burst(cxw, cyw, (BLOCKS[id] && BLOCKS[id].top) || '#fff', 7);
+      sfx('dig');
+    }
+  } else {
+    if (world.grid[r][c] !== 0){ return; }
+    // 不能把方块放在自己身上
+    var hw = player.w/2;
+    var overlapX = player.x + hw > c*TILE && player.x - hw < (c+1)*TILE;
+    var overlapY = player.y > r*TILE && player.y - player.h < (r+1)*TILE;
+    if (overlapX && overlapY){ toast('会把自己埋住哦！'); return; }
+    world.grid[r][c] = curBlock; worldDirty = true;
+    stats.built++; updateStats();
+    burst(cxw, cyw, BLOCKS[curBlock].top, 6);
+    sfx('place');
+  }
+}
+
+/* ================= UI 绑定 ================= */
+// 封面角色选择（小 canvas 预览）
+(function initCharPick(){
+  var wrap = $('charPick');
+  for (var i = 0; i < CHARS.length; i++){
+    (function(i){
+      var d = document.createElement('div');
+      d.className = 'cp' + (i === 0 ? ' sel' : '');
+      var c = document.createElement('canvas');
+      c.width = 112; c.height = 112;
+      c.style.width = '56px'; c.style.height = '56px';
+      var cc = c.getContext('2d');
+      cc.setTransform(2, 0, 0, 2, 0, 0);
+      drawChar(cc, CHARS[i], 28, 52, 40, 1);
+      d.appendChild(c);
+      var s = document.createElement('span'); s.textContent = CHARS[i].name;
+      d.appendChild(s);
+      d.onclick = function(){
+        curChar = i;
+        var all = wrap.querySelectorAll('.cp');
+        for (var k = 0; k < all.length; k++) all[k].classList.remove('sel');
+        d.classList.add('sel');
+      };
+      wrap.appendChild(d);
+    })(i);
+  }
+})();
+
+// 方块选择栏
+(function initPalette(){
+  var wrap = $('palette');
+  var icons = { 1:'🌿', 2:'🟫', 3:'🪨', 4:'🪵', 5:'🍃', 6:'🌸', 7:'🟪', 8:'🍬', 9:'☁️',
+    12:'🌷', 13:'💡', 14:'🪟', 15:'🎂', 16:'🌈' };
+  for (var i = 0; i < PALETTE_IDS.length; i++){
+    (function(i){
+      var id = PALETTE_IDS[i];
+      var d = document.createElement('div');
+      d.className = 'pal' + (id === curBlock ? ' sel' : '');
+      d.style.background = BLOCKS[id].top;
+      d.textContent = icons[id] || '';
+      d.onclick = function(){
+        curBlock = id; mode = 'build'; syncModeBtn();
+        var all = wrap.querySelectorAll('.pal');
+        for (var k = 0; k < all.length; k++) all[k].classList.remove('sel');
+        d.classList.add('sel');
+        sfx('select');
+        toast('放置：' + BLOCKS[id].name);
+      };
+      wrap.appendChild(d);
+    })(i);
+  }
+})();
+
+function syncModeBtn(){
+  var b = $('modeBtn');
+  if (mode === 'dig'){ b.textContent = '⛏️ 挖掘'; b.className = 'tb-btn mode-btn dig'; }
+  else { b.textContent = '🧱 放置'; b.className = 'tb-btn mode-btn build'; }
+}
+$('modeBtn').onclick = function(){
+  mode = (mode === 'dig') ? 'build' : 'dig'; syncModeBtn();
+  toast(mode === 'dig' ? '点方块把它挖掉！' : '点空地放上方块！');
+};
+
+// 触控（按住持续移动）
+function bindHold(id, on, off){
+  var el = $(id);
+  var start = function(ev){ ev.preventDefault(); on(); };
+  var end = function(ev){ ev.preventDefault(); off(); };
+  el.addEventListener('touchstart', start, { passive:false });
+  el.addEventListener('touchend', end, { passive:false });
+  el.addEventListener('touchcancel', end, { passive:false });
+  el.addEventListener('mousedown', start);
+  el.addEventListener('mouseup', end);
+  el.addEventListener('mouseleave', end);
+}
+bindHold('btnL', function(){ input.l = true; }, function(){ input.l = false; });
+bindHold('btnR', function(){ input.r = true; }, function(){ input.r = false; });
+$('btnJ').addEventListener('touchstart', function(e){ e.preventDefault(); jump(); }, { passive:false });
+$('btnJ').addEventListener('mousedown', function(e){ e.preventDefault(); jump(); });
+
+// 键盘（电脑上也能玩）
+document.addEventListener('keydown', function(e){
+  if (!running) return;
+  if (e.key === 'ArrowLeft' || e.key === 'a') input.l = true;
+  if (e.key === 'ArrowRight' || e.key === 'd') input.r = true;
+  if (e.key === ' ' || e.key === 'ArrowUp' || e.key === 'w'){ e.preventDefault(); jump(); }
+});
+document.addEventListener('keyup', function(e){
+  if (e.key === 'ArrowLeft' || e.key === 'a') input.l = false;
+  if (e.key === 'ArrowRight' || e.key === 'd') input.r = false;
+});
+
+// 点画布挖/放
+cv.addEventListener('click', function(e){
+  if (!running) return;
+  var rect = cv.getBoundingClientRect();
+  tapWorld(e.clientX - rect.left, e.clientY - rect.top);
+});
+
+// 自动保存
+setInterval(function(){ if (running && worldDirty){ saveWorld(); worldDirty = false; } }, 2000);
+window.addEventListener('pagehide', function(){ if (running) saveWorld(); });
+
+/* ================= 启停 ================= */
+$('startBtn').onclick = function(){
+  // 首次用户手势里解锁音频（移动端要求）
+  var ac = audioCtx(); if (ac && ac.state === 'suspended'){ ac.resume(); }
+  var sv = loadWorld();
+  if (sv && sv.v >= 3){
+    world = { grid: sv.grid };
+    // 未来新增建筑：只补建地标，保留玩家搭的东西
+    if (sv.v !== LM_VERSION){
+      buildLandmarks(world.grid, 22);
+      worldDirty = true;
+    }
+    // 旧存档（没有 ts 标记）首次进入时补埋宝石，只把石头换成宝石，不动玩家搭建
+    if (!sv.ts){ seedTreasures(world.grid); worldDirty = true; }
+    stats.built = sv.bc || 0; stats.treasure = sv.tc || 0;
+  } else {
+    // 无存档或 v3 前旧档（旧地形有断崖/实心树挡路）：重新生成可通行世界
+    world = genWorld();
+    worldDirty = true;
+    stats.built = 0; stats.treasure = 0;
+  }
+  updateStats();
+  initCritters();
+  $('cover').classList.add('hidden');
+  $('game').classList.remove('hidden');
+  resize();
+  spawnPlayer();
+  if (sv && typeof sv.px === 'number' && typeof sv.py === 'number' && sv.py > 0 && sv.py < ROWS*TILE){
+    player.x = sv.px; player.y = sv.py;
+    // 补建城堡后旧位置可能被埋进墙里，卡住就回出生点
+    if (solidAt(player.x, player.y - 2) || solidAt(player.x, player.y - player.h + 2)) spawnPlayer();
+  }
+  running = true;
+  loop();
+  toast('👋 一直往右走，去找糖果城堡吧！🏰');
+};
+$('coverHome').onclick = function(){ location.href = '../'; };
+$('homeBtn').onclick = function(){
+  saveWorld();
+  running = false;
+  if (rafId) cancelAnimationFrame(rafId);
+  location.href = '../';
+};
+$('resetBtn').onclick = function(){
+  if (!window.confirm('要生成一个全新的世界吗？现在搭的会消失哦～')) return;
+  world = genWorld(); worldDirty = true;
+  stats.built = 0; stats.treasure = 0; updateStats();
+  initCritters();
+  spawnPlayer(); saveWorld();
+  toast('🌱 新世界来啦！');
+};
+
+resize();
+</script>
+<script src="../shared/parent-gate.js"></script>
+</body>
+</html>

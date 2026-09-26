@@ -49,10 +49,18 @@ jobs:
           cp -r site/. dist/
           cp -r gpt6/dist dist/gpt6
           cp -r fable5.1/dist dist/fable5.1
+          cp -r kids-games/. dist/kids-games
           node scripts/generate-game-pages.mjs dist/games.json dist/games
           test -f dist/index.html
           test -f dist/gpt6/index.html
           test -f dist/fable5.1/index.html
+          test -f dist/kids-games/index.html
+          test -f dist/kids-games/sweet-adventure/index.html
+          test -f dist/kids-games/mxq-history/index.html
+          test -f dist/kids-games/mxq-school/index.html
+          test -f dist/kids-games/block-park/index.html
+          test -f dist/kids-games/mxq-platform/index.html
+          test -f dist/kids-games/sweet-match/index.html
 
       - name: Validate game registry
         run: |
@@ -66,6 +74,7 @@ jobs:
             if (!/^[a-z0-9][a-z0-9-]*$/.test(game.slug || '') || slugs.has(game.slug)) throw new Error(`invalid or duplicate game slug: ${game.slug}`);
             slugs.add(game.slug);
             if (!fs.existsSync(path.join('dist', 'games', game.slug, 'index.html'))) throw new Error(`missing game page: ${game.slug}`);
+            if (game.lobbyPath && !fs.existsSync(path.join('dist', game.lobbyPath, 'index.html'))) throw new Error(`missing game lobby: ${game.lobbyPath}`);
             if (!Array.isArray(game.variants) || game.variants.length === 0) throw new Error(`game has no variants: ${game.slug}`);
             const variantSlugs = new Set();
             for (const variant of game.variants) {

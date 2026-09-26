@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#6e62c9">
+<meta name="description" content="六款适合亲子一起玩的轻量 H5 小游戏，每天都有 AI 小伙伴陪你完成一个小任务。">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="shared/ai-companion.css">
+<title>小小游戏乐园 · 每天玩一点</title>
+<style>
+  :root { --ink:#3f365f; --muted:#83799b; --purple:#6e62c9; --pink:#f06ca5; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; min-height:100%; }
+  body { color:var(--ink); background:linear-gradient(140deg,#e9f7ff 0%,#f7ecff 43%,#fff4de 100%); font-family:system-ui,-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif; }
+  button,a { -webkit-tap-highlight-color:transparent; }
+  .wrap { width:min(1080px,100%); margin:0 auto; padding:clamp(18px,4vw,42px) clamp(16px,4vw,32px) 44px; }
+  .top { display:flex; align-items:center; justify-content:space-between; gap:16px; }
+  .brand { display:flex; align-items:center; gap:10px; color:var(--ink); text-decoration:none; font-weight:950; letter-spacing:.5px; }
+  .brand-mark { width:42px; height:42px; display:grid; place-items:center; border-radius:15px; background:linear-gradient(135deg,#8375e4,#f47caf); box-shadow:0 8px 22px #7766c43b; font-size:24px; }
+  .parent-link { border:0; padding:9px 13px; border-radius:999px; background:#ffffffa8; color:#6b5e8e; font-weight:800; cursor:pointer; }
+  .hero { display:grid; grid-template-columns:1.1fr .9fr; gap:26px; align-items:center; padding:clamp(34px,8vw,76px) 0 42px; }
+  .eyebrow { color:#796bbd; font-weight:900; font-size:13px; letter-spacing:1.2px; }
+  h1 { margin:10px 0 12px; max-width:650px; font-size:clamp(38px,7vw,72px); line-height:1.06; letter-spacing:-2px; }
+  .hero p { max-width:570px; margin:0; color:var(--muted); font-size:clamp(15px,2vw,19px); line-height:1.75; }
+  .hero-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:24px; }
+  .primary,.secondary { border:0; border-radius:16px; padding:13px 17px; font:900 14px system-ui,sans-serif; cursor:pointer; text-decoration:none; }
+  .primary { color:#fff; background:linear-gradient(135deg,#7165d1,#ec70a7); box-shadow:0 10px 24px #7062ca47; }
+  .secondary { color:#665a89; background:#ffffffba; }
+  .hero-art { position:relative; min-height:260px; display:grid; place-items:center; }
+  .orb { width:min(310px,72vw); aspect-ratio:1; border-radius:42% 58% 64% 36%/42% 38% 62% 58%; background:radial-gradient(circle at 35% 25%,#fff 0 7%,transparent 8%),linear-gradient(145deg,#d9d4ff,#ffd8eb 62%,#ffecc5); box-shadow:inset 0 0 0 14px #ffffff58,0 25px 50px #836edc38; transform:rotate(-8deg); }
+  .orb-face { position:absolute; font-size:clamp(74px,13vw,126px); filter:drop-shadow(0 10px 10px #8066a538); }
+  .float { position:absolute; padding:9px 12px; border-radius:13px; background:#fffdf4e8; color:#766b8e; font-weight:900; font-size:12px; box-shadow:0 8px 25px #765ab52b; }
+  .float.one { top:13%; right:8%; transform:rotate(7deg); }.float.two { bottom:12%; left:4%; transform:rotate(-5deg); }
+  .section-head { display:flex; align-items:end; justify-content:space-between; gap:16px; margin:9px 0 15px; }
+  .section-head h2 { margin:0; font-size:clamp(23px,4vw,34px); letter-spacing:-.8px; }.section-head p { margin:0; color:var(--muted); font-size:13px; }
+  .games { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+  .game { position:relative; display:flex; flex-direction:column; min-height:220px; padding:18px; border:1px solid #ffffffc4; border-radius:24px; background:#ffffffb5; box-shadow:0 12px 30px #68559c1a; text-decoration:none; color:var(--ink); transition:transform .15s,box-shadow .15s; }
+  .game:hover { transform:translateY(-4px); box-shadow:0 18px 34px #68559c2a; }.game:active { transform:scale(.98); }
+  .game-icon { width:54px; height:54px; display:grid; place-items:center; border-radius:18px; font-size:31px; background:var(--tint); }
+  .game h3 { margin:14px 0 5px; font-size:19px; }.game p { margin:0; color:var(--muted); font-size:13px; line-height:1.6; }.game small { margin-top:auto; padding-top:15px; color:#796cb1; font-weight:900; font-size:12px; }
+  .mission { display:grid; grid-template-columns:1fr auto; align-items:center; gap:18px; margin:32px 0; padding:21px 22px; border-radius:24px; background:linear-gradient(115deg,#fff6cf,#fffdf0); box-shadow:0 12px 30px #ba95652b; }.mission strong { display:block; font-size:18px; }.mission span { display:block; margin-top:5px; color:#8c7a55; font-size:13px; line-height:1.6; }
+  .mission button { border:0; border-radius:14px; padding:11px 14px; background:#eeb94d; color:#fff; font-weight:900; cursor:pointer; }
+  .trust { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:28px; }.trust article { padding:15px; border-radius:18px; background:#ffffff91; }.trust b { display:block; font-size:14px; }.trust span { display:block; margin-top:5px; color:var(--muted); font-size:12px; line-height:1.55; }
+  footer { display:flex; justify-content:space-between; gap:16px; margin-top:30px; padding-top:18px; border-top:1px solid #ffffffb5; color:#9288a5; font-size:11px; }.support { color:#6e62c9; font-weight:900; cursor:pointer; }
+  @media (max-width:760px) { .hero { grid-template-columns:1fr; padding-top:45px; }.hero-art { min-height:190px; order:-1; }.games { grid-template-columns:repeat(2,1fr); }.game { min-height:205px; }.trust { grid-template-columns:1fr; } }
+  @media (max-width:460px) { .games { grid-template-columns:1fr; }.game { min-height:170px; }.mission { grid-template-columns:1fr; }.mission button { justify-self:start; } footer { flex-direction:column; } }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <nav class="top"><a class="brand" href="./"><span class="brand-mark">🎪</span><span>小小游戏乐园</span></a><button class="parent-link" id="parentLink" type="button">家长入口</button></nav>
+  <section class="hero">
+    <div><div class="eyebrow">每天一个小任务 · 每局都有新发现</div><h1>玩得开心，<br><em style="color:#e86da2;font-style:normal">也在慢慢变厉害。</em></h1><p>六款轻量小游戏，一个会给提示、出任务、记住连续天数的 AI 小伙伴。打开就能玩，想停就停。</p><div class="hero-actions"><a class="primary" href="#games">开始今天的游戏</a><button class="secondary" id="questBtn" type="button">🤖 让 AI 出今日任务</button></div></div>
+    <div class="hero-art"><div class="orb"></div><div class="orb-face">🤖</div><div class="float one">✨ 我会记住你的进步</div><div class="float two">🌟 今天也来一局</div></div>
+  </section>
+  <section id="games"><div class="section-head"><div><h2>挑一款开始</h2><p>每款游戏都接入 AI 小伙伴和独立进度。</p></div><p id="progressText"></p></div><div class="games" id="gameGrid"></div></section>
+  <section class="mission"><div><strong>🤖 今日 AI 小任务</strong><span id="missionText">正在读取你的今日任务…</span></div><button id="missionBtn" type="button">去完成</button></section>
+  <section class="trust"><article><b>🔒 儿童友好</b><span>AI 只接收当前游戏状态，不索要姓名、照片、语音或联系方式。</span></article><article><b>⚡ 轻量打开</b><span>原生 HTML 游戏，无需安装、无广告打断游戏过程。</span></article><article><b>👨‍👩‍👧 家长可控</b><span>支持入口经过家长算术确认，付费功能按配置开启。</span></article></section>
+  <footer><span>小小游戏乐园 · 个人创作项目</span><span class="support" id="supportLink" data-parent-url="">支持开发者</span></footer>
+</main>
+<script src="shared/locale.js"></script>
+<script src="shared/parent-gate.js"></script>
+<script>
+(function () {
+  var english = window.KidsLocale && window.KidsLocale.english;
+  var catalog = [
+    {id:'sweet-adventure',icon:'🎀',name:'甜心乐园大冒险',en:'Sweet Adventure',type:'点跳跑酷',enType:'Runner',description:'收集甜品，躲开障碍，冲向彩虹门。',enDescription:'Collect treats, dodge obstacles, and reach the rainbow gate.',color:'#ffe5f0',quest:'收集 8 颗糖果',enQuest:'Collect 8 treats'},
+    {id:'mxq-history',icon:'📜',name:'米小圈历史大冒险',en:'History Time Quest',type:'益智答题',enType:'Quiz',description:'穿越 8 个时代，答题集齐历史宝物。',enDescription:'Travel through eight eras and collect history treasures.',color:'#fff0d8',quest:'答对 3 道题',enQuest:'Answer 3 questions'},
+    {id:'mxq-school',icon:'🎒',name:'米小圈上学记',en:'A Day at School',type:'剧情养成',enType:'Story',description:'一起上课、游戏、吃午餐，写下今天的日记。',enDescription:'Learn, play, share lunch, and write a tiny diary.',color:'#e4f2ff',quest:'完成 2 个场景',enQuest:'Finish 2 scenes'},
+    {id:'block-park',icon:'⛏️',name:'方块乐园',en:'Block Park',type:'沙盒建造',enType:'Builder',description:'挖方块、盖房子，打造自己的小角落。',enDescription:'Dig blocks and build a little place of your own.',color:'#eee7ff',quest:'放置 6 个方块',enQuest:'Place 6 blocks'},
+    {id:'mxq-platform',icon:'🚩',name:'米小圈闯关大冒险',en:'Platform Adventure',type:'平台跳跃',enType:'Platformer',description:'跳过平台、收集课本，安全抵达学校。',enDescription:'Jump across platforms, collect books, and reach school.',color:'#e4f7e8',quest:'收集 3 本课本',enQuest:'Collect 3 books'},
+    {id:'sweet-match',icon:'🍓',name:'甜甜消消乐',en:'Sweet Match',type:'三消',enType:'Match-3',description:'组合特殊糖果，完成每关的甜品目标。',enDescription:'Match special candies and complete each sweet goal.',color:'#ffe5f1',quest:'完成 2 次四连',enQuest:'Make 2 four-matches'}
+  ];
+  if (english) {
+    document.querySelector('.brand span:last-child').textContent = 'Kids Game Garden';
+    document.querySelector('.eyebrow').textContent = 'A tiny quest every day · A new discovery every round';
+    document.querySelector('h1').innerHTML = 'Play with joy,<br><em style="color:#e86da2;font-style:normal">grow a little every day.</em>';
+    document.querySelector('.hero p').textContent = 'Six light games and an AI companion who gives hints, sets quests, and remembers your streak. Open, play, pause whenever you like.';
+    document.querySelector('.primary').textContent = "Play today's game";
+    document.getElementById('questBtn').textContent = '🤖 Ask AI for a quest';
+    document.querySelector('#games h2').textContent = 'Pick a game';
+    document.querySelector('#games .section-head p').textContent = 'Every game has its own progress and AI companion.';
+    document.querySelector('.mission strong').textContent = '🤖 Today\'s AI quest';
+    document.getElementById('missionText').textContent = 'Play one round and tell AI what you liked most.';
+    document.getElementById('missionBtn').textContent = 'Play now';
+    document.querySelectorAll('.trust b')[0].textContent = '🔒 Child-friendly';
+    document.querySelectorAll('.trust span')[0].textContent = 'AI only receives game state. It never asks for names, photos, voice, or contact details.';
+    document.querySelectorAll('.trust b')[1].textContent = '⚡ Lightweight';
+    document.querySelectorAll('.trust span')[1].textContent = 'Native HTML games with no install and no interruptions.';
+    document.querySelectorAll('.trust b')[2].textContent = '👨‍👩‍👧 Parent-controlled';
+    document.querySelectorAll('.trust span')[2].textContent = 'Support links use a parent math gate and stay off until configured.';
+    document.querySelector('footer span').textContent = 'Kids Game Garden · An independent project';
+  }
+  var profile = {};
+  try { profile = JSON.parse(localStorage.getItem('kids-games-ai-profile-v1') || '{}') || {}; } catch (e) {}
+  var grid = document.getElementById('gameGrid');
+  catalog.forEach(function (item) {
+    var a = document.createElement('a'); a.className='game'; a.href=item.id+'/?quest=1'+(english?'&lang=en':'');
+    a.innerHTML='<span class="game-icon" style="--tint:'+item.color+'">'+item.icon+'</span><h3>'+(english?item.en:item.name)+'</h3><p>'+(english?item.enDescription:item.description)+'</p><small>'+(english?item.enType:item.type)+' · '+(english?'Quest: ':'今日任务：')+(english?item.enQuest:item.quest)+' →</small>';
+    grid.appendChild(a);
+  });
+  var quest = english ? 'Play one round and tell AI what you liked most.' : (profile.todayQuest || '玩一局并告诉 AI 你最喜欢的部分。');
+  document.getElementById('missionText').textContent = quest;
+  document.getElementById('progressText').textContent = english ? ((profile.streak || 0) + ' day streak · ' + (profile.stars || 0) + ' stars') : ((profile.streak || 0) + ' 天连续游玩 · ' + (profile.stars || 0) + ' 颗鼓励星');
+  document.getElementById('questBtn').onclick = function () { document.getElementById('missionBtn').click(); };
+  document.getElementById('missionBtn').onclick = function () { location.href = catalog[0].id + '/?quest=1' + (english?'&lang=en':''); };
+  document.getElementById('parentLink').onclick = function () { alert(english ? 'The parent area will show data and support options. Progress stays on this device.' : '家长入口会展示数据和支持选项。孩子可以继续玩，进度保存在本设备。'); };
+  var supportUrl = window.KIDS_SUPPORT_URL || '';
+  var support = document.getElementById('supportLink');
+  if (supportUrl) support.setAttribute('data-parent-url', supportUrl); else support.textContent = '支持开发者（即将开放）';
+}());
+</script>
+</body>
+</html>

@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#ffe8c9">
+<title>米小圈历史大冒险</title>
+<meta name="kids-game" content="mxq-history" data-name="米小圈历史大冒险" data-name-en="History Time Quest" data-icon="📜">
+<meta name="kids-ai-endpoint" content="https://kids-games-ai.convee-cn.workers.dev">
+<link rel="stylesheet" href="../shared/ai-companion.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📜</text></svg>">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; }
+  html,body { width:100%; height:100%; overflow:hidden;
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Source Han Sans SC",system-ui,sans-serif; }
+  body { background:linear-gradient(#fff3dc 0%, #ffe3c9 55%, #ffd9b8 100%); }
+
+  .screen { position:fixed; left:0; top:0; right:0; bottom:0; display:flex; flex-direction:column;
+    align-items:center; overflow-y:auto; overflow-x:hidden; padding:16px 12px 30px; }
+  .hidden { display:none !important; }
+
+  /* ============ 封面 ============ */
+  #cover { justify-content:center; text-align:center; }
+  .big-title { font-size:clamp(30px,8.5vw,52px); font-weight:900; color:#c0392b; letter-spacing:3px;
+    text-shadow:0 3px 0 #fff, 0 6px 14px rgba(192,57,43,.25); margin:10px 0 4px; }
+  .sub-title { font-size:clamp(13px,3.8vw,17px); color:#9a6a3a; font-weight:700; margin-bottom:12px; }
+  .story-box { background:rgba(255,255,255,.9); border:3px dashed #f0b46a; border-radius:18px;
+    padding:12px 16px; max-width:520px; color:#7a5230; font-size:clamp(14px,3.9vw,16px); line-height:1.9;
+    text-align:left; margin:8px 0 16px; box-shadow:0 6px 18px rgba(190,120,60,.18); }
+  .story-box b { color:#c0392b; }
+  .go-btn { padding:16px 54px; font-size:clamp(19px,5.5vw,24px); font-weight:900; letter-spacing:3px; color:#fff;
+    background:linear-gradient(#ffb054,#f0862a); border:none; border-radius:999px; cursor:pointer;
+    box-shadow:0 6px 0 #cf6d15, 0 10px 24px rgba(240,134,42,.4); transition:.1s; }
+  .go-btn:active { transform:translateY(4px); box-shadow:0 2px 0 #cf6d15; }
+  .mini-note { margin-top:12px; font-size:12px; color:#b08a5e; }
+  .lobby-btn { margin-top:14px; border:none; background:rgba(255,255,255,.92); border-radius:999px;
+    padding:9px 22px; font-size:14px; font-weight:900; color:#8a5fd0; cursor:pointer;
+    box-shadow:0 3px 10px rgba(150,100,180,.25); }
+  .lobby-btn:active { transform:scale(.96); }
+
+  /* ============ 地图 ============ */
+  #map { padding-top:max(14px, env(safe-area-inset-top)); }
+  .map-head { display:flex; align-items:center; gap:8px; width:min(560px,96vw); margin-bottom:6px; }
+  .map-title { font-size:clamp(19px,5.5vw,26px); font-weight:900; color:#c0392b; flex:1; }
+  .pill { background:#fff; border-radius:999px; padding:6px 14px; font-weight:900; color:#e08a1e;
+    box-shadow:0 3px 8px rgba(190,120,60,.2); font-size:clamp(13px,3.8vw,16px); white-space:nowrap; }
+  .pill.link { cursor:pointer; color:#8a5fd0; }
+  .era-list { width:min(560px,96vw); display:flex; flex-direction:column; gap:10px; padding-bottom:20px; }
+  .era-card { display:flex; align-items:center; gap:12px; background:#fff; border-radius:18px; padding:12px 14px;
+    box-shadow:0 5px 14px rgba(190,120,60,.16); cursor:pointer; border:3px solid transparent; transition:.15s;
+    position:relative; }
+  .era-card:active { transform:scale(.98); }
+  .era-card.locked { filter:grayscale(1); opacity:.55; }
+  .era-card.done { border-color:#7ecf7e; }
+  .era-icon { width:54px; height:54px; border-radius:14px; display:flex; align-items:center; justify-content:center;
+    font-size:30px; flex:none; }
+  .era-info { flex:1; min-width:0; }
+  .era-name { font-weight:900; font-size:clamp(16px,4.5vw,19px); color:#6b4a26; }
+  .era-desc { font-size:12px; color:#a8814f; margin-top:2px; }
+  .era-stars { font-size:13px; flex:none; color:#f0a020; font-weight:900; }
+  .era-badge { position:absolute; right:-4px; top:-8px; font-size:22px; }
+
+  /* ============ 答题 ============ */
+  #quiz { padding-top:max(12px, env(safe-area-inset-top)); }
+  .quiz-head { display:flex; align-items:center; gap:8px; width:min(560px,96vw); }
+  .back-btn { border:none; background:#fff; border-radius:999px; padding:7px 14px; font-weight:900; color:#a8814f;
+    cursor:pointer; box-shadow:0 3px 8px rgba(190,120,60,.2); font-size:14px; }
+  .q-progress { flex:1; height:12px; background:#ffe9cf; border-radius:99px; overflow:hidden; }
+  .q-progress > div { height:100%; width:0%; background:linear-gradient(90deg,#ffc36b,#f0862a); border-radius:99px; transition:width .4s; }
+  .q-count { font-weight:900; color:#c0392b; font-size:14px; }
+  .timer-wrap { width:min(560px,96vw); height:9px; background:#ffe0d0; border-radius:99px; overflow:hidden; margin-top:8px; }
+  .timer-wrap > div { height:100%; width:100%; background:linear-gradient(90deg,#ffb054,#e74c3c); border-radius:99px; }
+  .era-card.boss { border-color:#f0c14b; background:linear-gradient(#fffbe8,#fff3c4); }
+  .era-card.boss .era-name { color:#b8860b; }
+
+  .guide-row { display:flex; align-items:flex-end; gap:10px; width:min(560px,96vw); margin:10px 0 8px; }
+  .guide-ava { width:64px; height:64px; flex:none; }
+  .bubble { position:relative; background:#fff; border-radius:16px; padding:10px 14px; flex:1;
+    box-shadow:0 4px 12px rgba(190,120,60,.18); color:#6b4a26; font-size:clamp(14px,4vw,16px);
+    font-weight:700; line-height:1.7; min-height:44px; }
+  .bubble:before { content:''; position:absolute; left:-8px; bottom:16px; border:8px solid transparent;
+    border-right-color:#fff; border-left:none; }
+  .speak-btn { border:none; background:#fff4e2; border-radius:999px; padding:4px 10px; margin-left:6px;
+    cursor:pointer; font-size:13px; }
+
+  .q-card { width:min(560px,96vw); background:#fff; border-radius:20px; padding:16px;
+    box-shadow:0 6px 18px rgba(190,120,60,.18); margin-bottom:14px; }
+  .q-text { font-size:clamp(16px,4.6vw,20px); font-weight:900; color:#5d3d1e; line-height:1.7; margin-bottom:14px; }
+  .opts { display:flex; flex-direction:column; gap:10px; }
+  .opt { border:3px solid #ffe3bd; background:#fffaf2; border-radius:16px; padding:13px 14px;
+    font-size:clamp(15px,4.3vw,18px); font-weight:800; color:#6b4a26; cursor:pointer; text-align:left;
+    transition:.15s; line-height:1.5; }
+  .opt:active { transform:scale(.98); }
+  .opt.right { border-color:#5cb85c; background:#eaf9ea; color:#2e7d32; }
+  .opt.wrong { border-color:#e57373; background:#fdecea; color:#c0392b; opacity:.7; }
+  .shake { animation:shake .4s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-7px)} 50%{transform:translateX(7px)} 75%{transform:translateX(-4px)} }
+
+  /* 连一连 */
+  .match-grid { display:flex; gap:10px; }
+  .match-col { flex:1; display:flex; flex-direction:column; gap:10px; }
+  .m-item { border:3px solid #ffe3bd; background:#fffaf2; border-radius:14px; padding:12px 8px; text-align:center;
+    font-size:clamp(13px,3.9vw,16px); font-weight:800; color:#6b4a26; cursor:pointer; transition:.15s; line-height:1.4; }
+  .m-item.sel { border-color:#f0a020; background:#fff2d9; transform:scale(1.04); }
+  .m-item.ok { border-color:#5cb85c; background:#eaf9ea; color:#2e7d32; opacity:.75; pointer-events:none; }
+
+  /* 排一排 */
+  .order-pool { display:flex; flex-direction:column; gap:10px; margin-bottom:12px; }
+  .o-item { border:3px solid #ffe3bd; background:#fffaf2; border-radius:14px; padding:12px 12px;
+    font-size:clamp(14px,4vw,16px); font-weight:800; color:#6b4a26; cursor:pointer; transition:.15s; line-height:1.5; }
+  .o-item.placed { border-color:#5cb85c; background:#eaf9ea; color:#2e7d32; pointer-events:none; }
+  .o-item.placed:before { content:attr(data-n) " "; color:#f0a020; }
+  .order-tip { font-size:13px; color:#b08a5e; font-weight:700; margin-bottom:8px; }
+
+  .tip-card { display:none; background:#fff8dc; border:2px dashed #f0c14b; border-radius:14px; padding:10px 12px;
+    color:#8a6d1f; font-size:clamp(13px,3.8vw,15px); font-weight:700; line-height:1.7; margin-top:12px; }
+  .tip-card.show { display:block; animation:pop .3s; }
+  @keyframes pop { from { transform:scale(.85); opacity:0; } to { transform:scale(1); opacity:1; } }
+  .next-btn { display:none; margin:14px auto 0; padding:12px 40px; font-size:17px; font-weight:900; color:#fff;
+    background:linear-gradient(#ffb054,#f0862a); border:none; border-radius:999px; cursor:pointer;
+    box-shadow:0 4px 0 #cf6d15; }
+  .next-btn.show { display:block; animation:pop .3s; }
+  .next-btn:active { transform:translateY(3px); box-shadow:none; }
+
+  /* ============ 通关 / 图鉴 / 结局 ============ */
+  #reward, #finale { justify-content:center; text-align:center; background:rgba(255,240,220,.96); z-index:20; }
+  .treasure-card { background:#fff; border-radius:24px; padding:22px 30px; box-shadow:0 10px 30px rgba(190,120,60,.3);
+    max-width:420px; animation:pop .4s; }
+  .treasure-icon { font-size:74px; animation:bounce 1.2s infinite; display:inline-block; }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+  .treasure-name { font-size:clamp(20px,6vw,26px); font-weight:900; color:#c0392b; margin:6px 0; }
+  .treasure-desc { font-size:14px; color:#8a6a45; line-height:1.8; font-weight:700; }
+  .star-line { font-size:26px; margin:8px 0; }
+  .btn-row { margin-top:16px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+  .btn2 { padding:12px 24px; font-size:16px; font-weight:900; color:#fff; border:none; border-radius:999px;
+    cursor:pointer; box-shadow:0 4px 0 rgba(0,0,0,.15); }
+  .btn2:active { transform:translateY(3px); box-shadow:none; }
+  .btn2.orange { background:linear-gradient(#ffb054,#f0862a); }
+  .btn2.purple { background:linear-gradient(#b79aeb,#9d6fe0); }
+
+  #dex { padding-top:max(14px, env(safe-area-inset-top)); }
+  .dex-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:10px; width:min(560px,96vw); margin-top:10px; }
+  .dex-item { background:#fff; border-radius:16px; padding:14px 8px; text-align:center;
+    box-shadow:0 4px 12px rgba(190,120,60,.15); }
+  .dex-item .ic { font-size:40px; }
+  .dex-item .nm { font-weight:900; color:#6b4a26; font-size:14px; margin-top:4px; }
+  .dex-item .era { font-size:11px; color:#b08a5e; margin-top:2px; }
+  .dex-item.miss { opacity:.45; filter:grayscale(1); }
+
+  confetti-piece { position:fixed; width:10px; height:14px; top:-20px; z-index:30; pointer-events:none; }
+
+  /* ============ 穿越小剧场 ============ */
+  .skit-mask { position:fixed; left:0; top:0; right:0; bottom:0; z-index:50; display:flex;
+    flex-direction:column; align-items:center; justify-content:center; padding:20px 16px;
+    background:linear-gradient(rgba(40,20,10,.55),rgba(40,20,10,.72)); }
+  .skit-box { width:min(520px,94vw); background:rgba(255,248,236,.98); border-radius:22px;
+    padding:16px 16px 14px; box-shadow:0 12px 36px rgba(0,0,0,.35); animation:pop .3s; }
+  .skit-scene { text-align:center; font-weight:900; color:#c0392b; font-size:clamp(15px,4.4vw,19px); margin-bottom:12px; }
+  .skit-line { display:flex; align-items:flex-end; gap:10px; min-height:96px; }
+  .skit-ava { width:60px; height:60px; flex:none; }
+  .skit-bubble { position:relative; flex:1; background:#fff; border-radius:16px; padding:10px 14px;
+    box-shadow:0 4px 12px rgba(190,120,60,.18); }
+  .skit-bubble:before { content:''; position:absolute; left:-8px; bottom:14px; border:8px solid transparent;
+    border-right-color:#fff; border-left:none; }
+  .skit-who { font-weight:900; color:#e08a1e; font-size:13px; margin-bottom:3px; }
+  .skit-bubble > div:last-child { color:#6b4a26; font-weight:700; font-size:clamp(15px,4.2vw,17px); line-height:1.7; }
+  .skit-foot { display:flex; justify-content:space-between; align-items:center; margin-top:14px; }
+  .skit-skip { border:none; background:transparent; color:#b08a5e; font-weight:900; font-size:14px; cursor:pointer; }
+  .skit-next { border:none; background:linear-gradient(#ffb054,#f0862a); color:#fff; font-weight:900;
+    font-size:16px; border-radius:999px; padding:10px 26px; cursor:pointer; box-shadow:0 4px 0 #cf6d15; }
+  .skit-next:active { transform:translateY(3px); box-shadow:none; }
+  .emoji-ava { width:100%; height:100%; border-radius:50%; display:flex; align-items:center;
+    justify-content:center; font-size:34px; box-shadow:0 3px 8px rgba(190,120,60,.2); }
+
+  /* ============ 宝物详情弹窗 ============ */
+  .dexm-mask { position:fixed; left:0; top:0; right:0; bottom:0; z-index:50; display:flex;
+    align-items:center; justify-content:center; padding:20px 16px;
+    background:linear-gradient(rgba(40,20,10,.5),rgba(40,20,10,.66)); }
+  .dexm-box { width:min(440px,92vw); max-height:88vh; overflow-y:auto; background:#fff; border-radius:22px;
+    padding:20px 20px 16px; text-align:center; box-shadow:0 12px 36px rgba(0,0,0,.35); animation:pop .3s; }
+  .dexm-ic { font-size:64px; }
+  .dexm-name { font-size:clamp(19px,5.5vw,24px); font-weight:900; color:#c0392b; margin-top:4px; }
+  .dexm-era { font-size:12px; color:#b08a5e; font-weight:700; margin-top:2px; }
+  .dexm-desc { font-size:14px; color:#8a6a45; font-weight:700; line-height:1.8; margin-top:10px; text-align:left; }
+  .dexm-facts { margin-top:12px; display:flex; flex-direction:column; gap:8px; text-align:left; }
+  .dexm-facts > div { background:#fff8dc; border:2px dashed #f0c14b; border-radius:12px; padding:9px 11px;
+    color:#8a6d1f; font-size:13px; font-weight:700; line-height:1.6; }
+  .dexm-close { margin-top:16px; border:none; background:linear-gradient(#b79aeb,#9d6fe0); color:#fff;
+    font-weight:900; font-size:16px; border-radius:999px; padding:11px 30px; cursor:pointer; box-shadow:0 4px 0 rgba(0,0,0,.15); }
+  .dexm-close:active { transform:translateY(3px); box-shadow:none; }
+  .dex-item.got { cursor:pointer; }
+  .dex-item.got:active { transform:scale(.97); }
+
+  /* ============ 连对特效 ============ */
+  .streak-burst { position:fixed; left:50%; top:38%; transform:translate(-50%,0) scale(.6); z-index:40;
+    font-size:clamp(22px,7vw,34px); font-weight:900; color:#f0862a; pointer-events:none; opacity:0;
+    text-shadow:0 2px 0 #fff, 0 4px 10px rgba(240,134,42,.5); transition:transform .3s, opacity .3s; }
+  .streak-burst.go { opacity:1; transform:translate(-50%,-30px) scale(1.1); }
+
+  /* ============ 错题复习入口 ============ */
+  .era-card.review { border-color:#f2a6a6; background:linear-gradient(#fff5f5,#ffecec); }
+  .era-card.review .era-name { color:#d0522b; }
+</style>
+</head>
+<body>
+
+<!-- ============ 封面 ============ -->
+<div id="cover" class="screen">
+  <div id="coverAva"></div>
+  <div class="big-title">📜 米小圈历史大冒险 📜</div>
+  <div class="sub-title">—— 帮米小圈写完历史作业吧！——</div>
+  <div class="story-box">
+    <b>米小圈：</b>"完蛋啦！魏老师留了作业——《我最喜欢的历史人物》，可我一个历史人物都不认识！😱<br>
+    铁头说他只认识<b>孙悟空</b>（那是神话啦！），姜小牙说历史书太贵他也没看……<br>
+    快跟我一起<b>穿越时空</b>，从远古一路玩到明清，每一关都有宝物收集哦！"
+  </div>
+  <button class="go-btn" id="btnGo">出发穿越 🚀</button>
+  <div class="mini-note">🏺 通关收集 8 件历史宝物 · 全部通关解锁「时空大挑战」赢金冠 👑</div>
+  <button class="lobby-btn" id="btnLobby">🎪 回游戏乐园</button>
+</div>
+
+<!-- ============ 时代地图 ============ -->
+<div id="map" class="screen hidden">
+  <div class="map-head">
+    <div class="map-title">🗺️ 时空地图</div>
+    <div class="pill" id="starPill">⭐ 0</div>
+    <div class="pill link" id="dexBtn">🏺 图鉴</div>
+    <div class="pill link" id="lobbyPill">🎪 乐园</div>
+  </div>
+  <div class="era-list" id="eraList"></div>
+</div>
+
+<!-- ============ 答题 ============ -->
+<div id="quiz" class="screen hidden">
+  <div class="quiz-head">
+    <button class="back-btn" id="btnBack">← 地图</button>
+    <div class="q-progress"><div id="qProg"></div></div>
+    <div class="q-count" id="qCount">1/6</div>
+    <div class="pill hidden" id="bossHearts">❤️❤️❤️</div>
+  </div>
+  <div class="timer-wrap hidden" id="timerWrap"><div id="timerFill"></div></div>
+  <div class="guide-row">
+    <div class="guide-ava" id="guideAva"></div>
+    <div class="bubble"><span id="guideTxt"></span><button class="speak-btn hidden" id="btnSpeak">🔊 读题</button></div>
+  </div>
+  <div class="q-card" id="qCard"></div>
+</div>
+
+<!-- ============ 通关奖励 ============ -->
+<div id="reward" class="screen hidden">
+  <div class="treasure-card">
+    <div style="font-size:15px;font-weight:900;color:#f0a020;">🎉 通关啦！获得宝物 🎉</div>
+    <div class="treasure-icon" id="tIcon">🏺</div>
+    <div class="treasure-name" id="tName"></div>
+    <div class="treasure-desc" id="tDesc"></div>
+    <div class="star-line" id="tStars"></div>
+    <div class="treasure-desc" id="tSay" style="color:#c0392b;"></div>
+    <div class="btn-row">
+      <button class="btn2 orange" id="btnNextEra">下一关 ▶</button>
+      <button class="btn2 purple" id="btnMap1">回地图 🗺️</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 大结局 ============ -->
+<div id="finale" class="screen hidden">
+  <div class="treasure-card">
+    <div class="treasure-icon">🏆</div>
+    <div class="treasure-name">大冒险完成！</div>
+    <div class="treasure-desc" id="finaleTxt">
+      米小圈的作业得了 <b style="color:#c0392b;font-size:20px;">A+</b>！<br>
+      魏老师惊讶地推了推眼镜："米小圈，你什么时候变成历史小博士了？！"<br>
+      铁头和姜小牙齐声说："快教教我们！"<br><br>
+      🎓 你已经认识了大禹、孔子、秦始皇、蔡伦、诸葛亮、李白、司马光、郑和……<br>
+      你就是真正的<b>历史小博士</b>！
+    </div>
+    <div class="star-line" id="finaleStars"></div>
+    <div class="btn-row">
+      <button class="btn2 orange" id="btnDex2">看看我的宝物 🏺</button>
+      <button class="btn2 purple" id="btnMap2">回地图 🗺️</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 宝物图鉴 ============ -->
+<div id="dex" class="screen hidden">
+  <div class="map-head">
+    <div class="map-title">🏺 宝物图鉴</div>
+    <div class="pill link" id="btnBackDex">← 返回</div>
+  </div>
+  <div class="dex-grid" id="dexGrid"></div>
+</div>
+
+<!-- ============ 穿越小剧场 ============ -->
+<div id="skit" class="skit-mask hidden">
+  <div class="skit-box">
+    <div class="skit-scene" id="skitScene"></div>
+    <div class="skit-line">
+      <div class="skit-ava" id="skitAva"></div>
+      <div class="skit-bubble"><div class="skit-who" id="skitWho"></div><div id="skitTxt"></div></div>
+    </div>
+    <div class="skit-foot">
+      <button class="skit-skip" id="skitSkip">跳过 ▶▶</button>
+      <button class="skit-next" id="skitNext">继续 ▶</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 宝物详情弹窗 ============ -->
+<div id="dexModal" class="dexm-mask hidden">
+  <div class="dexm-box">
+    <div class="dexm-ic" id="dexmIc"></div>
+    <div class="dexm-name" id="dexmName"></div>
+    <div class="dexm-era" id="dexmEra"></div>
+    <div class="dexm-desc" id="dexmDesc"></div>
+    <div class="dexm-facts" id="dexmFacts"></div>
+    <button class="dexm-close" id="dexmClose">知道啦 ✓</button>
+  </div>
+</div>
+
+<script src="../shared/locale.js"></script>
+<script src="../shared/ai-companion.js"></script>
+<script>
+'use strict';
+/* 错误可视化(远程排查用) */
+window.addEventListener('error', function (ev) {
+  try {
+    var d = document.createElement('div');
+    d.style.cssText = 'position:fixed;left:8px;right:8px;bottom:8px;z-index:99;background:#c0392b;color:#fff;font-size:12px;padding:8px 10px;border-radius:8px;opacity:.93;word-break:break-all;';
+    d.textContent = '⚠️ 出错了: ' + (ev.message || '未知错误') + ' @' + (ev.lineno || '?');
+    document.body.appendChild(d);
+    setTimeout(function () { d.remove(); }, 10000);
+  } catch (e) {}
+});
+
+var $ = function (id) { return document.getElementById(id); };
+
+/* ============ 音效（WebAudio 合成） ============ */
+var AC = null;
+function initAudio() {
+  if (AC) return;
+  try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
+}
+function tone(f, dur, type, gain, delay) {
+  if (!AC) return;
+  var t0 = AC.currentTime + (delay || 0);
+  var o = AC.createOscillator(), g = AC.createGain();
+  o.type = type || 'sine'; o.frequency.value = f;
+  g.gain.setValueAtTime(gain || 0.14, t0);
+  g.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+  o.connect(g); g.connect(AC.destination);
+  o.start(t0); o.stop(t0 + dur + 0.02);
+}
+var sfx = {
+  click: function () { tone(880, 0.07, 'sine', 0.1); },
+  right: function () { tone(660, 0.12, 'sine', 0.15); tone(990, 0.15, 'sine', 0.12, 0.08); },
+  wrong: function () { tone(220, 0.2, 'triangle', 0.12); },
+  clear: function () { [523, 659, 784, 1046, 1318].forEach(function (f, i) { tone(f, 0.2, 'triangle', 0.15, i * 0.1); }); },
+  star: function () { [880, 1108, 1318].forEach(function (f, i) { tone(f, 0.12, 'triangle', 0.12, i * 0.06); }); },
+  streak: function () { [784, 988, 1318, 1568].forEach(function (f, i) { tone(f, 0.14, 'triangle', 0.13, i * 0.05); }); }
+};
+
+/* ============ 朗读（可用才显示按钮） ============ */
+var canSpeak = 'speechSynthesis' in window;
+function speak(txt) {
+  if (!canSpeak) return;
+  try {
+    window.speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(txt.replace(/[《》“”"]/g, ''));
+    u.lang = 'zh-CN'; u.rate = 0.9;
+    window.speechSynthesis.speak(u);
+  } catch (e) {}
+}
+
+/* ============ 米小圈 SVG 头像 ============ */
+function mxqSvg(size, mood) {
+  var mouth = mood === 'wow'
+    ? '<ellipse cx="50" cy="66" rx="7" ry="9" fill="#8b4513"/>'
+    : '<path d="M38 62 Q50 74 62 62" stroke="#8b4513" stroke-width="3.5" fill="none" stroke-linecap="round"/>';
+  return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">' +
+    '<circle cx="50" cy="54" r="34" fill="#ffe0c2" stroke="#e8b98a" stroke-width="2"/>' +
+    '<path d="M18 48 Q16 18 50 15 Q84 18 82 48 Q76 30 50 29 Q24 30 18 48Z" fill="#3a2e2a"/>' +
+    '<circle cx="50" cy="14" r="7" fill="none" stroke="#3a2e2a" stroke-width="5"/>' +
+    '<circle cx="37" cy="50" r="4.5" fill="#333"/><circle cx="63" cy="50" r="4.5" fill="#333"/>' +
+    '<circle cx="38.5" cy="48.5" r="1.5" fill="#fff"/><circle cx="64.5" cy="48.5" r="1.5" fill="#fff"/>' +
+    '<ellipse cx="29" cy="60" rx="5" ry="3.4" fill="#ffb3a0" opacity=".8"/>' +
+    '<ellipse cx="71" cy="60" rx="5" ry="3.4" fill="#ffb3a0" opacity=".8"/>' +
+    mouth +
+    '<path d="M28 84 Q50 96 72 84 L72 100 L28 100 Z" fill="#f0862a"/>' +
+    '</svg>';
+}
+
+/* ============ 题库（8 个时代） ============ */
+/* 题型: pick={t,q,opts:[[文本,是否正确,答错吐槽]],hint,tip}
+        match={t,q,pairs:[[左,右]..],tip}
+        order={t,q,steps:[按正确顺序],tip} */
+var ERAS = [
+  { id: 'yuangu', name: '远古传说', emoji: '🔥', color: '#ffd9b0',
+    desc: '大禹治水 · 炎黄子孙 · 仓颉造字',
+    treasure: { icon: '🏺', name: '彩陶碗', desc: '远古的人们用泥土烧出了漂亮的彩陶，这可是几千年前的"碗"哦！',
+      facts: ['最有名的一件彩陶上画着鱼和小人的脸，叫"人面鱼纹盆"，现在是博物馆里的国宝。', '上面红红黑黑的花纹，是古人用天然的矿石颜料一点一点画上去的。', '彩陶差不多有六千多年历史，比甲骨文还要古老得多！'] },
+    intro: [{ who: '米小圈', txt: '呼——时空隧道好晕！我们这是穿越到哪儿啦？' }, { who: '铁头', txt: '好久好久以前诶！连房子都没有，还有人住在山洞里！' }, { who: '姜小牙', txt: '别发呆了，快找认识的历史人物，你的作业还等着交呢！' }],
+    qs: [
+      { t: 'pick', q: '传说中，带领大家治好大洪水的英雄是谁？',
+        opts: [['💪 大禹', 1], ['🙋 米小圈', 0, '米小圈：嘿嘿，我治不了洪水，我连游泳圈都离不开！'], ['🐒 孙悟空', 0, '铁头：孙悟空是神话故事里的啦！']],
+        hint: '提示：他忙着治水，三次路过家门口都没进去休息～',
+        tip: '大禹治水"三过家门而不入"，他带大家挖河道，把洪水引进了大海。' },
+      { t: 'pick', q: '我们中国人常常说自己是"______子孙"？',
+        opts: [['🐉 炎黄', 1], ['🦖 恐龙', 0, '姜小牙：恐龙子孙？那你会喷火吗？'], ['🍫 巧克力', 0, '米小圈：巧克力子孙听起来好好吃呀……不对不对！']],
+        hint: '提示：是两位传说中的祖先，一位叫炎帝，一位叫黄帝～',
+        tip: '炎帝和黄帝是传说中中华民族的祖先，所以我们叫"炎黄子孙"。' },
+      { t: 'pick', q: '传说中，汉字是谁创造出来的？',
+        opts: [['✍️ 仓颉', 1], ['🧑‍🎄 圣诞老人', 0, '铁头：圣诞老人只会送礼物，不会造字啦！'], ['🤖 机器人', 0, '姜小牙：远古哪来的机器人，穿越也没这么穿的！']],
+        hint: '提示：他的名字叫"仓颉"（cāng jié），据说他看鸟的脚印想出了字的形状～',
+        tip: '传说仓颉观察鸟兽的脚印，创造了最早的汉字。' },
+      { t: 'order', q: '把"大禹治水"的故事按顺序排一排：',
+        steps: ['🌊 大洪水来了，房子都被淹了', '🤔 大禹想出好办法：挖河道', '⛏️ 大家一起挖河，把水引向大海', '🏡 洪水退了，大家过上好日子'],
+        tip: '大禹用"疏导"的办法，把水引走，而不是硬堵住它。' },
+      { t: 'pick', q: '进阶题！尧和舜把首领的位置传给了谁？',
+        opts: [['🏆 让给最有本事的人（禅让）', 1], ['👶 只传给自己的儿子', 0, '米小圈：那是后来夏朝才开始的规矩哦～'], ['✊ 石头剪刀布决定', 0, '姜小牙：输了不服怎么办，三局两胜吗？']],
+        hint: '提示：尧传给了舜，舜传给了禹，都不是自己的儿子～',
+        tip: '把位置让给最有德行本事的人叫"禅让"。尧让给舜，舜让给禹。' },
+      { t: 'pick', q: '进阶题！神农氏为了帮大家找到治病的药，做了什么？',
+        opts: [['🌿 亲口尝遍百草', 1], ['🛒 去药店买药', 0, '铁头：远古时期可没有药店呀！'], ['🔍 上网查资料', 0, '姜小牙：神农要有网络，早就直播带货啦！']],
+        hint: '提示：他把草药一棵一棵放进嘴里试～',
+        tip: '传说神农尝百草，一天中毒七十次，就为了找出能治病的草药。' }
+    ] },
+  { id: 'xsz', name: '夏商周', emoji: '🐢', color: '#d9ebc9',
+    desc: '甲骨文 · 青铜鼎 · 孔子',
+    treasure: { icon: '⚱️', name: '青铜鼎', desc: '商朝人用青铜做的大鼎，又能煮肉又是宝贝，最有名的司母戊鼎比米小圈还重好多倍！',
+      facts: ['最大的青铜鼎重达八百多公斤，比一头大水牛还要重！', '青铜是铜和锡混合做出来的，比纯铜更硬更结实。', '在古代，"鼎"还是权力的象征，所以有个成语叫"一言九鼎"。'] },
+    intro: [{ who: '米小圈', txt: '这里的人在乌龟壳上刻字，好奇怪呀！' }, { who: '姜小牙', txt: '真没文化，那叫甲骨文，是最早的汉字！' }, { who: '铁头', txt: '哇你居然知道？我还以为他们在画乌龟呢！' }],
+    qs: [
+      { t: 'pick', q: '最早的汉字"甲骨文"，是刻在哪里的？',
+        opts: [['🐢 龟甲和兽骨上', 1], ['📱 手机上', 0, '姜小牙：商朝人要有手机，还用得着刻乌龟壳？'], ['📓 作业本上', 0, '米小圈：那时候可没有作业本，真幸福啊……']],
+        hint: '提示：和乌龟身上硬硬的东西有关哦～',
+        tip: '三千多年前的商朝人把字刻在龟甲和兽骨上，这就是"甲骨文"。' },
+      { t: 'pick', q: '孔子是一位伟大的什么人？',
+        opts: [['👨‍🏫 老师', 1], ['🧑‍🍳 大厨师', 0, '铁头：孔子要是厨师，弟子三千得吃穷他呀！'], ['🧑‍✈️ 飞行员', 0, '姜小牙：两千多年前还没有飞机呢！']],
+        hint: '提示：他有三千个学生，被称为"万世师表"～',
+        tip: '孔子是春秋时期伟大的老师和思想家，传说他有三千弟子。' },
+      { t: 'match', q: '连一连：它们是做什么用的？',
+        pairs: [['⚱️ 青铜鼎', '煮东西的大锅'], ['🐢 甲骨文', '最早的汉字'], ['🔔 编钟', '能敲出音乐的乐器']],
+        tip: '青铜鼎煮肉，甲骨文记事，编钟奏乐——古人的生活也很丰富！' },
+      { t: 'pick', q: '夏、商、周三个朝代，哪个排在最前面？',
+        opts: [['1️⃣ 夏朝', 1], ['2️⃣ 商朝', 0, '差一点点！商朝是第二个～'], ['3️⃣ 周朝', 0, '周朝是三个里最晚的哦～']],
+        hint: '提示：有个顺口溜"夏商与西周"，第一个字就是答案～',
+        tip: '朝代顺序：夏 → 商 → 周。夏朝是传说中最早的朝代。' },
+      { t: 'pick', q: '进阶题！商朝最后一个暴君是谁？',
+        opts: [['😈 纣王', 1], ['👑 秦始皇', 0, '米小圈：秦始皇是好几百年之后的人啦！'], ['🐺 灰太狼', 0, '铁头：灰太狼在羊村，不在商朝！']],
+        hint: '提示：他的名字念"纣"（zhòu），周武王打败了他～',
+        tip: '纣王很残暴，周武王起兵打败了他，这就是"武王伐纣"，之后建立了周朝。' },
+      { t: 'pick', q: '进阶题！"烽火戏诸侯"里，周幽王乱点警报烽火是为了什么？',
+        opts: [['😄 逗王妃褒姒笑', 1], ['🍠 烤红薯吃', 0, '姜小牙：用军事警报烤红薯，也太浪费啦！'], ['🎂 开生日派对', 0, '米小圈：这个派对的代价也太大了……']],
+        hint: '提示：王妃不爱笑，周幽王想出了这个坏主意～',
+        tip: '烽火是打仗的警报。骗人骗多了，等敌人真的来时就没人来救了——撒谎要不得！' }
+    ] },
+  { id: 'qin', name: '秦朝', emoji: '🛡️', color: '#e3d4f7',
+    desc: '秦始皇 · 兵马俑 · 长城',
+    treasure: { icon: '🗿', name: '兵马俑', desc: '秦始皇的地下军队！几千个陶土士兵，每一个的脸都长得不一样，藏在西安的地下两千多年。',
+      facts: ['兵马俑刚做好时其实是彩色的！只是出土见到空气后，颜色很快就掉了。', '它是1974年陕西的农民打井时，一锄头意外挖出来的。', '几千个兵马俑里，考古学家还没找到两张一模一样的脸。'] },
+    intro: [{ who: '铁头', txt: '米小圈快看！好多好多泥巴士兵，排得整整齐齐！' }, { who: '米小圈', txt: '这就是传说中的兵马俑吧？也太壮观了！' }, { who: '姜小牙', txt: '嘘——小声点，别把两千多年前的皇帝吵醒了。' }],
+    qs: [
+      { t: 'pick', q: '第一个统一中国的皇帝是谁？',
+        opts: [['👑 秦始皇', 1], ['🦷 姜小牙', 0, '姜小牙：我要是皇帝，天天吃糖不刷牙！——所以我当不了。'], ['🐷 猪八戒', 0, '铁头：猪八戒是《西游记》里的神话人物啦！']],
+        hint: '提示：他姓嬴名政，建立的朝代叫"秦"～',
+        tip: '公元前221年，秦始皇统一了中国，还统一了文字和货币。' },
+      { t: 'pick', q: '西安地下埋着的"泥土士兵大军团"叫什么？',
+        opts: [['🗿 兵马俑', 1], ['🧸 玩具兵', 0, '米小圈：那可不是玩具，是国宝！'], ['⛄ 雪人军团', 0, '铁头：雪人早就化掉啦，怎么保存两千年！']],
+        hint: '提示：三个字，最后一个字念"俑"（yǒng）～',
+        tip: '兵马俑是秦始皇的陪葬军队，被称为"世界第八大奇迹"。' },
+      { t: 'pick', q: '为了挡住敌人，秦始皇把北边的城墙连起来，修成了什么？',
+        opts: [['🧱 万里长城', 1], ['🏫 学校围墙', 0, '米小圈：学校围墙挡住的是想出去玩的我……'], ['🎢 过山车', 0, '姜小牙：要是过山车就好玩啦！']],
+        hint: '提示：它特别特别长，像一条巨龙趴在山上～',
+        tip: '长城连起来有上万里长，所以叫"万里长城"。' },
+      { t: 'order', q: '把这些朝代按先后顺序排一排：',
+        steps: ['夏朝', '商朝', '周朝', '秦朝'],
+        tip: '记住顺口溜：夏商与西周，之后春秋战国，然后秦统一天下！' },
+      { t: 'pick', q: '进阶题！找出"混进来"的东西：哪一个不是秦朝的？',
+        opts: [['🐴 唐三彩', 1], ['🗿 兵马俑', 0, '兵马俑就是秦朝的哦，找找"混进来"的那个～'], ['🧱 万里长城', 0, '长城是秦朝连起来的哦，找找"混进来"的那个～']],
+        hint: '提示：有个宝贝的名字里就藏着它自己的朝代～',
+        tip: '唐三彩是唐朝的陶器——名字里的"唐"字就是答案！做题要细心找线索哦。' },
+      { t: 'pick', q: '进阶题！秦朝之后，下一个朝代是什么？',
+        opts: [['🏮 汉朝', 1], ['🌸 唐朝', 0, '唐朝还要再等好几百年呢～'], ['🧭 宋朝', 0, '宋朝更晚啦～']],
+        hint: '提示：我们的民族叫"汉族"，就和这个朝代有关～',
+        tip: '秦朝之后是汉朝。"汉族""汉字"的名字都是从汉朝来的。' }
+    ] },
+  { id: 'han', name: '汉朝', emoji: '📜', color: '#f9e2c8',
+    desc: '蔡伦造纸 · 丝绸之路 · 史记',
+    treasure: { icon: '📜', name: '纸卷', desc: '蔡伦改进造纸术之前，古人要在竹简上写字，一本书要用一车竹片拉！有了纸，读书写字方便多啦。',
+      facts: ['蔡伦用树皮、破布、旧渔网这些便宜材料造纸，所以纸变得又便宜又好用。', '造纸术是中国四大发明之一，后来慢慢传到了全世界。', '在纸普及以前，一部大书要写在成百上千片竹简上，搬起来得用车拉。'] },
+    intro: [{ who: '米小圈', txt: '这条路上好多骆驼，驮着亮闪闪的丝绸！' }, { who: '姜小牙', txt: '这就是丝绸之路，一直通到很远很远的西方呢。' }, { who: '铁头', txt: '我肚子饿了……能用作业换点西域的葡萄干吗？' }],
+    qs: [
+      { t: 'pick', q: '汉朝的蔡伦改进了什么，让写字方便了很多？',
+        opts: [['📄 造纸术', 1], ['🍜 煮面条', 0, '铁头：煮面条也很伟大！但……不是他干的。'], ['🎆 放烟花', 0, '姜小牙：烟花那是后来火药的事儿啦！']],
+        hint: '提示：你写作业用的东西，就是他改进出来的～',
+        tip: '东汉的蔡伦改进了造纸术，纸又轻又便宜，是四大发明之一！' },
+      { t: 'pick', q: '纸发明以前，古人把字写在什么上面？',
+        opts: [['🎋 竹简（竹片）上', 1], ['📱 iPad上', 0, '米小圈：汉朝人要有iPad，我立刻穿越回去抢一个！'], ['🍕 披萨上', 0, '铁头：写完就吃掉吗？那考试怎么办！']],
+        hint: '提示：把竹子削成一片一片，再用绳子串起来～',
+        tip: '古人把字写在竹简上，一本书要好多捆竹片，特别重！' },
+      { t: 'pick', q: '张骞开辟的、连接中国和西方的著名道路叫什么？',
+        opts: [['🐫 丝绸之路', 1], ['🛣️ 高速公路', 0, '姜小牙：汉朝可没有汽车哦！'], ['🌈 彩虹桥', 0, '米小圈：彩虹桥是小马宝莉里的吧！']],
+        hint: '提示：商人们牵着骆驼，驮着漂亮的丝绸走这条路～',
+        tip: '张骞出使西域，开辟了丝绸之路，中国的丝绸、茶叶从这里运向世界。' },
+      { t: 'match', q: '连一连：汉朝的名人都做了什么？',
+        pairs: [['🧻 蔡伦', '改进造纸术'], ['🐫 张骞', '开辟丝绸之路'], ['📚 司马迁', '写了《史记》']],
+        tip: '司马迁写的《史记》记录了三千年的历史，被称为"史家之绝唱"。' },
+      { t: 'pick', q: '进阶题！汉朝十几岁就带兵打败匈奴的少年将军是谁？',
+        opts: [['🏇 霍去病', 1], ['🔥 哪吒', 0, '铁头：哪吒是神话人物啦！'], ['🦸 奥特曼', 0, '姜小牙：奥特曼打的是怪兽，不是匈奴！']],
+        hint: '提示：他的名字三个字，念"霍去病"～',
+        tip: '霍去病十几岁就当了将军，留下名言"匈奴未灭，何以家为"。' },
+      { t: 'pick', q: '超级易混题！写《史记》的是司马迁，那司马光是谁？',
+        opts: [['🪨 宋朝人，小时候砸缸救过人', 1], ['📚 《史记》也是他写的', 0, '米小圈：差点骗到我！《史记》是司马迁写的～'], ['👬 他俩是双胞胎兄弟', 0, '姜小牙：他们俩差了一千多年呢！']],
+        hint: '提示：砸缸的是司马光，写《史记》的是司马迁，一字之差～',
+        tip: '司马迁（汉朝）写《史记》；司马光（宋朝）砸缸救人、写《资治通鉴》。一字之差，别搞混！' }
+    ] },
+  { id: 'sanguo', name: '三国', emoji: '⚔️', color: '#cfe6f5',
+    desc: '诸葛亮 · 草船借箭 · 魏蜀吴',
+    treasure: { icon: '🪶', name: '羽毛扇', desc: '诸葛亮的标志！轻轻一摇，好主意就来了。草船借箭、空城计都是他的妙计。',
+      facts: ['有句俗话"三个臭皮匠，顶个诸葛亮"，就是夸他特别聪明。', '《三国演义》里，他摆出"空城计"，大开城门弹琴，把敌人吓得不敢进城。', '传说他还发明了会运粮食的"木牛流马"，是个了不起的发明家。'] },
+    intro: [{ who: '铁头', txt: '打起来啦打起来啦！这是在拍打仗的电影吗？' }, { who: '米小圈', txt: '这是三国！你看那个摇羽毛扇的，好像很厉害的样子。' }, { who: '姜小牙', txt: '那可是诸葛亮，三国第一聪明人，快去跟他讨教几招！' }],
+    qs: [
+      { t: 'pick', q: '三国里最聪明、总拿着羽毛扇的军师是谁？',
+        opts: [['🪶 诸葛亮', 1], ['👓 魏老师', 0, '米小圈：魏老师确实很厉害，但她管的是我们班！'], ['🤠 米爸爸', 0, '米小圈：我爸连我的数学题都不会做……']],
+        hint: '提示：他的名字四个字念"诸葛孔明"，也叫诸葛亮～',
+        tip: '诸葛亮是三国时期蜀国的军师，特别有智慧。' },
+      { t: 'pick', q: '诸葛亮用什么办法"借"到了十万支箭？',
+        opts: [['⛵ 草船借箭', 1], ['🛒 网上购物', 0, '姜小牙：包邮也到不了三国啊！'], ['🪄 变魔术', 0, '铁头：不是魔法，是智慧！']],
+        hint: '提示：大雾天，他把扎满草人的船开到了敌人军营前～',
+        tip: '大雾天曹操看不清，下令射箭，箭全射在草人上——十万支箭轻松到手！' },
+      { t: 'pick', q: '"三国"指的是哪三个国家？',
+        opts: [['⚔️ 魏、蜀、吴', 1], ['🌍 中、美、英', 0, '姜小牙：这是现在的国家啦！'], ['📖 唐、宋、元', 0, '米小圈：这些是后来的朝代哦～']],
+        hint: '提示：曹操的魏、刘备的蜀、孙权的吴～',
+        tip: '东汉之后天下分成三国：曹魏、蜀汉、东吴。' },
+      { t: 'order', q: '把"草船借箭"的故事按顺序排一排：',
+        steps: ['😠 周瑜让诸葛亮十天造十万支箭', '⛵ 诸葛亮把扎满草人的船准备好', '🌫️ 大雾天，船开到曹操军营前', '🏹 曹军射箭全插在草人上，箭借到啦！'],
+        tip: '诸葛亮不但聪明，还懂天气——他早算准那天有大雾！' },
+      { t: 'pick', q: '进阶题！"桃园三结义"是哪三个人结拜成兄弟？',
+        opts: [['🍑 刘备、关羽、张飞', 1], ['🎒 米小圈、铁头、姜小牙', 0, '米小圈：嘿嘿我们仨是铁三角，可惜不在三国！'], ['🐒 唐僧、孙悟空、猪八戒', 0, '铁头：他们是取经队，还少数了个沙和尚呢！']],
+        hint: '提示：大哥刘备、二哥关羽、三弟张飞～',
+        tip: '刘备、关羽、张飞在桃园结拜为兄弟，一起同心协力打天下。' },
+      { t: 'pick', q: '进阶题！"三顾茅庐"说的是谁三次上门去请谁？',
+        opts: [['🙇 刘备三次去请诸葛亮', 1], ['🪶 诸葛亮三次去请刘备', 0, '反啦反啦！是刘备上门去请诸葛亮～'], ['🍚 曹操三次去蹭饭', 0, '姜小牙：曹操表示：我没有！']],
+        hint: '提示：被请的人住在茅草屋里，摇着羽毛扇～',
+        tip: '刘备三次拜访诸葛亮的茅草屋，诚意满满，诸葛亮终于答应出山帮他。' }
+    ] },
+  { id: 'tang', name: '唐朝', emoji: '🌸', color: '#ffd9e2',
+    desc: '李白 · 武则天 · 玄奘取经',
+    treasure: { icon: '🐴', name: '唐三彩', desc: '唐朝最漂亮的陶器，黄、绿、白三种颜色，最常见的就是神气的三彩马！',
+      facts: ['唐三彩其实不止三种颜色，这里的"三"是"多"的意思。', '它最常见的样子是马和骆驼，因为唐朝人特别喜欢这些动物。', '这些漂亮陶器大多是随葬用的，古人希望它们能陪伴主人。'] },
+    intro: [{ who: '米小圈', txt: '哇，这里好热闹，还有人在吟诗喝酒！' }, { who: '姜小牙', txt: '唐朝最有名的就是诗人啦，说不定能碰见李白！' }, { who: '铁头', txt: '李白？就是"床前明月光"那个吗？我会背前两句！' }],
+    qs: [
+      { t: 'pick', q: '"床前明月光，疑是地上霜"是哪位"诗仙"写的？',
+        opts: [['🌙 李白', 1], ['🗣️ 铁头', 0, '铁头：我只会写"床前明月光，我想吃蛋黄"……'], ['🎅 圣诞老人', 0, '姜小牙：圣诞老人只会说 Ho Ho Ho！']],
+        hint: '提示：他特别爱月亮，也爱喝酒作诗，人称"诗仙"～',
+        tip: '李白是唐朝大诗人，一生写了上千首诗，被称为"诗仙"。' },
+      { t: 'pick', q: '中国历史上唯一的女皇帝是谁？',
+        opts: [['👸 武则天', 1], ['❄️ 白雪公主', 0, '米小圈：白雪公主在童话城堡里，不在唐朝！'], ['🧚 莫老师', 0, '米小圈：莫老师是我们心中的神仙姐姐，但她不是皇帝啦！']],
+        hint: '提示：她姓武，是唐朝的皇帝～',
+        tip: '武则天是中国历史上唯一的女皇帝，她做皇帝时国家很强盛。' },
+      { t: 'pick', q: '《西游记》里唐僧的原型，真去西天取经的人是谁？',
+        opts: [['🧘 玄奘', 1], ['🐒 孙悟空', 0, '铁头：又是孙悟空！他真的是神话人物啦！'], ['🐷 猪八戒', 0, '姜小牙：八戒走到半路就得饿倒了……']],
+        hint: '提示：他是一位和尚，名字念"玄奘"（xuán zàng）～',
+        tip: '唐朝和尚玄奘真的走了几万里路去印度取经，《西游记》就是根据他的故事改编的！' },
+      { t: 'match', q: '连一连：唐朝的名人都是做什么的？',
+        pairs: [['🌙 李白', '写诗的"诗仙"'], ['👸 武则天', '唯一的女皇帝'], ['🧘 玄奘', '去西天取经的和尚']],
+        tip: '唐朝还有个了不起的发明——火药，就是在唐朝出现的！' },
+      { t: 'pick', q: '进阶题！李白是"诗仙"，那"诗圣"是谁？',
+        opts: [['📖 杜甫', 1], ['🗣️ 铁头', 0, '铁头："床前明月光，我想吃蛋黄"……能算诗圣吗？——不能。'], ['🧘 唐僧', 0, '米小圈：唐僧会念经，不写诗啦！']],
+        hint: '提示：他姓杜，和李白是好朋友，两人经常一起玩～',
+        tip: '李白是"诗仙"，杜甫是"诗圣"，都是唐朝最伟大的诗人。' },
+      { t: 'pick', q: '进阶题！唐朝的鉴真和尚六次东渡大海，把文化传到了哪个国家？',
+        opts: [['🗾 日本', 1], ['🗽 美国', 0, '姜小牙：那时候还没有美国这个国家呢！'], ['🌕 月球', 0, '米小圈：坐船可到不了月球！']],
+        hint: '提示：在中国的东边，要坐船渡海过去～',
+        tip: '鉴真东渡失败了五次都不放弃，第六次终于成功，把唐朝文化和医药带到了日本。' }
+    ] },
+  { id: 'song', name: '宋朝', emoji: '🧭', color: '#d4f0e0',
+    desc: '指南针 · 活字印刷 · 司马光砸缸',
+    treasure: { icon: '🧭', name: '指南针', desc: '不管怎么转，它永远指着南北！宋朝人把它用在航海上，再也不怕在大海里迷路啦。',
+      facts: ['指南针的老祖宗叫"司南"，长得像一把小勺子放在盘子上。', '它靠磁铁的力量指方向，永远指着南和北。', '有了指南针，海上的大船就算看不见岸，也不会迷路啦。'] },
+    intro: [{ who: '米小圈', txt: '街上好多小店，还有人拿着个会转的小针在看。' }, { who: '姜小牙', txt: '那是指南针！宋朝的宝贝可多了，四大发明这儿就占俩。' }, { who: '铁头', txt: '我只想尝尝宋朝的点心……听说可好吃了。' }],
+    qs: [
+      { t: 'pick', q: '航海时帮船找到方向的伟大发明是什么？',
+        opts: [['🧭 指南针', 1], ['🔦 手电筒', 0, '姜小牙：手电筒能照亮，可不认识路呀！'], ['🗺️ 藏宝图', 0, '米小圈：藏宝图是海盗故事里的啦！']],
+        hint: '提示：它的小针永远指向南边～',
+        tip: '指南针是四大发明之一，宋朝时用在航海上，船再也不迷路了。' },
+      { t: 'pick', q: '宋朝的毕昇发明了什么样的印刷术？',
+        opts: [['🔠 活字印刷', 1], ['🖨️ 3D打印', 0, '姜小牙：3D打印是一千年后的事儿！'], ['🖍️ 手抄一百遍', 0, '米小圈：抄一百遍？那不成罚抄作业了嘛！']],
+        hint: '提示：把每个字做成一个个小方块，能反复拼着用～',
+        tip: '毕昇把字刻成一个个活动的小字块，随意排版，印书快多了！' },
+      { t: 'pick', q: '小伙伴掉进大水缸，司马光是怎么救他的？',
+        opts: [['🪨 搬石头砸破缸', 1], ['📞 打110', 0, '铁头：宋朝还没有电话哦！'], ['🥤 用吸管把水喝光', 0, '姜小牙：喝到明年也喝不完呀！']],
+        hint: '提示：缸破了，水流走了，人就得救啦～',
+        tip: '司马光小时候机智砸缸救人，长大后还写了史书《资治通鉴》。' },
+      { t: 'order', q: '把"司马光砸缸"的故事按顺序排一排：',
+        steps: ['🧗 小伙伴爬上假山玩', '💦 一不小心掉进大水缸', '🪨 司马光搬起石头砸破缸', '😄 水流出来，小伙伴得救啦'],
+        tip: '遇到危险要冷静想办法，司马光就是好榜样！' },
+      { t: 'pick', q: '进阶题！背上刺着"精忠报国"四个字的大英雄是谁？',
+        opts: [['🛡️ 岳飞', 1], ['🎅 圣诞老人', 0, '铁头：圣诞老人背上背的是礼物袋！'], ['🍼 葫芦娃', 0, '姜小牙：葫芦娃救的是爷爷～']],
+        hint: '提示：传说他的妈妈亲手在他背上刺了这四个字～',
+        tip: '岳飞是宋朝抗金大英雄，"精忠报国"是他一生的信念。' },
+      { t: 'pick', q: '进阶题！超级长的名画《清明上河图》画的是什么？',
+        opts: [['🏙️ 宋朝城市的热闹街市', 1], ['🏫 米小圈的学校', 0, '米小圈：我们学校要能进名画就好啦！'], ['🦁 动物园', 0, '铁头：画里是有骆驼，但真不是动物园！']],
+        hint: '提示：画里有店铺、小桥、大船，还有八百多个小人～',
+        tip: '《清明上河图》五米多长，画了北宋都城的热闹街景，藏着八百多个人物！' }
+    ] },
+  { id: 'mingqing', name: '明清', emoji: '⛵', color: '#fce8c4',
+    desc: '郑和下西洋 · 故宫 · 本草纲目',
+    treasure: { icon: '⛵', name: '郑和宝船', desc: '郑和的船队有两百多艘大船，七次下西洋，最远开到了非洲！比哥伦布还早几十年。',
+      facts: ['郑和最大的宝船像好几个篮球场那么大，是当时世界上数一数二的大木船。', '他七次下西洋，到过三十多个国家和地区，一路都是去交朋友。', '郑和下西洋比欧洲的哥伦布航海还要早八十多年呢。'] },
+    intro: [{ who: '铁头', txt: '好大好大的船队！是要出海去探险吗？' }, { who: '米小圈', txt: '这是郑和下西洋！这可是我们的最后一站啦，冲呀！' }, { who: '姜小牙', txt: '答完这一关，米小圈的历史作业就大功告成咯！' }],
+    qs: [
+      { t: 'pick', q: '明朝带着大船队七次下西洋的航海家是谁？',
+        opts: [['⛵ 郑和', 1], ['🏴‍☠️ 海盗船长', 0, '铁头：郑和是去交朋友的，不是去抢宝藏的！'], ['🦷 姜小牙', 0, '姜小牙：我坐船三分钟就晕了……当不了航海家。']],
+        hint: '提示：他姓郑，船队最远到过非洲～',
+        tip: '郑和七下西洋，把丝绸和瓷器带给了世界各国的朋友。' },
+      { t: 'pick', q: '北京城里，明清皇帝住的大宫殿叫什么？',
+        opts: [['🏯 故宫', 1], ['🎡 游乐园', 0, '米小圈：皇宫可不能随便玩滑梯！'], ['🏠 大别墅', 0, '姜小牙：故宫有九千多间房，别墅可比不了！']],
+        hint: '提示：它也叫"紫禁城"，现在谁都可以去参观～',
+        tip: '故宫是明清两朝的皇宫，有大约九千间房，是世界上最大的宫殿建筑群。' },
+      { t: 'pick', q: '李时珍写的那本厉害的药草书叫什么？',
+        opts: [['🌿 《本草纲目》', 1], ['➗ 《数学作业》', 0, '米小圈：别提作业！我就是为了逃避作业才穿越的！'], ['📖 《米小圈上学记》', 0, '米小圈：嘿嘿，那本书写的是我，可它治不了病～']],
+        hint: '提示：书名四个字，写了将近两千种药材～',
+        tip: '李时珍走遍山川尝百草，花27年写成《本草纲目》，记了近两千种药。' },
+      { t: 'match', q: '大挑战！四大发明连一连：',
+        pairs: [['📄 造纸术', '汉朝·蔡伦改进'], ['🔠 活字印刷', '宋朝·毕昇发明'], ['🧭 指南针', '宋朝用于航海'], ['🎆 火药', '唐朝出现']],
+        tip: '造纸术、印刷术、指南针、火药——中国的四大发明改变了全世界！' },
+      { t: 'pick', q: '烧脑陷阱题！《西游记》这本书是什么朝代的人写的？',
+        opts: [['📖 明朝（吴承恩写的）', 1], ['🐒 唐朝', 0, '差点骗到你！故事发生在唐朝，但书是后来明朝人写的～'], ['📅 上个星期', 0, '姜小牙：上个星期我还在补作业……']],
+        hint: '提示：故事里是唐僧，但作者吴承恩生活在明朝～',
+        tip: '玄奘取经是唐朝的真事，明朝的吴承恩把它写成了神话小说《西游记》。' },
+      { t: 'order', q: '终极大挑战！把学过的朝代全部排一排：',
+        steps: ['夏商周', '秦朝', '汉朝', '三国', '唐朝', '宋朝', '明清'],
+        tip: '夏商周→秦→汉→三国→唐→宋→明清，你已经把中国历史串成一条线啦！厉害！' }
+    ] }
+];
+
+/* ============ 进度存档 ============ */
+var SAVE_KEY = 'mxq_history_v1';
+var save = { done: {}, stars: {} };
+try { var s = JSON.parse(localStorage.getItem(SAVE_KEY)); if (s && s.done) save = s; } catch (e) {}
+function persist() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) {} }
+function totalStars() { var n = 0; for (var k in save.stars) n += save.stars[k]; return n; }
+function doneCount() { var n = 0; for (var k in save.done) if (save.done[k]) n++; return n; }
+
+/* ============ 屏幕切换 ============ */
+var SCREENS = ['cover', 'map', 'quiz', 'reward', 'finale', 'dex'];
+function show(id) {
+  SCREENS.forEach(function (sid) { $(sid).classList.toggle('hidden', sid !== id); });
+  if (canSpeak) try { window.speechSynthesis.cancel(); } catch (e) {}
+}
+
+/* ============ 地图 ============ */
+function renderMap() {
+  $('starPill').textContent = '⭐ ' + totalStars();
+  var list = $('eraList'); list.innerHTML = '';
+  ERAS.forEach(function (era, i) {
+    var unlocked = i === 0 || save.done[ERAS[i - 1].id];
+    var done = !!save.done[era.id];
+    var card = document.createElement('div');
+    card.className = 'era-card' + (unlocked ? '' : ' locked') + (done ? ' done' : '');
+    card.innerHTML =
+      '<div class="era-icon" style="background:' + era.color + '">' + (unlocked ? era.emoji : '🔒') + '</div>' +
+      '<div class="era-info"><div class="era-name">第' + (i + 1) + '关 · ' + era.name + '</div>' +
+      '<div class="era-desc">' + era.desc + '</div></div>' +
+      '<div class="era-stars">' + (done ? '⭐×' + (save.stars[era.id] || 0) : (unlocked ? 'GO!' : '')) + '</div>' +
+      (done ? '<div class="era-badge">' + era.treasure.icon + '</div>' : '');
+    if (unlocked) card.addEventListener('click', function () { initAudio(); sfx.click(); startEra(i); });
+    list.appendChild(card);
+  });
+  /* Boss 关：全部通关后解锁 */
+  var allDone = doneCount() === ERAS.length;
+  var bossDone = save.boss && save.boss.done;
+  var bc = document.createElement('div');
+  bc.className = 'era-card boss' + (allDone ? '' : ' locked');
+  bc.innerHTML =
+    '<div class="era-icon" style="background:#ffe9a8">' + (allDone ? '👑' : '🔒') + '</div>' +
+    '<div class="era-info"><div class="era-name">时空大挑战</div>' +
+    '<div class="era-desc">' + (allDone ? '10道随机题 · 只有3颗心 · 25秒倒计时 · 没有提示！' : '通关全部 8 关后解锁') + '</div></div>' +
+    '<div class="era-stars">' + (bossDone ? '👑×' + (save.boss.best || 0) : (allDone ? '敢来吗!' : '')) + '</div>';
+  if (allDone) bc.addEventListener('click', function () { initAudio(); sfx.click(); startBoss(); });
+  list.appendChild(bc);
+  /* 错题复习入口：有错题时插到列表最上方 */
+  var wl = wrongList();
+  if (wl.length) {
+    var rb = document.createElement('div');
+    rb.className = 'era-card review';
+    rb.innerHTML =
+      '<div class="era-icon" style="background:#ffe0e0">📖</div>' +
+      '<div class="era-info"><div class="era-name">错题复习</div>' +
+      '<div class="era-desc">复习 ' + wl.length + ' 道做错过的题，答对补回小星星 ⭐</div></div>' +
+      '<div class="era-stars">复习!</div>';
+    rb.addEventListener('click', function () { initAudio(); sfx.click(); startReview(); });
+    list.insertBefore(rb, list.firstChild);
+  }
+  stopBossTimer();
+  $('bossHearts').classList.add('hidden');
+  $('timerWrap').classList.add('hidden');
+  $('skit').classList.add('hidden');
+  $('dexModal').classList.add('hidden');
+  show('map');
+}
+
+/* ============ Boss：时空大挑战 ============ */
+var boss = null, bossTimerId = null, bossDeadline = 0;
+var BOSS_TIME = 25000;
+function stopBossTimer() { if (bossTimerId) { clearInterval(bossTimerId); bossTimerId = null; } }
+function startBoss() {
+  var pool = [];
+  ERAS.forEach(function (era) { era.qs.forEach(function (q) { if (q.t === 'pick') pool.push(q); }); });
+  pool.sort(function () { return Math.random() - 0.5; });
+  boss = { qs: pool.slice(0, 10), qi: 0, hearts: 3, right: 0 };
+  $('bossHearts').classList.remove('hidden');
+  $('timerWrap').classList.remove('hidden');
+  show('quiz');
+  renderBossQuestion();
+}
+function renderBossQuestion() {
+  stopBossTimer();
+  var q = boss.qs[boss.qi];
+  $('qCount').textContent = (boss.qi + 1) + '/10';
+  $('qProg').style.width = (boss.qi / 10 * 100) + '%';
+  $('bossHearts').textContent = '❤️'.repeat(boss.hearts) + '🖤'.repeat(3 - boss.hearts);
+  $('guideAva').innerHTML = mxqSvg(64, 'wow');
+  guideSay(boss.qi === 0 ? '时空大挑战开始！没有提示，答错扣一颗心，加油！' : '第' + (boss.qi + 1) + '题来啦！稳住！');
+  if (canSpeak) $('btnSpeak').classList.remove('hidden');
+  var card = $('qCard'); card.innerHTML = '';
+  var qt = document.createElement('div'); qt.className = 'q-text'; qt.textContent = q.q.replace(/^(进阶题|超级易混题|烧脑陷阱题)！/, '');
+  card.appendChild(qt);
+  var answered = false;
+  var box = document.createElement('div'); box.className = 'opts';
+  var opts = q.opts.slice().sort(function () { return Math.random() - 0.5; });
+  function settle(ok, pickedBtn) {
+    if (answered) return; answered = true;
+    stopBossTimer();
+    if (ok) { boss.right++; sfx.right(); if (pickedBtn) pickedBtn.classList.add('right'); guideSay('对啦！真快！'); }
+    else {
+      boss.hearts--; sfx.wrong();
+      if (pickedBtn) pickedBtn.classList.add('wrong', 'shake');
+      /* 亮出正确答案 */
+      var correct = q.opts.filter(function (o) { return o[1]; })[0][0];
+      [].slice.call(box.children).forEach(function (b) { if (b.textContent === correct) b.classList.add('right'); });
+      guideSay(pickedBtn ? '哎呀答错了！正确答案亮绿灯啦～' : '⏰ 时间到！正确答案亮绿灯啦～');
+      $('bossHearts').textContent = '❤️'.repeat(boss.hearts) + '🖤'.repeat(3 - boss.hearts);
+    }
+    setTimeout(function () {
+      if (boss.hearts <= 0) { finishBoss(false); return; }
+      boss.qi++;
+      if (boss.qi < boss.qs.length) renderBossQuestion();
+      else finishBoss(true);
+    }, 1400);
+  }
+  opts.forEach(function (o) {
+    var b = document.createElement('button'); b.className = 'opt'; b.textContent = o[0];
+    b.addEventListener('click', function () { initAudio(); settle(!!o[1], b); });
+    box.appendChild(b);
+  });
+  card.appendChild(box);
+  $('btnSpeak').onclick = function () { initAudio(); speak(qt.textContent); };
+  /* 倒计时 */
+  bossDeadline = Date.now() + BOSS_TIME;
+  $('timerFill').style.width = '100%';
+  bossTimerId = setInterval(function () {
+    var left = bossDeadline - Date.now();
+    $('timerFill').style.width = Math.max(0, left / BOSS_TIME * 100) + '%';
+    if (left <= 0) settle(false, null);
+  }, 100);
+}
+function finishBoss(win) {
+  stopBossTimer();
+  $('bossHearts').classList.add('hidden');
+  $('timerWrap').classList.add('hidden');
+  if (win) {
+    if (!save.boss) save.boss = {};
+    save.boss.done = true;
+    save.boss.best = Math.max(save.boss.best || 0, boss.right);
+    persist();
+    sfx.clear(); confetti();
+    $('tIcon').textContent = '👑';
+    $('tName').textContent = '时空王冠';
+    $('tDesc').textContent = '10题答对了 ' + boss.right + ' 题！你战胜了时空大挑战，是当之无愧的历史小博士！';
+    $('tStars').textContent = '👑';
+    $('tSay').textContent = '米小圈：我宣布——你就是我们铁三角的历史老师！';
+  } else {
+    sfx.wrong();
+    $('tIcon').textContent = '😵';
+    $('tName').textContent = '差一点点！';
+    $('tDesc').textContent = '心用完啦～答对了 ' + boss.right + ' 题。再去各关复习复习，回来再战！';
+    $('tStars').textContent = '💪';
+    $('tSay').textContent = '米小圈：别灰心！我考试也经常差一点点……好像不是一点点。';
+  }
+  $('btnNextEra').style.display = 'none';
+  show('reward');
+}
+
+/* ============ 答题流程 ============ */
+var cur = { era: 0, qi: 0, stars: 0, firstTry: true, streak: 0 };
+function curEra() { return cur.reviewEra ? cur.reviewEra : ERAS[cur.era]; }
+function startEra(i) {
+  cur = { era: i, qi: 0, stars: 0, firstTry: true, streak: 0 };
+  var era = ERAS[i];
+  showSkit('第' + (i + 1) + '关 · ' + era.name, era, function () {
+    stopBossTimer();
+    $('bossHearts').classList.add('hidden');
+    $('timerWrap').classList.add('hidden');
+    show('quiz');
+    renderQuestion();
+  });
+}
+function guideSay(txt) { $('guideTxt').textContent = txt; }
+
+/* ============ 穿越小剧场 ============ */
+var SKIT_CHARS = {
+  '铁头': { e: '😆', bg: '#cfe6f5' }, '姜小牙': { e: '😏', bg: '#e3d4f7' },
+  '魏老师': { e: '👓', bg: '#ffe0c2' }, '莫老师': { e: '😊', bg: '#ffd9e2' }
+};
+function charAva(who, size) {
+  if (who === '米小圈') return mxqSvg(size);
+  var c = SKIT_CHARS[who] || { e: '🙂', bg: '#eee' };
+  return '<div class="emoji-ava" style="background:' + c.bg + '">' + c.e + '</div>';
+}
+function showSkit(label, era, onDone) {
+  var lines = era.intro || [];
+  if (!lines.length) { onDone(); return; }
+  $('skitScene').textContent = (era.emoji || '📜') + ' ' + label;
+  var idx = 0;
+  function renderLine() {
+    var ln = lines[idx];
+    $('skitAva').innerHTML = charAva(ln.who, 60);
+    $('skitWho').textContent = ln.who;
+    $('skitTxt').textContent = ln.txt;
+    $('skitNext').textContent = idx < lines.length - 1 ? '继续 ▶' : '开始闯关 🚀';
+  }
+  function done() {
+    $('skitNext').onclick = null; $('skitSkip').onclick = null;
+    $('skit').classList.add('hidden');
+    onDone();
+  }
+  renderLine();
+  $('skit').classList.remove('hidden');
+  $('skitNext').onclick = function () { initAudio(); sfx.click(); idx++; if (idx < lines.length) renderLine(); else done(); };
+  $('skitSkip').onclick = function () { initAudio(); sfx.click(); done(); };
+}
+
+/* ============ 错题本 ============ */
+function wrongKey(idx, qi) { return ERAS[idx].id + '::' + qi; }
+function recordWrong() {
+  if (cur.reviewEra) return;
+  if (!save.wrong) save.wrong = {};
+  save.wrong[wrongKey(cur.era, cur.qi)] = 1;
+  persist();
+}
+function wrongList() {
+  var out = [];
+  if (!save.wrong) return out;
+  for (var k in save.wrong) {
+    if (!save.wrong[k]) continue;
+    var p = k.split('::'); var era = null;
+    for (var i = 0; i < ERAS.length; i++) { if (ERAS[i].id === p[0]) { era = ERAS[i]; break; } }
+    if (!era) continue;
+    var qi = parseInt(p[1], 10);
+    var q = era.qs[qi];
+    if (q) out.push({ key: k, q: q, name: era.name });
+  }
+  return out;
+}
+function startReview() {
+  var list = wrongList();
+  if (!list.length) { renderMap(); return; }
+  cur = { era: 0, qi: 0, stars: 0, firstTry: true, streak: 0,
+    reviewEra: { name: '错题复习', emoji: '📖', qs: [] }, reviewKeys: [] };
+  for (var i = 0; i < list.length; i++) { cur.reviewEra.qs.push(list[i].q); cur.reviewKeys.push(list[i].key); }
+  stopBossTimer();
+  $('bossHearts').classList.add('hidden');
+  $('timerWrap').classList.add('hidden');
+  $('skit').classList.add('hidden');
+  show('quiz');
+  renderQuestion();
+}
+function reviewClear() {
+  var key = cur.reviewKeys[cur.qi];
+  if (!key) return;
+  if (save.wrong) delete save.wrong[key];
+  if (cur.firstTry) {
+    var eid = key.split('::')[0], src = null;
+    for (var i = 0; i < ERAS.length; i++) { if (ERAS[i].id === eid) { src = ERAS[i]; break; } }
+    if (src) save.stars[eid] = Math.min(src.qs.length, (save.stars[eid] || 0) + 1);
+  }
+  persist();
+}
+function finishReview() {
+  sfx.clear(); confetti();
+  $('tIcon').textContent = '📖';
+  $('tName').textContent = '错题清光啦！';
+  $('tDesc').textContent = '你把这 ' + cur.reviewEra.qs.length + ' 道做错过的题全部复习答对，补回的小星星已经记到地图上啦！';
+  $('tStars').textContent = '⭐ ' + totalStars();
+  $('tSay').textContent = '米小圈：错题一道都不留，你真是学霸本霸！';
+  $('btnNextEra').style.display = 'none';
+  show('reward');
+}
+function streakBurst(n) {
+  var el = document.createElement('div');
+  el.className = 'streak-burst';
+  el.textContent = '🔥 连对 ×' + n + '！';
+  document.body.appendChild(el);
+  setTimeout(function () { el.classList.add('go'); }, 20);
+  setTimeout(function () { el.remove(); }, 1200);
+}
+
+function renderQuestion() {
+  var era = curEra();
+  var q = era.qs[cur.qi];
+  cur.firstTry = true;
+  $('qCount').textContent = (cur.qi + 1) + '/' + era.qs.length;
+  $('qProg').style.width = (cur.qi / era.qs.length * 100) + '%';
+  $('guideAva').innerHTML = mxqSvg(64);
+  guideSay(cur.qi === 0 ? '欢迎来到【' + era.name + '】！' + era.emoji + ' 帮我答对下面的题吧！' : '继续继续！这题你肯定会！');
+  var speakBtn = $('btnSpeak');
+  if (canSpeak) speakBtn.classList.remove('hidden');
+
+  var card = $('qCard'); card.innerHTML = '';
+  var qt = document.createElement('div'); qt.className = 'q-text'; qt.textContent = q.q;
+  card.appendChild(qt);
+  var speakText = q.q;
+
+  if (q.t === 'pick') {
+    var box = document.createElement('div'); box.className = 'opts';
+    var opts = q.opts.slice().sort(function () { return Math.random() - 0.5; });
+    opts.forEach(function (o) {
+      var b = document.createElement('button'); b.className = 'opt'; b.textContent = o[0];
+      b.addEventListener('click', function () {
+        initAudio();
+        if (b.classList.contains('right') || b.classList.contains('wrong')) return;
+        if (o[1]) {
+          b.classList.add('right'); sfx.right();
+          finishQuestion(q, card);
+        } else {
+          b.classList.add('wrong', 'shake'); sfx.wrong();
+          cur.firstTry = false; cur.streak = 0; recordWrong();
+          guideSay(o[2] ? o[2] + ' ' + (q.hint || '再想想～') : (q.hint || '再想想～'));
+        }
+      });
+      box.appendChild(b);
+    });
+    card.appendChild(box);
+    speakText += '。' + opts.map(function (o) { return o[0].replace(/^[^一-龥《]+/, ''); }).join('，');
+  } else if (q.t === 'match') {
+    var grid = document.createElement('div'); grid.className = 'match-grid';
+    var colL = document.createElement('div'); colL.className = 'match-col';
+    var colR = document.createElement('div'); colR.className = 'match-col';
+    grid.appendChild(colL); grid.appendChild(colR);
+    var lefts = q.pairs.map(function (p, i) { return { txt: p[0], i: i }; }).sort(function () { return Math.random() - 0.5; });
+    var rights = q.pairs.map(function (p, i) { return { txt: p[1], i: i }; }).sort(function () { return Math.random() - 0.5; });
+    var selL = null, doneN = 0;
+    lefts.forEach(function (item) {
+      var d = document.createElement('div'); d.className = 'm-item'; d.textContent = item.txt;
+      d.addEventListener('click', function () {
+        initAudio(); sfx.click();
+        if (d.classList.contains('ok')) return;
+        colL.querySelectorAll('.m-item').forEach(function (x) { x.classList.remove('sel'); });
+        d.classList.add('sel'); selL = { el: d, i: item.i };
+      });
+      colL.appendChild(d);
+    });
+    rights.forEach(function (item) {
+      var d = document.createElement('div'); d.className = 'm-item'; d.textContent = item.txt;
+      d.addEventListener('click', function () {
+        initAudio();
+        if (d.classList.contains('ok') || !selL) { if (!selL) guideSay('先点左边的一个，再点右边和它是一对的～'); return; }
+        if (selL.i === item.i) {
+          sfx.right();
+          d.classList.add('ok'); selL.el.classList.remove('sel'); selL.el.classList.add('ok');
+          selL = null; doneN++;
+          guideSay('对啦！继续连～');
+          if (doneN === q.pairs.length) finishQuestion(q, card);
+        } else {
+          sfx.wrong(); d.classList.add('shake'); cur.firstTry = false; cur.streak = 0; recordWrong();
+          setTimeout(function () { d.classList.remove('shake'); }, 400);
+          guideSay('这两个不是一对哦，再看看～');
+        }
+      });
+      colR.appendChild(d);
+    });
+    card.appendChild(grid);
+  } else if (q.t === 'order') {
+    var tip = document.createElement('div'); tip.className = 'order-tip';
+    tip.textContent = '👇 按事情发生的先后顺序，一个一个点：';
+    card.appendChild(tip);
+    var pool = document.createElement('div'); pool.className = 'order-pool';
+    var items = q.steps.map(function (s, i) { return { txt: s, i: i }; }).sort(function () { return Math.random() - 0.5; });
+    var nextN = 0;
+    items.forEach(function (item) {
+      var d = document.createElement('div'); d.className = 'o-item'; d.textContent = item.txt;
+      d.addEventListener('click', function () {
+        initAudio();
+        if (d.classList.contains('placed')) return;
+        if (item.i === nextN) {
+          sfx.right();
+          d.classList.add('placed'); d.setAttribute('data-n', '第' + (nextN + 1) + '步 ✓');
+          nextN++;
+          if (nextN === q.steps.length) finishQuestion(q, card);
+          else guideSay('对啦！接下来发生了什么？');
+        } else {
+          sfx.wrong(); d.classList.add('shake'); cur.firstTry = false; cur.streak = 0; recordWrong();
+          setTimeout(function () { d.classList.remove('shake'); }, 400);
+          guideSay(nextN === 0 ? '想一想，故事最开始发生了什么？' : '不对哦～想想第' + (nextN + 1) + '步该是什么？');
+        }
+      });
+      pool.appendChild(d);
+    });
+    card.appendChild(pool);
+  }
+
+  speakBtn.onclick = function () { initAudio(); speak(speakText); };
+}
+
+function finishQuestion(q, card) {
+  if (cur.firstTry) {
+    cur.stars++; cur.streak = (cur.streak || 0) + 1; sfx.star();
+    if (cur.streak >= 3) { sfx.streak(); streakBurst(cur.streak); }
+  }
+  if (cur.reviewEra) reviewClear();
+  guideSay(cur.firstTry ? '太棒了！一次就答对！⭐' : '答对啦！你真会动脑筋！');
+  var tip = document.createElement('div'); tip.className = 'tip-card show';
+  tip.textContent = '💡 知识小贴士：' + q.tip;
+  card.appendChild(tip);
+  var era = curEra();
+  var btn = document.createElement('button'); btn.className = 'next-btn show';
+  btn.textContent = cur.qi < era.qs.length - 1 ? '下一题 ▶' : (cur.reviewEra ? '复习完成 🎉' : '领取宝物 🎁');
+  btn.addEventListener('click', function () {
+    sfx.click();
+    cur.qi++;
+    if (cur.qi < era.qs.length) renderQuestion();
+    else finishEra();
+  });
+  card.appendChild(btn);
+  $('qProg').style.width = ((cur.qi + 1) / era.qs.length * 100) + '%';
+}
+
+function finishEra() {
+  if (cur.reviewEra) { finishReview(); return; }
+  var era = ERAS[cur.era];
+  var firstClear = !save.done[era.id];
+  save.done[era.id] = true;
+  save.stars[era.id] = Math.max(save.stars[era.id] || 0, cur.stars);
+  persist();
+  sfx.clear();
+  $('tIcon').textContent = era.treasure.icon;
+  $('tName').textContent = era.treasure.name;
+  $('tDesc').textContent = era.treasure.desc;
+  $('tStars').textContent = '⭐'.repeat(Math.max(cur.stars, 0)) + '☆'.repeat(Math.max(era.qs.length - cur.stars, 0));
+  var praise = [
+    '米小圈：哇！你比姜小牙聪明一百倍！',
+    '米小圈：铁头听了直拍手，手都拍红啦！',
+    '米小圈：魏老师要是知道了，肯定给你贴小红花！',
+    '米小圈：我要把这个宝物画到作业本上！'
+  ];
+  $('tSay').textContent = praise[Math.floor(Math.random() * praise.length)];
+  $('btnNextEra').style.display = cur.era < ERAS.length - 1 ? '' : 'none';
+  confetti();
+  show('reward');
+  if (firstClear && doneCount() === ERAS.length) {
+    setTimeout(function () {
+      if ($('reward').classList.contains('hidden')) return;
+      $('finaleStars').textContent = '⭐ 总共获得 ' + totalStars() + ' 颗星星！';
+      show('finale'); confetti(); sfx.clear();
+    }, 2600);
+  }
+}
+
+/* ============ 图鉴 ============ */
+function openDexDetail(d) {
+  $('dexmIc').textContent = d.icon;
+  $('dexmName').textContent = d.name;
+  $('dexmEra').textContent = d.eraLabel;
+  $('dexmDesc').textContent = d.desc;
+  var box = $('dexmFacts'); box.innerHTML = '';
+  (d.facts || []).forEach(function (f) {
+    var e = document.createElement('div'); e.textContent = '🔎 ' + f; box.appendChild(e);
+  });
+  $('dexModal').classList.remove('hidden');
+}
+function renderDex() {
+  var g = $('dexGrid'); g.innerHTML = '';
+  ERAS.forEach(function (era) {
+    var got = !!save.done[era.id];
+    var d = document.createElement('div');
+    d.className = 'dex-item' + (got ? ' got' : ' miss');
+    d.innerHTML = '<div class="ic">' + (got ? era.treasure.icon : '❓') + '</div>' +
+      '<div class="nm">' + (got ? era.treasure.name : '？？？') + '</div>' +
+      '<div class="era">' + era.name + (got ? '' : ' · 通关解锁') + '</div>';
+    if (got) d.addEventListener('click', (function (e) {
+      return function () {
+        initAudio(); sfx.click();
+        openDexDetail({ icon: e.treasure.icon, name: e.treasure.name, eraLabel: e.name,
+          desc: e.treasure.desc, facts: e.treasure.facts });
+      };
+    })(era));
+    g.appendChild(d);
+  });
+  var gotCrown = save.boss && save.boss.done;
+  var c = document.createElement('div');
+  c.className = 'dex-item' + (gotCrown ? ' got' : ' miss');
+  c.innerHTML = '<div class="ic">' + (gotCrown ? '👑' : '❓') + '</div>' +
+    '<div class="nm">' + (gotCrown ? '时空王冠' : '？？？') + '</div>' +
+    '<div class="era">时空大挑战' + (gotCrown ? '' : ' · 获胜解锁') + '</div>';
+  if (gotCrown) c.addEventListener('click', function () {
+    initAudio(); sfx.click();
+    openDexDetail({ icon: '👑', name: '时空王冠', eraLabel: '时空大挑战',
+      desc: '集齐八件历史宝物、又打赢了时空大挑战，才能拿到的最高荣誉！',
+      facts: ['从远古到明清，中国有文字记载的历史长达三千多年。', '朝代顺序小口诀：夏商周、秦汉、三国、唐宋、明清。', '你已经是米小圈铁三角公认的"历史小博士"啦！'] });
+  });
+  g.appendChild(c);
+  show('dex');
+}
+
+/* ============ 彩带 ============ */
+function confetti() {
+  var colors = ['#ff9ec7', '#ffd94f', '#7ecf7e', '#7ec3f0', '#f0862a', '#b79aeb'];
+  for (var i = 0; i < 26; i++) {
+    (function (i) {
+      var p = document.createElement('confetti-piece');
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.background = colors[i % colors.length];
+      p.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      p.style.transition = 'transform ' + (1.6 + Math.random()) + 's ease-in, opacity .4s ' + (1.4 + Math.random()) + 's';
+      document.body.appendChild(p);
+      setTimeout(function () {
+        p.style.transform = 'translateY(' + (window.innerHeight + 40) + 'px) rotate(' + (Math.random() * 720 - 360) + 'deg)';
+        p.style.opacity = '0';
+      }, 30);
+      setTimeout(function () { p.remove(); }, 3200);
+    })(i);
+  }
+}
+
+/* ============ 绑定 ============ */
+$('coverAva').innerHTML = mxqSvg(110, 'wow');
+$('btnGo').addEventListener('click', function () { initAudio(); sfx.click(); renderMap(); });
+$('btnLobby').addEventListener('click', function () { location.href = '../'; });
+$('lobbyPill').addEventListener('click', function () { location.href = '../'; });
+$('btnBack').addEventListener('click', function () { sfx.click(); renderMap(); });
+$('dexBtn').addEventListener('click', function () { sfx.click(); renderDex(); });
+$('btnBackDex').addEventListener('click', function () { sfx.click(); renderMap(); });
+$('btnMap1').addEventListener('click', function () { sfx.click(); renderMap(); });
+$('btnMap2').addEventListener('click', function () { sfx.click(); renderMap(); });
+$('btnDex2').addEventListener('click', function () { sfx.click(); renderDex(); });
+$('btnNextEra').addEventListener('click', function () {
+  sfx.click();
+  var next = cur.era + 1;
+  if (next < ERAS.length) startEra(next); else renderMap();
+});
+$('dexmClose').addEventListener('click', function () { sfx.click(); $('dexModal').classList.add('hidden'); });
+$('dexModal').addEventListener('click', function (ev) { if (ev.target === $('dexModal')) $('dexModal').classList.add('hidden'); });
+
+/* 测试钩子 */
+window.__h = { save: save, ERAS: ERAS, cur: function () { return cur; }, renderMap: renderMap, startEra: startEra,
+  startBoss: startBoss, startReview: startReview, wrongList: wrongList, showSkit: showSkit, renderDex: renderDex };
+</script>
+<script src="../shared/parent-gate.js"></script>
+</body>
+</html>

@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#ffe0ef">
+<title>甜甜消消乐</title>
+<meta name="kids-game" content="sweet-match" data-name="甜甜消消乐" data-name-en="Sweet Match" data-icon="🍓">
+<meta name="kids-ai-endpoint" content="https://kids-games-ai.convee-cn.workers.dev">
+<link rel="stylesheet" href="../shared/ai-companion.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍓</text></svg>">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; }
+  html,body { width:100%; height:100%; overflow:hidden;
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Source Han Sans SC",system-ui,sans-serif; }
+  body { background:linear-gradient(#ffd6e7 0%, #ffe9f2 50%, #fff5d7 100%); }
+
+  .screen { position:fixed; left:0; top:0; right:0; bottom:0; display:flex; flex-direction:column;
+    align-items:center; overflow-y:auto; padding:16px 12px 30px; z-index:10; }
+  .hidden { display:none !important; }
+
+  /* ===== 封面/选关 ===== */
+  #cover { justify-content:center; text-align:center; }
+  .big-title { font-size:clamp(30px,8.5vw,52px); font-weight:900; color:#ff4f92; letter-spacing:3px;
+    text-shadow:0 3px 0 #fff, 0 6px 14px rgba(255,79,146,.3); margin:10px 0 4px; }
+  .sub-title { font-size:clamp(13px,3.8vw,17px); color:#a06a85; font-weight:700; margin-bottom:12px; }
+  .story-box { background:rgba(255,255,255,.9); border:3px dashed #ffb0d0; border-radius:18px;
+    padding:12px 16px; max-width:520px; color:#7a4a60; font-size:clamp(14px,3.9vw,16px); line-height:1.9;
+    text-align:left; margin:8px 0 16px; box-shadow:0 6px 18px rgba(255,140,180,.2); }
+  .story-box b { color:#ff4f92; }
+  .go-btn { padding:16px 54px; font-size:clamp(19px,5.5vw,24px); font-weight:900; letter-spacing:3px; color:#fff;
+    background:linear-gradient(#ff9ec7,#ff6fa5); border:none; border-radius:999px; cursor:pointer;
+    box-shadow:0 6px 0 #e05a90, 0 10px 24px rgba(255,111,165,.4); transition:.1s; }
+  .go-btn:active { transform:translateY(4px); box-shadow:0 2px 0 #e05a90; }
+  .mini-note { margin-top:12px; font-size:12px; color:#b48ca0; }
+  .lobby-btn { margin-top:14px; border:none; background:rgba(255,255,255,.92); border-radius:999px;
+    padding:9px 22px; font-size:14px; font-weight:900; color:#8a5fd0; cursor:pointer;
+    box-shadow:0 3px 10px rgba(150,100,180,.25); }
+  .lobby-btn:active { transform:scale(.96); }
+
+  #levelsel { padding-top:max(14px, env(safe-area-inset-top)); }
+  .map-head { display:flex; align-items:center; gap:8px; width:min(560px,96vw); margin-bottom:8px; }
+  .map-title { font-size:clamp(19px,5.5vw,26px); font-weight:900; color:#ff4f92; flex:1; }
+  .pill { background:#fff; border-radius:999px; padding:6px 14px; font-weight:900; color:#f0a020;
+    box-shadow:0 3px 8px rgba(255,140,180,.2); font-size:clamp(13px,3.8vw,16px); white-space:nowrap; }
+  .pill.link { cursor:pointer; color:#8a5fd0; }
+  .lv-grid { width:min(560px,96vw); display:grid; grid-template-columns:repeat(auto-fill,minmax(96px,1fr));
+    gap:10px; padding-bottom:20px; }
+  .lv-cell { background:#fff; border-radius:16px; padding:12px 6px; text-align:center; cursor:pointer;
+    box-shadow:0 4px 12px rgba(255,140,180,.18); border:3px solid transparent; transition:.15s; }
+  .lv-cell:active { transform:scale(.95); }
+  .lv-cell.locked { filter:grayscale(1); opacity:.55; }
+  .lv-cell.done { border-color:#ff9ec7; }
+  .lv-cell .n { font-size:24px; font-weight:900; color:#ff6fa5; }
+  .lv-cell .st { font-size:13px; color:#f0a020; letter-spacing:1px; margin-top:2px; }
+  .lv-cell .gicon { font-size:16px; margin-top:2px; }
+
+  /* ===== 对局 ===== */
+  #play { padding-top:max(10px, env(safe-area-inset-top)); overflow:hidden; }
+  .top-bar { display:flex; align-items:center; gap:8px; width:min(480px,96vw); }
+  .back-btn { border:none; background:#fff; border-radius:999px; padding:7px 14px; font-weight:900; color:#a06a85;
+    cursor:pointer; box-shadow:0 3px 8px rgba(255,140,180,.2); font-size:14px; }
+  .moves-pill { background:#fff; border-radius:16px; padding:6px 16px; text-align:center;
+    box-shadow:0 3px 10px rgba(255,140,180,.25); }
+  .moves-pill .num { font-size:clamp(22px,6vw,28px); font-weight:900; color:#ff4f92; line-height:1.1; }
+  .moves-pill .lab { font-size:11px; color:#b48ca0; font-weight:700; }
+  .goals { flex:1; display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+  .goal { background:#fff; border-radius:14px; padding:5px 10px; font-weight:900; font-size:clamp(14px,4vw,17px);
+    box-shadow:0 3px 8px rgba(255,140,180,.2); color:#7a4a60; }
+  .goal.ok { color:#3f9d46; background:#eaf9ea; }
+
+  .guide-row { display:flex; align-items:center; gap:8px; width:min(480px,96vw); margin:8px 0 6px; }
+  .guide-face { font-size:30px; flex:none; }
+  .guide-txt { background:rgba(255,255,255,.9); border-radius:12px; padding:6px 12px; flex:1;
+    color:#a06a85; font-size:clamp(12px,3.5vw,14px); font-weight:700; box-shadow:0 3px 8px rgba(255,140,180,.15); }
+
+  #boardWrap { position:relative; margin-top:6px; background:rgba(255,255,255,.55); border-radius:18px;
+    box-shadow:0 8px 24px rgba(255,140,180,.3); padding:6px; }
+  #board { position:relative; }
+  .tile { position:absolute; display:flex; align-items:center; justify-content:center;
+    border-radius:12px; cursor:pointer; transition:transform .18s ease;
+    background:rgba(255,255,255,.75); box-shadow:inset 0 -2px 0 rgba(255,140,180,.18); }
+  .tile.sel { outline:3px solid #ff6fa5; outline-offset:-3px; z-index:2; animation:wob .5s infinite; }
+  @keyframes wob { 0%,100%{transform:var(--tf) scale(1)} 50%{transform:var(--tf) scale(1.1)} }
+  .tile.pop { animation:popA .28s forwards; z-index:3; }
+  @keyframes popA { to { transform:var(--tf) scale(0); opacity:0; } }
+  .tile.shake { animation:shakeA .3s; }
+  @keyframes shakeA { 25%{margin-left:-5px} 75%{margin-left:5px} }
+  .tile .sp { position:absolute; right:2px; top:1px; font-size:11px; }
+
+  #banner { position:fixed; top:34%; left:0; right:0; z-index:18; text-align:center; pointer-events:none;
+    font-size:clamp(26px,8vw,44px); font-weight:900; color:#ff4f92; text-shadow:0 3px 0 #fff,0 8px 16px rgba(255,79,146,.35);
+    opacity:0; transform:scale(.6); transition:all .3s cubic-bezier(.34,1.56,.64,1); }
+  #banner.show { opacity:1; transform:scale(1); }
+
+  /* ===== 结算 ===== */
+  #result { background:rgba(255,240,247,.94); justify-content:center; z-index:20; }
+  .panel { background:#fff; border-radius:24px; padding:22px 30px; text-align:center;
+    box-shadow:0 10px 30px rgba(255,140,180,.35); max-width:420px; animation:popIn .4s; }
+  @keyframes popIn { from { transform:scale(.85); opacity:0; } to { transform:scale(1); opacity:1; } }
+  .r-title { font-size:clamp(24px,7vw,36px); font-weight:900; color:#ff4f92; margin-bottom:6px; }
+  .r-stars { font-size:36px; margin:6px 0; letter-spacing:5px; }
+  .r-say { background:#fff8dc; border:2px dashed #f0c14b; border-radius:14px; padding:10px; color:#8a6d1f;
+    font-size:14px; font-weight:700; line-height:1.7; margin:10px 0; }
+  .btn2 { padding:12px 26px; font-size:16px; font-weight:900; color:#fff; border:none; border-radius:999px;
+    cursor:pointer; margin:4px 5px 0; box-shadow:0 4px 0 rgba(0,0,0,.15); }
+  .btn2:active { transform:translateY(3px); box-shadow:none; }
+  .btn2.pink { background:linear-gradient(#ff9ec7,#ff6fa5); }
+  .btn2.purple { background:linear-gradient(#b79aeb,#9d6fe0); }
+</style>
+</head>
+<body>
+
+<!-- 封面 -->
+<div id="cover" class="screen">
+  <div style="font-size:64px;">🐰🎀</div>
+  <div class="big-title">🍓 甜甜消消乐 🍓</div>
+  <div class="sub-title">—— 帮小美美做甜品派对！——</div>
+  <div class="story-box">
+    <b>小美美：</b>"甜品派对马上开始啦！可是甜品还没凑齐……😿<br>
+    <b>滑动</b>交换相邻的甜品，<b>三个连成一排</b>就能收进篮子！<br>
+    连出 <b>4 个</b>会变出条纹糖✨，<b>5 个</b>会变出彩虹糖🌈，超级厉害哦！"
+  </div>
+  <button class="go-btn" id="btnGo">开始派对 🎉</button>
+  <div class="mini-note">🍬 每关在步数内收集目标甜品 · 失败可以免费重来</div>
+  <button class="lobby-btn" id="btnLobby">🎪 回游戏乐园</button>
+</div>
+
+<!-- 选关 -->
+<div id="levelsel" class="screen hidden">
+  <div class="map-head">
+    <div class="map-title">🧁 甜品地图</div>
+    <div class="pill" id="starPill">⭐ 0</div>
+    <div class="pill link" id="lobbyPill">🎪 乐园</div>
+  </div>
+  <div class="lv-grid" id="lvGrid"></div>
+</div>
+
+<!-- 对局 -->
+<div id="play" class="screen hidden">
+  <div class="top-bar">
+    <button class="back-btn" id="btnBack">← 地图</button>
+    <div class="moves-pill"><div class="num" id="movesNum">20</div><div class="lab">剩余步数</div></div>
+    <div class="goals" id="goals"></div>
+  </div>
+  <div class="guide-row">
+    <div class="guide-face">🐰</div>
+    <div class="guide-txt" id="guideTxt">滑动交换甜品，三连就能收集！</div>
+  </div>
+  <div id="boardWrap"><div id="board"></div></div>
+</div>
+<div id="banner"></div>
+
+<!-- 结算 -->
+<div id="result" class="screen hidden">
+  <div class="panel">
+    <div class="r-title" id="rTitle">🎉 过关啦！</div>
+    <div class="r-stars" id="rStars">⭐⭐⭐</div>
+    <div class="r-say" id="rSay"></div>
+    <button class="btn2 pink" id="btnNext">下一关 ▶</button>
+    <button class="btn2 pink hidden" id="btnRetry">再试一次 🔄</button>
+    <button class="btn2 purple" id="btnSel">甜品地图 🗺️</button>
+  </div>
+</div>
+
+<script src="../shared/locale.js"></script>
+<script src="../shared/ai-companion.js"></script>
+<script>
+'use strict';
+/* 错误可视化 */
+window.addEventListener('error', function (ev) {
+  try {
+    var d = document.createElement('div');
+    d.style.cssText = 'position:fixed;left:8px;right:8px;bottom:8px;z-index:99;background:#c0392b;color:#fff;font-size:12px;padding:8px 10px;border-radius:8px;opacity:.93;word-break:break-all;';
+    d.textContent = '⚠️ 出错了: ' + (ev.message || '未知错误') + ' @' + (ev.lineno || '?');
+    document.body.appendChild(d);
+    setTimeout(function () { d.remove(); }, 10000);
+  } catch (e) {}
+});
+var $ = function (id) { return document.getElementById(id); };
+function rnd(n) { return Math.floor(Math.random() * n); }
+
+/* ===== 音频 ===== */
+var AC = null, master = null, muted = false;
+function initAudio() {
+  if (AC) return;
+  try {
+    AC = new (window.AudioContext || window.webkitAudioContext)();
+    master = AC.createGain(); master.gain.value = 1; master.connect(AC.destination);
+  } catch (e) {}
+}
+function tone(f, dur, type, gain, delay) {
+  if (!AC) return;
+  var t0 = AC.currentTime + (delay || 0);
+  var o = AC.createOscillator(), g = AC.createGain();
+  o.type = type || 'sine'; o.frequency.value = f;
+  g.gain.setValueAtTime(gain || 0.13, t0);
+  g.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+  o.connect(g); g.connect(master);
+  o.start(t0); o.stop(t0 + dur + 0.02);
+}
+var sfx = {
+  click: function () { tone(880, 0.07, 'sine', 0.1); },
+  swap: function () { tone(500, 0.08, 'sine', 0.1); },
+  bad: function () { tone(220, 0.15, 'triangle', 0.1); },
+  pop: function (combo) { var f = 620 + Math.min(combo, 10) * 60; tone(f, 0.12, 'sine', 0.14); tone(f * 1.5, 0.1, 'sine', 0.07, 0.05); },
+  special: function () { [660, 880, 1108].forEach(function (f, i) { tone(f, 0.12, 'triangle', 0.13, i * 0.05); }); },
+  rainbow: function () { [523, 659, 784, 1046, 1318].forEach(function (f, i) { tone(f, 0.15, 'triangle', 0.13, i * 0.06); }); },
+  win: function () { [523, 659, 784, 1046, 1318, 1568].forEach(function (f, i) { tone(f, 0.2, 'triangle', 0.15, i * 0.09); }); },
+  lose: function () { [500, 400, 300].forEach(function (f, i) { tone(f, 0.25, 'triangle', 0.12, i * 0.15); }); }
+};
+
+/* ===== 数据 ===== */
+var FRUITS = ['🍓', '🧁', '🍩', '🍭', '🍪', '🫐'];
+var N = 7;                          /* 7x7 棋盘 */
+var LEVELS = [
+  { moves: 20, colors: 4, goals: { 0: 12 } },
+  { moves: 20, colors: 4, goals: { 1: 10, 0: 10 } },
+  { moves: 20, colors: 5, goals: { 2: 14 } },
+  { moves: 19, colors: 5, goals: { 3: 12, 1: 12 } },
+  { moves: 19, colors: 5, goals: { 0: 16, 4: 10 } },
+  { moves: 18, colors: 5, goals: { 2: 15, 3: 15 } },
+  { moves: 18, colors: 6, goals: { 5: 12 } },
+  { moves: 18, colors: 6, goals: { 5: 10, 1: 14 } },
+  { moves: 17, colors: 6, goals: { 0: 14, 2: 14 } },
+  { moves: 16, colors: 6, goals: { 3: 12, 4: 12, 5: 12 } }
+];
+var GUIDE_TIPS = [
+  '滑动交换甜品，三连就能收集！',
+  '看好目标再动手，步数很宝贵哦～',
+  '连出 4 个试试，会有条纹糖惊喜！',
+  '条纹糖能清一整行或一整列！',
+  '连出 5 个有彩虹糖，超级无敌！',
+  '先消下面的，上面会连锁掉落～',
+  '蓝莓来啦！颜色变多要更细心～',
+  '彩虹糖和谁交换，就清光那种甜品！',
+  '快成为甜品大师啦，加油！',
+  '最后一关！小美美相信你！'
+];
+var SAVE_KEY = 'sweet_match_v1';
+var save = { unlocked: 1, stars: {} };
+try { var sv = JSON.parse(localStorage.getItem(SAVE_KEY)); if (sv && sv.unlocked) save = sv; } catch (e) {}
+function persist() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) {} }
+function totalStars() { var n = 0; for (var k in save.stars) n += save.stars[k]; return n; }
+
+/* ===== 对局状态 ===== */
+var G = {
+  lv: 0, board: [], tiles: [], moves: 0, goals: {}, need: {},
+  busy: false, sel: null, combo: 0, size: 48, over: false
+};
+window.__m = G;
+
+function showScreen(id) {
+  ['cover', 'levelsel', 'play', 'result'].forEach(function (s) { $(s).classList.toggle('hidden', s !== id); });
+}
+var bannerT = null;
+function showBanner(txt, ms) {
+  var b = $('banner'); b.textContent = txt; b.classList.add('show');
+  clearTimeout(bannerT); bannerT = setTimeout(function () { b.classList.remove('show'); }, ms || 1100);
+}
+function guideSay(t) { $('guideTxt').textContent = t; }
+
+/* ===== 选关 ===== */
+function renderSel() {
+  $('starPill').textContent = '⭐ ' + totalStars();
+  var grid = $('lvGrid'); grid.innerHTML = '';
+  LEVELS.forEach(function (lv, i) {
+    var unlocked = i < save.unlocked;
+    var st = save.stars[i] || 0;
+    var cell = document.createElement('div');
+    cell.className = 'lv-cell' + (unlocked ? '' : ' locked') + (st > 0 ? ' done' : '');
+    var gicons = Object.keys(lv.goals).map(function (k) { return FRUITS[k]; }).join('');
+    cell.innerHTML = '<div class="n">' + (unlocked ? (i + 1) : '🔒') + '</div>' +
+      '<div class="st">' + (st ? '⭐'.repeat(st) : (unlocked ? 'GO!' : '')) + '</div>' +
+      '<div class="gicon">' + gicons + '</div>';
+    if (unlocked) cell.addEventListener('click', function () { initAudio(); sfx.click(); startLevel(i); });
+    grid.appendChild(cell);
+  });
+  showScreen('levelsel');
+}
+
+/* ===== 棋盘 ===== */
+function cellColors() { return LEVELS[G.lv].colors; }
+function newPiece() { return { c: rnd(cellColors()), sp: null }; }
+function findMatches(board) {
+  var hits = [];
+  for (var r = 0; r < N; r++) hits[r] = [];
+  var found = [];
+  /* 横向 */
+  for (var r2 = 0; r2 < N; r2++) {
+    var run = 1;
+    for (var c = 1; c <= N; c++) {
+      var same = c < N && board[r2][c] && board[r2][c - 1] && board[r2][c].c === board[r2][c - 1].c;
+      if (same) run++;
+      else {
+        if (run >= 3) found.push({ r: r2, c: c - run, len: run, dir: 'h' });
+        run = 1;
+      }
+    }
+  }
+  /* 纵向 */
+  for (var c2 = 0; c2 < N; c2++) {
+    var run2 = 1;
+    for (var r3 = 1; r3 <= N; r3++) {
+      var same2 = r3 < N && board[r3] && board[r3][c2] && board[r3 - 1][c2] && board[r3][c2].c === board[r3 - 1][c2].c;
+      if (same2) run2++;
+      else {
+        if (run2 >= 3) found.push({ r: r3 - run2, c: c2, len: run2, dir: 'v' });
+        run2 = 1;
+      }
+    }
+  }
+  return found;
+}
+function hasAnyMove(board) {
+  for (var r = 0; r < N; r++) for (var c = 0; c < N; c++) {
+    if (board[r][c] && board[r][c].sp === 'rb') return true;
+    var dirs = [[0, 1], [1, 0]];
+    for (var d = 0; d < 2; d++) {
+      var r2 = r + dirs[d][0], c2 = c + dirs[d][1];
+      if (r2 >= N || c2 >= N) continue;
+      var tmp = board[r][c]; board[r][c] = board[r2][c2]; board[r2][c2] = tmp;
+      var m = findMatches(board).length > 0;
+      tmp = board[r][c]; board[r][c] = board[r2][c2]; board[r2][c2] = tmp;
+      if (m) return true;
+    }
+  }
+  return false;
+}
+function buildBoard() {
+  var b = [];
+  for (var r = 0; r < N; r++) { b[r] = []; for (var c = 0; c < N; c++) b[r][c] = newPiece(); }
+  /* 消掉初始三连 */
+  var guard = 0;
+  while (findMatches(b).length > 0 && guard++ < 200) {
+    findMatches(b).forEach(function (m) {
+      for (var i = 0; i < m.len; i++) {
+        var rr = m.dir === 'h' ? m.r : m.r + i;
+        var cc = m.dir === 'h' ? m.c + i : m.c;
+        b[rr][cc] = newPiece();
+      }
+    });
+  }
+  if (!hasAnyMove(b)) return buildBoard();
+  return b;
+}
+
+/* ===== DOM 渲染 ===== */
+function layoutSize() {
+  var maxW = Math.min(window.innerWidth * 0.94, 480) - 12;
+  var maxH = window.innerHeight - 230;
+  G.size = Math.floor(Math.min(maxW, maxH) / N);
+  if (G.size < 36) G.size = 36;
+  var bd = $('board');
+  bd.style.width = (G.size * N) + 'px';
+  bd.style.height = (G.size * N) + 'px';
+}
+function tf(r, c) { return 'translate(' + (c * G.size) + 'px,' + (r * G.size) + 'px)'; }
+function makeTileEl(p, r, c) {
+  var el = document.createElement('div');
+  el.className = 'tile';
+  el.style.width = (G.size - 6) + 'px'; el.style.height = (G.size - 6) + 'px';
+  el.style.margin = '3px';
+  el.style.fontSize = Math.round(G.size * 0.58) + 'px';
+  el.style.transform = tf(r, c);
+  el.style.setProperty('--tf', tf(r, c));
+  syncTileEl(el, p);
+  return el;
+}
+function syncTileEl(el, p) {
+  el.textContent = p.sp === 'rb' ? '🌈' : FRUITS[p.c];
+  var old = el.querySelector('.sp');
+  if (old) old.remove();
+  if (p.sp === 'h' || p.sp === 'v') {
+    var s = document.createElement('div'); s.className = 'sp'; s.textContent = p.sp === 'h' ? '↔️' : '↕️';
+    el.appendChild(s);
+  }
+}
+function renderBoard() {
+  layoutSize();
+  var bd = $('board'); bd.innerHTML = '';
+  G.tiles = [];
+  for (var r = 0; r < N; r++) {
+    G.tiles[r] = [];
+    for (var c = 0; c < N; c++) {
+      var el = makeTileEl(G.board[r][c], r, c);
+      bindTile(el, r, c);
+      bd.appendChild(el);
+      G.tiles[r][c] = el;
+    }
+  }
+}
+function moveTileEl(el, r, c) {
+  el.style.transform = tf(r, c);
+  el.style.setProperty('--tf', tf(r, c));
+}
+
+/* ===== 输入:点选或滑动 ===== */
+var touchStart = null;
+function bindTile(el, r0, c0) {
+  el.addEventListener('touchstart', function (e) {
+    e.preventDefault(); initAudio(); if (AC && AC.state === 'suspended') AC.resume();
+    var pos = findTilePos(el);
+    touchStart = { x: e.touches[0].clientX, y: e.touches[0].clientY, r: pos.r, c: pos.c };
+  }, { passive: false });
+  el.addEventListener('touchend', function (e) {
+    e.preventDefault();
+    if (!touchStart) return;
+    var dx = e.changedTouches[0].clientX - touchStart.x;
+    var dy = e.changedTouches[0].clientY - touchStart.y;
+    var pos = { r: touchStart.r, c: touchStart.c };
+    touchStart = null;
+    if (Math.abs(dx) < 18 && Math.abs(dy) < 18) { tapTile(pos.r, pos.c); return; }
+    var tr = pos.r + (Math.abs(dy) > Math.abs(dx) ? (dy > 0 ? 1 : -1) : 0);
+    var tc = pos.c + (Math.abs(dx) >= Math.abs(dy) ? (dx > 0 ? 1 : -1) : 0);
+    trySwap(pos.r, pos.c, tr, tc);
+  }, { passive: false });
+  el.addEventListener('mousedown', function (e) {
+    initAudio(); if (AC && AC.state === 'suspended') AC.resume();
+    var pos = findTilePos(el);
+    touchStart = { x: e.clientX, y: e.clientY, r: pos.r, c: pos.c };
+  });
+  el.addEventListener('mouseup', function (e) {
+    if (!touchStart) return;
+    var dx = e.clientX - touchStart.x, dy = e.clientY - touchStart.y;
+    var pos = { r: touchStart.r, c: touchStart.c };
+    touchStart = null;
+    if (Math.abs(dx) < 12 && Math.abs(dy) < 12) { tapTile(pos.r, pos.c); return; }
+    var tr = pos.r + (Math.abs(dy) > Math.abs(dx) ? (dy > 0 ? 1 : -1) : 0);
+    var tc = pos.c + (Math.abs(dx) >= Math.abs(dy) ? (dx > 0 ? 1 : -1) : 0);
+    trySwap(pos.r, pos.c, tr, tc);
+  });
+}
+function findTilePos(el) {
+  for (var r = 0; r < N; r++) for (var c = 0; c < N; c++) if (G.tiles[r][c] === el) return { r: r, c: c };
+  return { r: 0, c: 0 };
+}
+function tapTile(r, c) {
+  if (G.busy || G.over) return;
+  if (G.sel) {
+    var pr = G.sel.r, pc = G.sel.c;
+    G.tiles[pr][pc].classList.remove('sel');
+    if (pr === r && pc === c) { G.sel = null; return; }
+    if (Math.abs(pr - r) + Math.abs(pc - c) === 1) { G.sel = null; trySwap(pr, pc, r, c); return; }
+    G.sel = { r: r, c: c }; G.tiles[r][c].classList.add('sel'); sfx.click();
+  } else {
+    G.sel = { r: r, c: c }; G.tiles[r][c].classList.add('sel'); sfx.click();
+  }
+}
+
+/* ===== 交换与消除 ===== */
+function trySwap(r1, c1, r2, c2) {
+  if (G.busy || G.over) return;
+  if (r2 < 0 || r2 >= N || c2 < 0 || c2 >= N) return;
+  if (Math.abs(r1 - r2) + Math.abs(c1 - c2) !== 1) return;
+  if (G.sel) { G.tiles[G.sel.r][G.sel.c].classList.remove('sel'); G.sel = null; }
+  G.busy = true;
+  var p1 = G.board[r1][c1], p2 = G.board[r2][c2];
+  /* 彩虹糖:与任意甜品交换=清光那种颜色 */
+  if (p1.sp === 'rb' || p2.sp === 'rb') {
+    doSwapVisual(r1, c1, r2, c2);
+    setTimeout(function () {
+      var colorPiece = p1.sp === 'rb' ? p2 : p1;
+      var rbPos = p1.sp === 'rb' ? { r: r2, c: c2 } : { r: r1, c: c1 };  /* 交换后的位置 */
+      G.moves--; updateTop();
+      sfx.rainbow(); showBanner('🌈 彩虹糖！');
+      var cells = [{ r: rbPos.r, c: rbPos.c }];
+      for (var r = 0; r < N; r++) for (var c = 0; c < N; c++)
+        if (G.board[r][c] && G.board[r][c].c === colorPiece.c && !G.board[r][c].sp) cells.push({ r: r, c: c });
+      popCells(cells, function () { afterResolve(); });
+    }, 200);
+    return;
+  }
+  /* 普通交换 */
+  doSwapVisual(r1, c1, r2, c2);
+  setTimeout(function () {
+    var matches = findMatches(G.board);
+    if (matches.length === 0) {
+      /* 换回去 */
+      sfx.bad();
+      doSwapVisual(r1, c1, r2, c2);
+      setTimeout(function () { G.busy = false; }, 200);
+      return;
+    }
+    sfx.swap();
+    G.moves--; updateTop();
+    G.combo = 0;
+    resolveMatches({ r: r2, c: c2 });
+  }, 200);
+}
+function doSwapVisual(r1, c1, r2, c2) {
+  var p = G.board[r1][c1]; G.board[r1][c1] = G.board[r2][c2]; G.board[r2][c2] = p;
+  var e = G.tiles[r1][c1]; G.tiles[r1][c1] = G.tiles[r2][c2]; G.tiles[r2][c2] = e;
+  moveTileEl(G.tiles[r1][c1], r1, c1);
+  moveTileEl(G.tiles[r2][c2], r2, c2);
+}
+/* 消除一轮:找三连→标记特殊糖→弹掉→掉落→递归 */
+function resolveMatches(swapPos) {
+  var matches = findMatches(G.board);
+  if (matches.length === 0) { afterResolve(); return; }
+  G.combo++;
+  if (G.combo >= 3) showBanner('🔥 连锁 ×' + G.combo + '！');
+  sfx.pop(G.combo);
+  var popSet = {}, specials = [];
+  matches.forEach(function (m) {
+    for (var i = 0; i < m.len; i++) {
+      var r = m.dir === 'h' ? m.r : m.r + i;
+      var c = m.dir === 'h' ? m.c + i : m.c;
+      popSet[r + '_' + c] = true;
+    }
+    if (m.len >= 4) {
+      /* 特殊糖生成在交换点(在这条消除线上时)或线中间 */
+      var sr = m.dir === 'h' ? m.r : m.r + Math.floor(m.len / 2);
+      var sc = m.dir === 'h' ? m.c + Math.floor(m.len / 2) : m.c;
+      if (swapPos) {
+        for (var j = 0; j < m.len; j++) {
+          var rr = m.dir === 'h' ? m.r : m.r + j;
+          var cc = m.dir === 'h' ? m.c + j : m.c;
+          if (rr === swapPos.r && cc === swapPos.c) { sr = rr; sc = cc; break; }
+        }
+      }
+      specials.push({ r: sr, c: sc, sp: m.len >= 5 ? 'rb' : (m.dir === 'h' ? 'v' : 'h'), color: G.board[sr][sc].c });
+    }
+  });
+  /* 条纹糖被消除时触发整行/列 */
+  var extra = [];
+  Object.keys(popSet).forEach(function (k) {
+    var parts = k.split('_'); var r = +parts[0], c = +parts[1];
+    var p = G.board[r][c];
+    if (p && p.sp === 'h') { for (var cc = 0; cc < N; cc++) extra.push({ r: r, c: cc }); sfx.special(); }
+    if (p && p.sp === 'v') { for (var rr = 0; rr < N; rr++) extra.push({ r: rr, c: c }); sfx.special(); }
+  });
+  extra.forEach(function (e) { popSet[e.r + '_' + e.c] = true; });
+  var cells = Object.keys(popSet).map(function (k) {
+    var parts = k.split('_'); return { r: +parts[0], c: +parts[1] };
+  });
+  /* 特殊糖位置不弹掉,并且在掉落发生前就地变身(掉落后棋子会换位置) */
+  specials.forEach(function (s) {
+    cells = cells.filter(function (cl) { return !(cl.r === s.r && cl.c === s.c); });
+    var p = G.board[s.r][s.c];
+    if (p) { p.sp = s.sp; if (s.sp === 'rb') p.c = -1; syncTileEl(G.tiles[s.r][s.c], p); }
+    sfx.special(); showBanner(s.sp === 'rb' ? '🌈 彩虹糖诞生！' : '✨ 条纹糖诞生！', 900);
+  });
+  popCells(cells, function () {
+    setTimeout(function () { resolveMatches(null); }, 100);
+  });
+}
+function popCells(cells, done) {
+  cells.forEach(function (cl) {
+    var p = G.board[cl.r][cl.c];
+    if (!p) return;
+    if (p.c >= 0 && G.need[p.c] > 0) { G.need[p.c]--; }
+    G.board[cl.r][cl.c] = null;
+    var el = G.tiles[cl.r][cl.c];
+    if (el) el.classList.add('pop');
+  });
+  updateTop();
+  setTimeout(function () {
+    /* 移除弹掉的DOM,下落,补新 */
+    cells.forEach(function (cl) {
+      var el = G.tiles[cl.r][cl.c];
+      if (el && el.parentNode) el.parentNode.removeChild(el);
+      G.tiles[cl.r][cl.c] = null;
+    });
+    dropAndFill();
+    setTimeout(done, 240);
+  }, 260);
+}
+function dropAndFill() {
+  var bd = $('board');
+  for (var c = 0; c < N; c++) {
+    var write = N - 1;
+    for (var r = N - 1; r >= 0; r--) {
+      if (G.board[r][c]) {
+        if (write !== r) {
+          G.board[write][c] = G.board[r][c]; G.board[r][c] = null;
+          G.tiles[write][c] = G.tiles[r][c]; G.tiles[r][c] = null;
+          moveTileEl(G.tiles[write][c], write, c);
+        }
+        write--;
+      }
+    }
+    /* 顶部补新 */
+    var newCount = write + 1;
+    for (var k = 0; k < newCount; k++) {
+      var p = newPiece();
+      G.board[k][c] = p;
+      var el = makeTileEl(p, k - newCount, c);       /* 从上方掉入 */
+      bindTile(el, k, c);
+      bd.appendChild(el);
+      G.tiles[k][c] = el;
+      (function (el2, k2, c2) {
+        setTimeout(function () { moveTileEl(el2, k2, c2); }, 20);
+      })(el, k, c);
+    }
+  }
+}
+function afterResolve() {
+  updateTop();
+  /* 目标达成? */
+  var doneAll = true;
+  Object.keys(G.need).forEach(function (k) { if (G.need[k] > 0) doneAll = false; });
+  if (doneAll) { levelWin(); return; }
+  if (G.moves <= 0) { levelLose(); return; }
+  /* 死局洗牌 */
+  if (!hasAnyMove(G.board)) {
+    showBanner('🔀 没有可消的啦,洗个牌～', 1300);
+    G.board = buildBoard();
+    renderBoard();
+  }
+  G.busy = false;
+}
+
+/* ===== 关卡流程 ===== */
+function startLevel(i) {
+  G.lv = i; G.over = false; G.busy = false; G.sel = null; G.combo = 0;
+  var lv = LEVELS[i];
+  G.moves = lv.moves;
+  G.need = {};
+  Object.keys(lv.goals).forEach(function (k) { G.need[k] = lv.goals[k]; });
+  G.board = buildBoard();
+  showScreen('play');
+  renderBoard();
+  updateTop();
+  guideSay(GUIDE_TIPS[i % GUIDE_TIPS.length]);
+  showBanner('第' + (i + 1) + '关！', 1100);
+}
+function updateTop() {
+  $('movesNum').textContent = Math.max(0, G.moves);
+  var g = $('goals'); g.innerHTML = '';
+  Object.keys(G.need).forEach(function (k) {
+    var left = G.need[k];
+    var d = document.createElement('div');
+    d.className = 'goal' + (left <= 0 ? ' ok' : '');
+    d.textContent = FRUITS[k] + ' ' + (left <= 0 ? '✓' : left);
+    g.appendChild(d);
+  });
+}
+function levelWin() {
+  G.over = true; G.busy = true;
+  sfx.win();
+  var st = G.moves >= 5 ? 3 : G.moves >= 2 ? 2 : 1;
+  save.stars[G.lv] = Math.max(save.stars[G.lv] || 0, st);
+  if (G.lv + 1 >= save.unlocked) save.unlocked = Math.min(LEVELS.length, G.lv + 2);
+  persist();
+  $('rTitle').textContent = '🎉 过关啦！';
+  $('rStars').textContent = '⭐'.repeat(st) + '☆'.repeat(3 - st);
+  var says = [
+    '小美美：甜品收集完成，派对开始咯！',
+    '小美美：你的手指有魔法吧！',
+    '小美美：库洛米看了都说服！',
+    '小美美：甜品堆成小山啦～'
+  ];
+  $('rSay').textContent = '🐰 ' + says[rnd(says.length)];
+  $('btnNext').classList.toggle('hidden', G.lv >= LEVELS.length - 1);
+  $('btnRetry').classList.add('hidden');
+  if (G.lv === LEVELS.length - 1) {
+    $('rTitle').textContent = '👑 全部通关！';
+    $('rSay').textContent = '🐰 小美美：十关全通！你就是甜品派对的超级主厨！🎂 总星星 ' + totalStars() + '/30';
+  }
+  setTimeout(function () { showScreen('result'); }, 700);
+}
+function levelLose() {
+  G.over = true; G.busy = true;
+  sfx.lose();
+  $('rTitle').textContent = '💦 差一点点！';
+  $('rStars').textContent = '💪';
+  $('rSay').textContent = '🐰 小美美：还差一点甜品～再来一次肯定行！';
+  $('btnNext').classList.add('hidden');
+  $('btnRetry').classList.remove('hidden');
+  setTimeout(function () { showScreen('result'); }, 700);
+}
+
+/* ===== 绑定 ===== */
+$('btnGo').addEventListener('click', function () { initAudio(); sfx.click(); renderSel(); });
+$('btnBack').addEventListener('click', function () { sfx.click(); renderSel(); });
+$('btnNext').addEventListener('click', function () { sfx.click(); startLevel(Math.min(G.lv + 1, LEVELS.length - 1)); });
+$('btnRetry').addEventListener('click', function () { sfx.click(); startLevel(G.lv); });
+$('btnSel').addEventListener('click', function () { sfx.click(); renderSel(); });
+$('btnLobby').addEventListener('click', function () { location.href = '../'; });
+$('lobbyPill').addEventListener('click', function () { location.href = '../'; });
+window.addEventListener('resize', function () {
+  if (!$('play').classList.contains('hidden')) renderBoard();
+});
+window.__hooks = { startLevel: startLevel, trySwap: trySwap, findMatches: findMatches, renderSel: renderSel, LEVELS: LEVELS, save: save };
+showScreen('cover');
+</script>
+<script src="../shared/parent-gate.js"></script>
+</body>
+</html>

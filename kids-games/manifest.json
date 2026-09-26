@@ -1,0 +1,9 @@
+{
+  "name": "小小游戏乐园",
+  "short_name": "小游戏乐园",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f7ecff",
+  "theme_color": "#6e62c9",
+  "icons": []
+}

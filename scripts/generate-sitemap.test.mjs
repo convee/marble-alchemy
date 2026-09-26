@@ -4,7 +4,7 @@ import { renderSitemap, sitemapPaths } from './generate-sitemap.mjs';
 
 test('builds stable static and registry-backed game URLs', () => {
   const registry = {
-    games: [{ slug: 'alpha-game', variants: [{ playPath: '/alpha/' }, { playPath: '/beta/' }, { playPath: '/alpha/' }] }],
+    games: [{ slug: 'alpha-game', lobbyPath: '/alpha-lobby/', variants: [{ playPath: '/alpha/' }, { playPath: '/beta/' }, { playPath: '/alpha/' }] }],
   };
   assert.deepEqual(sitemapPaths(registry), [
     '/',
@@ -15,6 +15,7 @@ test('builds stable static and registry-backed game URLs', () => {
     '/terms.html',
     '/refund.html',
     '/games/alpha-game/',
+    '/alpha-lobby/',
     '/alpha/',
     '/beta/',
   ]);

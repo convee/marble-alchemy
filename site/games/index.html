@@ -24,6 +24,7 @@
       .variants { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin-top: 18px; }
       .variant { overflow: hidden; border: 1px solid rgba(142,162,200,.22); border-radius: 14px; background: rgba(5,7,15,.45); }
       .variant img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; }
+      .variant-placeholder { display: grid; place-items: center; width: 100%; aspect-ratio: 16 / 9; background: radial-gradient(circle at 35% 25%, rgba(255,255,255,.3), transparent 32%), linear-gradient(135deg, rgba(53,242,255,.18), rgba(216,198,143,.16)); color: var(--text); font-size: 48px; }
       .variant-body { padding: 15px; }
       .variant-body p { margin: 7px 0 12px; font-size: 14px; }
       .actions { display: flex; gap: 10px; flex-wrap: wrap; }
@@ -48,9 +49,12 @@
     <script>
       const catalog = document.querySelector('#catalog');
       const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
+      const renderMedia = (game, variant) => variant.image
+        ? `<img src="${escapeHtml(variant.image)}" alt="${escapeHtml(variant.title)} gameplay" loading="lazy" />`
+        : `<div class="variant-placeholder" role="img" aria-label="${escapeHtml(variant.title)}">${escapeHtml(variant.icon || '🎮')}</div>`;
       const renderVariant = (game, variant) => `
         <article class="variant">
-          <img src="${escapeHtml(variant.image || '')}" alt="${escapeHtml(variant.title)} gameplay" loading="lazy" />
+          ${renderMedia(game, variant)}
           <div class="variant-body">
             <h3>${escapeHtml(variant.title)}</h3>
             <p>${escapeHtml(variant.description)}</p>

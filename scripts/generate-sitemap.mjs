@@ -28,6 +28,7 @@ export function sitemapPaths(registry) {
   const paths = new Set(STATIC_PATHS);
   for (const game of registry.games) {
     if (typeof game.slug === 'string' && game.slug) paths.add(`/games/${game.slug}/`);
+    if (typeof game.lobbyPath === 'string' && game.lobbyPath.startsWith('/')) paths.add(game.lobbyPath);
     for (const variant of game.variants ?? []) {
       if (typeof variant.playPath === 'string' && variant.playPath.startsWith('/')) paths.add(variant.playPath);
     }

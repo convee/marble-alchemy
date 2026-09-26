@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#cfe8ff">
+<title>米小圈上学记</title>
+<meta name="kids-game" content="mxq-school" data-name="米小圈上学记" data-name-en="A Day at School" data-icon="🎒">
+<meta name="kids-ai-endpoint" content="https://kids-games-ai.convee-cn.workers.dev">
+<link rel="stylesheet" href="../shared/ai-companion.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎒</text></svg>">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; }
+  html,body { width:100%; height:100%; overflow:hidden;
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Source Han Sans SC",system-ui,sans-serif; }
+  body { background:linear-gradient(#d6ecff 0%, #e8f4ff 50%, #fff3dc 100%); color:#3a4a5a; }
+
+  .screen { position:fixed; left:0; top:0; right:0; bottom:0; display:flex; flex-direction:column;
+    align-items:center; overflow-y:auto; overflow-x:hidden; padding:16px 12px 30px; }
+  .hidden { display:none !important; }
+
+  /* ====== 顶部行程进度 ====== */
+  .trip { display:flex; gap:5px; width:min(560px,96vw); margin:2px 0 10px; align-items:center; justify-content:center; flex-wrap:wrap; }
+  .trip .dot { display:flex; flex-direction:column; align-items:center; gap:2px; font-size:11px; color:#9db3c7; font-weight:700; }
+  .trip .dot .em { width:34px; height:34px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center;
+    font-size:18px; box-shadow:0 2px 6px rgba(90,130,170,.18); border:2px solid #e3eefa; }
+  .trip .dot.on .em { background:#ffe08a; border-color:#ffbf3d; transform:scale(1.12); }
+  .trip .dot.on { color:#e08a1e; }
+  .trip .dot.pass .em { background:#c9f0c9; border-color:#7ecf7e; }
+  .trip .arw { color:#c3d6ea; font-weight:900; }
+
+  /* ====== 封面 ====== */
+  #cover { justify-content:center; text-align:center; }
+  .big-title { font-size:clamp(32px,9vw,54px); font-weight:900; color:#3d7fd0; letter-spacing:3px;
+    text-shadow:0 3px 0 #fff, 0 6px 14px rgba(61,127,208,.25); margin:8px 0 2px; }
+  .sub-title { font-size:clamp(13px,3.8vw,17px); color:#5a86b0; font-weight:700; margin-bottom:12px; }
+  .story-box { background:rgba(255,255,255,.92); border:3px dashed #8fc0f0; border-radius:18px;
+    padding:14px 18px; max-width:520px; color:#41607e; font-size:clamp(14px,3.9vw,16px); line-height:1.95;
+    text-align:left; margin:8px 0 16px; box-shadow:0 6px 18px rgba(90,130,170,.18); }
+  .story-box b { color:#e0782a; }
+  .cast { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin:2px 0 18px; max-width:520px; }
+  .cast .who { display:flex; flex-direction:column; align-items:center; gap:3px; width:62px; }
+  .cast .who svg { width:52px; height:52px; }
+  .cast .who span { font-size:11px; font-weight:800; color:#6a8399; }
+  .go-btn { padding:16px 54px; font-size:clamp(19px,5.5vw,24px); font-weight:900; letter-spacing:3px; color:#fff;
+    background:linear-gradient(#5aa9f0,#3d7fd0); border:none; border-radius:999px; cursor:pointer;
+    box-shadow:0 6px 0 #2b5f9e, 0 10px 24px rgba(61,127,208,.4); transition:.1s; }
+  .go-btn:active { transform:translateY(4px); box-shadow:0 2px 0 #2b5f9e; }
+  .mini-note { margin-top:12px; font-size:12px; color:#8ba7bf; }
+
+  /* ====== 舞台通用 ====== */
+  #stage { padding-top:max(12px, env(safe-area-inset-top)); }
+  .head { display:flex; align-items:center; gap:8px; width:min(560px,96vw); margin-bottom:8px; }
+  .back-btn { border:none; background:#fff; border-radius:999px; padding:7px 14px; font-weight:900; color:#5a86b0;
+    cursor:pointer; box-shadow:0 3px 8px rgba(90,130,170,.2); font-size:14px; }
+  .scene-name { flex:1; font-size:clamp(17px,5vw,22px); font-weight:900; color:#3d7fd0; text-align:center; }
+  .pill { background:#fff; border-radius:999px; padding:6px 14px; font-weight:900; color:#e0902a;
+    box-shadow:0 3px 8px rgba(90,130,170,.2); font-size:clamp(13px,3.8vw,16px); white-space:nowrap; }
+
+  /* 对话气泡 */
+  .talk { display:flex; align-items:flex-end; gap:10px; width:min(560px,96vw); margin:6px 0 8px; }
+  .talk svg { width:64px; height:64px; flex:none; }
+  .bubble { position:relative; background:#fff; border-radius:16px; padding:11px 14px; flex:1;
+    box-shadow:0 4px 12px rgba(90,130,170,.18); color:#41607e; font-size:clamp(14px,4vw,16px);
+    font-weight:700; line-height:1.75; min-height:44px; }
+  .bubble:before { content:''; position:absolute; left:-8px; bottom:16px; border:8px solid transparent;
+    border-right-color:#fff; border-left:none; }
+  .bubble b { color:#e0782a; }
+  .speak-btn { border:none; background:#eaf3ff; border-radius:999px; padding:4px 10px; margin-left:6px;
+    cursor:pointer; font-size:13px; float:right; }
+
+  .card { width:min(560px,96vw); background:#fff; border-radius:20px; padding:16px;
+    box-shadow:0 6px 18px rgba(90,130,170,.18); margin-bottom:14px; }
+  .q-text { font-size:clamp(16px,4.6vw,20px); font-weight:900; color:#37536e; line-height:1.7; margin-bottom:14px; }
+
+  /* 选项 */
+  .opts { display:flex; flex-direction:column; gap:10px; }
+  .opt { border:3px solid #d6e8fb; background:#f7fbff; border-radius:16px; padding:13px 14px;
+    font-size:clamp(15px,4.3vw,18px); font-weight:800; color:#41607e; cursor:pointer; text-align:left;
+    transition:.15s; line-height:1.5; }
+  .opt:active { transform:scale(.98); }
+  .opt.right { border-color:#5cb85c; background:#eaf9ea; color:#2e7d32; }
+  .opt.wrong { border-color:#e57373; background:#fdecea; color:#c0392b; opacity:.8; }
+  .shake { animation:shake .4s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-7px)} 50%{transform:translateX(7px)} 75%{transform:translateX(-4px)} }
+
+  .tip-card { display:none; background:#fff8dc; border:2px dashed #f0c14b; border-radius:14px; padding:10px 12px;
+    color:#8a6d1f; font-size:clamp(13px,3.8vw,15px); font-weight:700; line-height:1.7; margin-top:12px; }
+  .tip-card.show { display:block; animation:pop .3s; }
+  @keyframes pop { from { transform:scale(.85); opacity:0; } to { transform:scale(1); opacity:1; } }
+  .next-btn { display:none; margin:14px auto 0; padding:13px 44px; font-size:17px; font-weight:900; color:#fff;
+    background:linear-gradient(#5aa9f0,#3d7fd0); border:none; border-radius:999px; cursor:pointer;
+    box-shadow:0 4px 0 #2b5f9e; }
+  .next-btn.show { display:block; animation:pop .3s; }
+  .next-btn:active { transform:translateY(3px); box-shadow:none; }
+
+  /* ====== 起床反应关 ====== */
+  #tapArea { width:min(560px,96vw); }
+  .task-grid { display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin:4px 0; }
+  .task { width:132px; height:120px; border-radius:20px; background:#f7fbff; border:3px solid #d6e8fb;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; cursor:pointer;
+    transition:.12s; font-weight:800; color:#5a86b0; position:relative; }
+  .task .te { font-size:44px; }
+  .task .tn { font-size:14px; }
+  .task.next { border-color:#ffbf3d; background:#fff6e0; animation:glow 1s infinite; }
+  @keyframes glow { 0%,100%{box-shadow:0 0 0 0 rgba(255,191,61,.5)} 50%{box-shadow:0 0 0 10px rgba(255,191,61,0)} }
+  .task.done { border-color:#7ecf7e; background:#eaf9ea; color:#2e7d32; }
+  .task.done:after { content:'✓'; position:absolute; top:6px; right:10px; color:#5cb85c; font-size:20px; }
+  .timebar { height:16px; background:#ffe0e0; border-radius:99px; overflow:hidden; margin:12px 0 4px; }
+  .timebar > div { height:100%; width:100%; background:linear-gradient(90deg,#7ecf7e,#ffd24d,#ff6b6b);
+    border-radius:99px; transition:width .1s linear; }
+  .hint-line { text-align:center; font-weight:800; color:#e0902a; margin-top:8px; font-size:clamp(14px,4vw,16px); }
+
+  /* ====== 午餐护食关 ====== */
+  #defendArea { width:min(560px,96vw); }
+  .plate { position:relative; width:100%; height:min(340px,52vh); background:#eaf3ff; border-radius:22px;
+    overflow:hidden; border:3px solid #cfe1f5; touch-action:none; }
+  .drum { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); font-size:66px; z-index:2;
+    filter:drop-shadow(0 4px 6px rgba(0,0,0,.15)); pointer-events:none; }
+  .hand { position:absolute; font-size:50px; cursor:pointer; z-index:3; transition:transform .05s;
+    filter:drop-shadow(0 3px 4px rgba(0,0,0,.2)); }
+  .hand.hit { animation:handhit .3s; }
+  @keyframes handhit { 0%{transform:scale(1.3) rotate(0)} 100%{transform:scale(0) rotate(40deg); opacity:0} }
+  .def-stat { display:flex; justify-content:space-between; width:100%; margin:10px 0 2px; font-weight:900; }
+  .def-stat .ok { color:#2e7d32; } .def-stat .bad { color:#c0392b; }
+  .pow { position:absolute; font-size:26px; font-weight:900; color:#ff6b6b; z-index:5; pointer-events:none;
+    animation:powup .5s ease-out forwards; text-shadow:0 2px 0 #fff; }
+  @keyframes powup { from{transform:scale(.5);opacity:1} to{transform:scale(1.6) translateY(-30px);opacity:0} }
+
+  /* ====== 美术涂色关 ====== */
+  .color-row { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin:10px 0; }
+  .swatch { width:48px; height:48px; border-radius:14px; cursor:pointer; border:4px solid #fff;
+    box-shadow:0 3px 8px rgba(0,0,0,.15); transition:.12s; }
+  .swatch:active { transform:scale(.9); }
+  .swatch.sel { border-color:#3d7fd0; transform:scale(1.12); }
+  #paintSvg { width:min(280px,72vw); height:auto; display:block; margin:6px auto; }
+
+  /* ====== 结算 / 日记 ====== */
+  #finale { justify-content:flex-start; text-align:center; background:linear-gradient(#fff6df,#ffe9c9); z-index:20; }
+  .fin-title { font-size:clamp(26px,7vw,40px); font-weight:900; color:#e0782a; margin:10px 0 4px;
+    text-shadow:0 3px 0 #fff; }
+  .stars-big { font-size:30px; letter-spacing:4px; margin:4px 0 10px; }
+  .diary { width:min(520px,94vw); background:
+      repeating-linear-gradient(#fffdf5,#fffdf5 33px,#e9d9c0 34px);
+    border-radius:8px 16px 16px 8px; border-left:10px solid #ff9e9e; padding:14px 18px 20px 22px;
+    box-shadow:0 10px 30px rgba(190,120,60,.28); text-align:left; position:relative; }
+  .diary h3 { color:#c0392b; font-size:clamp(18px,5vw,22px); margin-bottom:6px; line-height:34px; }
+  .diary p { color:#5a4632; font-size:clamp(14px,4vw,16px); line-height:34px; font-weight:600; }
+  .diary p b { color:#3d7fd0; }
+  .diary .sign { text-align:right; color:#a06a3a; font-weight:800; margin-top:6px; line-height:34px; }
+  .fin-btns { display:flex; gap:12px; margin:18px 0 6px; flex-wrap:wrap; justify-content:center; }
+  .confetti { position:fixed; top:-20px; font-size:22px; z-index:30; pointer-events:none; animation:fall linear forwards; }
+  @keyframes fall { to { transform:translateY(105vh) rotate(360deg); } }
+
+  /* ====== 课间猜拳 ====== */
+  .rps-arena { display:flex; align-items:center; justify-content:center; gap:14px; margin:10px 0 4px; }
+  .rps-hand { font-size:50px; width:72px; height:72px; display:flex; align-items:center; justify-content:center;
+    background:#f7fbff; border-radius:18px; border:3px solid #d6e8fb; }
+  .rps-hand.reveal { animation:pop .3s; }
+  .rps-vs { font-size:20px; font-weight:900; color:#c0392b; }
+  .rps-row { display:flex; gap:12px; justify-content:center; margin:14px 0 2px; }
+  .rps-pick { width:76px; height:76px; border-radius:20px; border:3px solid #d6e8fb; background:#fff;
+    font-size:36px; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:2px; transition:.12s; color:#5a86b0; }
+  .rps-pick:active { transform:scale(.92); }
+  .rps-pick .pl { font-size:12px; font-weight:800; }
+
+  /* ====== 小红花墙 ====== */
+  .stk-title { font-weight:900; color:#c0392b; font-size:clamp(15px,4.4vw,18px); margin:16px 0 4px; }
+  .stk-wall { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; width:min(520px,94vw); margin:2px auto 4px; }
+  .stk { width:84px; padding:8px 4px; border-radius:14px; background:#fff; border:2px solid #f0dcc0;
+    display:flex; flex-direction:column; align-items:center; gap:2px; box-shadow:0 3px 8px rgba(190,120,60,.15);
+    position:relative; }
+  .stk .se { font-size:30px; }
+  .stk .st { font-size:11px; font-weight:800; color:#a06a3a; }
+  .stk.off { filter:grayscale(1); opacity:.42; }
+  .stk.on:after { content:'🌸'; position:absolute; top:-6px; right:-4px; font-size:16px; }
+
+  /* toast */
+  #toast { position:fixed; left:50%; bottom:34px; transform:translateX(-50%) translateY(20px); opacity:0;
+    background:rgba(45,70,95,.94); color:#fff; padding:11px 20px; border-radius:999px; font-weight:800;
+    font-size:15px; z-index:60; transition:.25s; max-width:88vw; text-align:center; }
+  #toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+  #errbar { position:fixed; left:0; right:0; top:0; background:#c0392b; color:#fff; font-size:12px;
+    padding:6px 10px; z-index:999; display:none; word-break:break-all; }
+</style>
+</head>
+<body>
+<div id="errbar"></div>
+
+<!-- ============ 封面 ============ -->
+<div id="cover" class="screen">
+  <div class="big-title">🎒 米小圈上学记</div>
+  <div class="sub-title">陪米小圈过热闹的一天！</div>
+  <div class="cast" id="cast"></div>
+  <div class="story-box">
+    叮铃铃——闹钟响啦！今天是<b>星期一</b>，米小圈又赖床了。<br>
+    要经历<b>起床、上学、上课、课间、午餐、美术、放学</b>七件大事，
+    还会遇到铁头、姜小牙、李黎、魏老师和莫老师……<br>
+    你能帮米小圈顺利过完这一天，晚上写出一篇日记吗？
+  </div>
+  <button class="go-btn" id="startBtn">开始这一天 ▶</button>
+  <div class="mini-note">🌟 会自动记住你玩到哪一关</div>
+  <button class="back-btn" id="coverHome" style="margin-top:14px;padding:9px 22px;">🎪 回游戏乐园</button>
+</div>
+
+<!-- ============ 舞台 ============ -->
+<div id="stage" class="screen hidden">
+  <div class="head">
+    <button class="back-btn" id="homeBtn">🏠</button>
+    <div class="scene-name" id="sceneName">场景</div>
+    <div class="pill" id="starPill">⭐ 0</div>
+  </div>
+  <div class="trip" id="trip"></div>
+  <div id="stageBody" style="width:min(560px,96vw); display:flex; flex-direction:column; align-items:center;"></div>
+</div>
+
+<!-- ============ 结算日记 ============ -->
+<div id="finale" class="screen hidden">
+  <div class="fin-title">📔 今天的日记</div>
+  <div class="stars-big" id="finStars">⭐⭐⭐⭐⭐⭐</div>
+  <div class="diary" id="diary"></div>
+  <div class="stk-title" id="stkTitle"></div>
+  <div class="stk-wall" id="stkWall"></div>
+  <div class="fin-btns">
+    <button class="go-btn" id="againBtn" style="padding:13px 34px;font-size:18px;">再玩一次 🔄</button>
+    <button class="back-btn" id="finHome" style="padding:13px 24px;font-size:16px;">回乐园</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="../shared/locale.js"></script>
+<script src="../shared/ai-companion.js"></script>
+<script>
+"use strict";
+
+/* ========== 全局错误红条（方便手机远程排查） ========== */
+window.onerror = function(m, s, l){
+  var e = document.getElementById('errbar');
+  e.style.display = 'block';
+  e.textContent = '出错: ' + m + ' @' + l;
+  return false;
+};
+
+/* ========== 小工具 ========== */
+function $(id){ return document.getElementById(id); }
+function show(id){ $(id).classList.remove('hidden'); }
+function hide(id){ $(id).classList.add('hidden'); }
+function toast(msg){
+  var t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toast._t); toast._t = setTimeout(function(){ t.classList.remove('show'); }, 1800);
+}
+function speak(text){
+  try {
+    if (!('speechSynthesis' in window)) return;
+    speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(text);
+    u.lang = 'zh-CN'; u.rate = 0.95; u.pitch = 1.1;
+    speechSynthesis.speak(u);
+  } catch(e){}
+}
+function confetti(){
+  var ems = ['🎉','⭐','🎊','✨','🌟','🍬'];
+  for (var i=0;i<26;i++){
+    (function(i){
+      var d = document.createElement('div');
+      d.className = 'confetti';
+      d.textContent = ems[i % ems.length];
+      d.style.left = (Math.random()*100) + 'vw';
+      d.style.animationDuration = (1.6 + Math.random()*1.4) + 's';
+      d.style.animationDelay = (Math.random()*0.5) + 's';
+      document.body.appendChild(d);
+      setTimeout(function(){ d.remove(); }, 3600);
+    })(i);
+  }
+}
+
+/* ========== SVG 卡通头像（原创手绘风） ========== */
+function avatar(who){
+  var faces = {
+    // 米小圈：黄脸、呆毛、大眼、总在笑
+    mxq:  '<circle cx="50" cy="54" r="34" fill="#ffe0a3" stroke="#e0a24a" stroke-width="3"/>'
+        + '<path d="M50 20 q6 -12 -2 -14 q10 2 6 14" fill="#7a5230"/>'
+        + '<circle cx="39" cy="52" r="6" fill="#fff" stroke="#5a4632" stroke-width="2"/><circle cx="40" cy="53" r="3" fill="#3a2e22"/>'
+        + '<circle cx="61" cy="52" r="6" fill="#fff" stroke="#5a4632" stroke-width="2"/><circle cx="62" cy="53" r="3" fill="#3a2e22"/>'
+        + '<path d="M40 68 q10 9 20 0" stroke="#c0392b" stroke-width="3" fill="none" stroke-linecap="round"/>'
+        + '<circle cx="33" cy="63" r="4" fill="#ffb3b3"/><circle cx="67" cy="63" r="4" fill="#ffb3b3"/>',
+    // 铁头：方脑袋、平头、憨
+    tie:  '<rect x="20" y="24" width="60" height="58" rx="14" fill="#d9c1a3" stroke="#a9865a" stroke-width="3"/>'
+        + '<rect x="20" y="24" width="60" height="12" rx="6" fill="#4a3a28"/>'
+        + '<rect x="34" y="50" width="9" height="6" rx="2" fill="#3a2e22"/><rect x="57" y="50" width="9" height="6" rx="2" fill="#3a2e22"/>'
+        + '<path d="M40 68 q10 6 20 0" stroke="#7a5230" stroke-width="3" fill="none" stroke-linecap="round"/>'
+        + '<rect x="42" y="70" width="16" height="5" rx="2" fill="#c98"/>',
+    // 姜小牙：龅牙、精
+    jia:  '<circle cx="50" cy="54" r="33" fill="#ffd9b0" stroke="#d99a58" stroke-width="3"/>'
+        + '<path d="M30 30 q20 -8 40 0" stroke="#4a3a28" stroke-width="6" fill="none" stroke-linecap="round"/>'
+        + '<circle cx="40" cy="52" r="5" fill="#3a2e22"/><circle cx="60" cy="52" r="5" fill="#3a2e22"/>'
+        + '<path d="M40 66 q10 6 20 0" stroke="#c0392b" stroke-width="3" fill="none" stroke-linecap="round"/>'
+        + '<rect x="45" y="66" width="10" height="9" rx="2" fill="#fff" stroke="#ddd" stroke-width="1"/>',
+    // 李黎：马尾女生、蝴蝶结
+    lili: '<circle cx="50" cy="54" r="33" fill="#ffe3d0" stroke="#e8a888" stroke-width="3"/>'
+        + '<path d="M17 54 q0 -34 33 -34 q33 0 33 34 q-10 -20 -33 -20 q-23 0 -33 20" fill="#5a3a2a"/>'
+        + '<circle cx="20" cy="52" r="8" fill="#ff8fb0"/><circle cx="80" cy="52" r="8" fill="#ff8fb0"/>'
+        + '<circle cx="41" cy="53" r="5" fill="#3a2e22"/><circle cx="59" cy="53" r="5" fill="#3a2e22"/>'
+        + '<path d="M42 67 q8 6 16 0" stroke="#c0392b" stroke-width="3" fill="none" stroke-linecap="round"/>'
+        + '<circle cx="32" cy="63" r="4" fill="#ffc2d1"/><circle cx="68" cy="63" r="4" fill="#ffc2d1"/>',
+    // 魏老师：眼镜、严肃（严厉的班主任）
+    wei:  '<circle cx="50" cy="54" r="33" fill="#f2d9bd" stroke="#c99a6a" stroke-width="3"/>'
+        + '<path d="M18 44 q0 -26 32 -26 q32 0 32 26 q-8 -14 -32 -14 q-24 0 -32 14" fill="#3a3a3a"/>'
+        + '<circle cx="40" cy="52" r="10" fill="#fff" stroke="#333" stroke-width="3"/><circle cx="60" cy="52" r="10" fill="#fff" stroke="#333" stroke-width="3"/>'
+        + '<line x1="50" y1="52" x2="50" y2="52" stroke="#333" stroke-width="3"/><path d="M50 52 h0" /><line x1="49" y1="50" x2="51" y2="50" stroke="#333" stroke-width="3"/>'
+        + '<circle cx="40" cy="52" r="3" fill="#3a2e22"/><circle cx="60" cy="52" r="3" fill="#3a2e22"/>'
+        + '<path d="M40 70 q10 -4 20 0" stroke="#7a5230" stroke-width="3" fill="none" stroke-linecap="round"/>',
+    // 莫老师：温柔、长发、微笑
+    mo:   '<circle cx="50" cy="54" r="33" fill="#ffe6d6" stroke="#e0a888" stroke-width="3"/>'
+        + '<path d="M15 60 q0 -40 35 -40 q35 0 35 40 q-6 -24 -35 -24 q-29 0 -35 24" fill="#6a4a3a"/>'
+        + '<path d="M16 56 q-3 18 4 26" stroke="#6a4a3a" stroke-width="7" fill="none" stroke-linecap="round"/>'
+        + '<path d="M84 56 q3 18 -4 26" stroke="#6a4a3a" stroke-width="7" fill="none" stroke-linecap="round"/>'
+        + '<path d="M35 52 q5 -4 10 0" stroke="#3a2e22" stroke-width="3" fill="none" stroke-linecap="round"/>'
+        + '<path d="M55 52 q5 -4 10 0" stroke="#3a2e22" stroke-width="3" fill="none" stroke-linecap="round"/>'
+        + '<path d="M40 66 q10 8 20 0" stroke="#c0392b" stroke-width="3" fill="none" stroke-linecap="round"/>'
+        + '<circle cx="34" cy="61" r="4" fill="#ffc2b3"/><circle cx="66" cy="61" r="4" fill="#ffc2b3"/>',
+    // 妈妈
+    mom:  '<circle cx="50" cy="54" r="33" fill="#ffe6d6" stroke="#e0a888" stroke-width="3"/>'
+        + '<path d="M16 58 q0 -38 34 -38 q34 0 34 38 q-8 -22 -34 -22 q-26 0 -34 22" fill="#8a5a3a"/>'
+        + '<circle cx="41" cy="53" r="4" fill="#3a2e22"/><circle cx="59" cy="53" r="4" fill="#3a2e22"/>'
+        + '<path d="M40 66 q10 8 20 0" stroke="#c0392b" stroke-width="3" fill="none" stroke-linecap="round"/>'
+  };
+  var inner = faces[who] || faces.mxq;
+  return '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">' + inner + '</svg>';
+}
+
+/* ========== 关卡数据 ========== */
+var SCENES = [
+  { key:'wake',   icon:'🌅', name:'起床大作战', type:'tap' },
+  { key:'road',   icon:'🚶', name:'上学路上',   type:'quiz' },
+  { key:'class',  icon:'📖', name:'课堂提问',   type:'quiz' },
+  { key:'recess', icon:'✊', name:'课间十分钟', type:'rps' },
+  { key:'lunch',  icon:'🍗', name:'午餐保卫战', type:'defend' },
+  { key:'art',    icon:'🎨', name:'美术课',     type:'paint' },
+  { key:'home',   icon:'☔', name:'放学回家',   type:'choice' }
+];
+
+/* 路上：脑筋急转弯题库（姜小牙 / 铁头出题），每次随机抽 2 题，重玩有新鲜感 */
+var ROAD_POOL = [
+  { who:'jia', name:'姜小牙',
+    q:'姜小牙考你个脑筋急转弯：什么东西越洗越脏？',
+    opts:['水','肥皂','毛巾','小手'], right:0,
+    tip:'哈哈，是水呀！洗东西的水会越用越脏～ 米小圈：「这也算题？我早知道了！」' },
+  { who:'tie', name:'铁头',
+    q:'铁头挠挠头问：什么帽子永远不能戴在头上？',
+    opts:['草帽','螺帽','雨帽','棉帽'], right:1,
+    tip:'是螺帽（螺丝帽）！它是拧螺丝用的呀。铁头：「怪不得我戴不上，还以为头太硬。」' },
+  { who:'jia', name:'姜小牙',
+    q:'姜小牙眨眨眼：什么东西有脚，却一步也不会走？',
+    opts:['小狗','桌子','小鸟','大马'], right:1,
+    tip:'是桌子呀！桌子有四条腿却站着不动～ 米小圈：「差点被你绕进去！」' },
+  { who:'tie', name:'铁头',
+    q:'铁头想了半天问：什么车寸步难行、只会原地打转？',
+    opts:['汽车','风车','火车','自行车'], right:1,
+    tip:'是风车！它只会迎着风转圈圈。铁头一拍脑袋：「原来是它！」' },
+  { who:'jia', name:'姜小牙',
+    q:'姜小牙嘿嘿一笑：小明的爸爸有三个儿子，大毛、二毛，老三叫什么？',
+    opts:['三毛','小明','四毛','大毛'], right:1,
+    tip:'当然是小明啦——他就是小明的爸爸的儿子！米小圈：「好狡猾的题！」' }
+];
+
+/* 课堂：魏老师提问（一年级数学/语文/常识），每次随机抽 2 题 */
+var CLASS_POOL = [
+  { who:'wei', name:'魏老师',
+    q:'魏老师推推眼镜：「米小圈！3 + 4 等于几？」',
+    opts:['6','7','8','很多'], right:1,
+    tip:'3 + 4 = 7，答对啦！米小圈松了口气：「吓死我了，还好这题我会。」' },
+  { who:'wei', name:'魏老师',
+    q:'「‘马马虎虎’这个词，是说一个人做事怎么样？」',
+    opts:['很认真','不认真、粗心','跑得快','爱骑马'], right:1,
+    tip:'‘马马虎虎’是说做事不认真、粗心。米小圈心想：「这不就是在说我吗……」' },
+  { who:'wei', name:'魏老师',
+    q:'魏老师敲敲黑板：「10 减 6 等于几？」',
+    opts:['3','4','5','6'], right:1,
+    tip:'10 - 6 = 4，完全正确！米小圈偷偷比了个耶。' },
+  { who:'wei', name:'魏老师',
+    q:'「一年一共有几个月呀？」',
+    opts:['10 个','11 个','12 个','13 个'], right:2,
+    tip:'一年有 12 个月！米小圈：「一个月发一次零花钱就好了……」' },
+  { who:'wei', name:'魏老师',
+    q:'「太阳每天早上从哪个方向升起来？」',
+    opts:['东边','西边','南边','北边'], right:0,
+    tip:'太阳从东边升起、西边落下。米小圈：「难怪我家窗户早上最晒！」' }
+];
+
+/* 放学：剧情选择（都是好结局，选暖心的加星） */
+var HOME_STEP = {
+  who:'lili', name:'李黎',
+  q:'放学时突然下起大雨，米小圈没带伞。李黎撑着一把小花伞走过来。你会怎么做？',
+  opts:[
+    { t:'和李黎一起打伞回家，路上聊今天的趣事', good:true,
+      tip:'李黎脸红红地点点头。两个人挤在一把小伞下，笑着跑回家，今天真开心！' },
+    { t:'自己冲进雨里，说男子汉不怕淋雨', good:false,
+      tip:'结果米小圈淋成了落汤鸡，回家还打了三个喷嚏。李黎在后面喊：「你等等我呀！」' }
+  ]
+};
+
+/* ========== 存档 ========== */
+var SAVE_KEY = 'mxq_school_v1';
+var SAVE_VER = 2; /* 场景数量/结构变化时 +1，旧存档自动重开，避免关卡错位 */
+function loadSave(){
+  try { return JSON.parse(localStorage.getItem(SAVE_KEY)) || {}; } catch(e){ return {}; }
+}
+function persist(){
+  try { localStorage.setItem(SAVE_KEY, JSON.stringify(G)); } catch(e){}
+}
+
+/* ========== 游戏状态 ========== */
+/* result: 各场景表现，写日记/小红花墙时读取（wake/recess/lunch/home 为布尔，art 存颜色名） */
+var G = { ver:SAVE_VER, idx:0, stars:0, done:[], result:{} };
+
+function resetGame(){
+  G = { ver:SAVE_VER, idx:0, stars:0, done:[], result:{} };
+  persist();
+}
+function recordResult(key, val){ G.result[key] = val; persist(); }
+
+/* 从池子里随机抽 n 道不重复的题 */
+function pickN(pool, n){
+  var arr = pool.slice();
+  for (var i=arr.length-1;i>0;i--){
+    var j = Math.floor(Math.random()*(i+1));
+    var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+  }
+  return arr.slice(0, n);
+}
+
+/* ========== 顶部行程 & 星数 ========== */
+function renderTrip(){
+  var html = '';
+  for (var i=0;i<SCENES.length;i++){
+    var cls = 'dot';
+    if (i < G.idx) cls += ' pass';
+    else if (i === G.idx) cls += ' on';
+    html += '<div class="' + cls + '"><div class="em">' + SCENES[i].icon + '</div></div>';
+    if (i < SCENES.length-1) html += '<div class="arw">›</div>';
+  }
+  $('trip').innerHTML = html;
+  $('starPill').textContent = '⭐ ' + G.stars;
+}
+
+/* ========== 场景分发 ========== */
+var advancing = false; /* 防止双击「下一站」时连跳两关 */
+function goStage(){
+  advancing = false;
+  cleanupTimers();
+  hide('cover'); hide('finale'); show('stage');
+  if (G.idx >= SCENES.length){ finish(); return; }
+  var sc = SCENES[G.idx];
+  $('sceneName').textContent = sc.icon + ' ' + sc.name;
+  renderTrip();
+  var body = $('stageBody'); body.innerHTML = '';
+  if (sc.type === 'tap')    buildWake(body);
+  if (sc.type === 'quiz')   buildQuiz(body, pickN(sc.key === 'road' ? ROAD_POOL : CLASS_POOL, 2), sc.key);
+  if (sc.type === 'rps')    buildRps(body);
+  if (sc.type === 'defend') buildDefend(body);
+  if (sc.type === 'paint')  buildPaint(body);
+  if (sc.type === 'choice') buildChoice(body);
+}
+
+/* 过关：加星、存档、进入下一关 */
+function clearScene(gotStar){
+  if (gotStar && G.done.indexOf(G.idx) < 0){ G.stars += 1; G.done.push(G.idx); }
+  persist();
+  renderTrip();
+}
+function nextScene(){
+  if (advancing) return;
+  advancing = true;
+  G.idx += 1; persist();
+  goStage();
+}
+
+/* 通用「继续」按钮 + 提示卡 */
+function tipAndNext(body, tipText, gotStar){
+  var tip = document.createElement('div');
+  tip.className = 'tip-card show'; tip.innerHTML = tipText;
+  body.appendChild(tip);
+  var btn = document.createElement('button');
+  btn.className = 'next-btn show';
+  btn.textContent = (G.idx >= SCENES.length-1) ? '写今天的日记 📔' : '下一站 ▶';
+  var used = false;
+  btn.onclick = function(){ if (used) return; used = true; clearScene(gotStar); nextScene(); };
+  body.appendChild(btn);
+  btn.scrollIntoView({ behavior:'smooth', block:'center' });
+}
+
+/* ---------- 对话气泡 ---------- */
+function talkRow(who, name, text){
+  var wrap = document.createElement('div');
+  wrap.className = 'talk';
+  wrap.innerHTML = avatar(who)
+    + '<div class="bubble"><button class="speak-btn">🔊读一读</button><b>' + name + '：</b>' + text + '</div>';
+  wrap.querySelector('.speak-btn').onclick = function(){ speak(text); };
+  return wrap;
+}
+
+/* ========== 关卡1：起床反应 ========== */
+function buildWake(body){
+  body.appendChild(talkRow('mom','妈妈','米小圈快起床！还有 12 秒就要迟到啦！按顺序把 5 件事做完！'));
+  var wrap = document.createElement('div'); wrap.id = 'tapArea';
+  var tasks = [
+    { e:'😪', n:'起床' }, { e:'🪥', n:'刷牙' }, { e:'👕', n:'穿衣' },
+    { e:'🍞', n:'吃早饭' }, { e:'🎒', n:'背书包' }
+  ];
+  var grid = document.createElement('div'); grid.className = 'task-grid';
+  var cells = [];
+  for (var i=0;i<tasks.length;i++){
+    (function(i){
+      var c = document.createElement('div'); c.className = 'task';
+      c.innerHTML = '<div class="te">' + tasks[i].e + '</div><div class="tn">' + tasks[i].n + '</div>';
+      c.onclick = function(){ onTap(i); };
+      grid.appendChild(c); cells.push(c);
+    })(i);
+  }
+  var bar = document.createElement('div'); bar.className = 'timebar';
+  var fill = document.createElement('div'); bar.appendChild(fill);
+  var hint = document.createElement('div'); hint.className = 'hint-line';
+  hint.textContent = '👉 先点会发光的「起床」！';
+  wrap.appendChild(grid); wrap.appendChild(bar); wrap.appendChild(hint);
+  body.appendChild(wrap);
+
+  var cur = 0, total = 12000, left = total, timer = null, ended = false;
+  cells[0].classList.add('next');
+
+  function stop(){ if (timer){ clearInterval(timer); timer = null; } }
+  function onTap(i){
+    if (ended) return;
+    if (i !== cur){ // 点错顺序：抖一下，不惩罚
+      cells[i].classList.add('shake');
+      setTimeout(function(){ cells[i].classList.remove('shake'); }, 400);
+      return;
+    }
+    cells[i].classList.remove('next'); cells[i].classList.add('done');
+    cur += 1;
+    if (cur < cells.length){
+      cells[cur].classList.add('next');
+      hint.textContent = '👉 快点「' + tasks[cur].n + '」！';
+    } else {
+      ended = true; stop();
+      hint.textContent = '🎉 全部搞定，冲出家门！';
+      speak('太棒了，准备上学咯');
+      recordResult('wake', true);
+      tipAndNext(body, '米小圈一阵风冲出门：「今天居然没迟到，我简直是天才！」', true);
+    }
+  }
+  timer = setInterval(function(){
+    left -= 100; var pct = Math.max(0, left/total*100);
+    fill.style.width = pct + '%';
+    if (left <= 0 && !ended){
+      ended = true; stop();
+      hint.textContent = '⏰ 有点慢啦，不过没关系～';
+      recordResult('wake', false);
+      tipAndNext(body, '米小圈踩着铃声冲进教室，魏老师瞪了他一眼。下次要快一点哦！', false);
+    }
+  }, 100);
+  // 离开场景时清理计时器
+  wake_cleanup = stop;
+}
+var wake_cleanup = null;
+
+/* ========== 关卡2 & 3：答题（选择题 / 急转弯） ========== */
+function buildQuiz(body, list, key){
+  var state = { qi:0, correctCount:0 };
+  function renderQ(){
+    body.innerHTML = '';
+    var q = list[state.qi];
+    body.appendChild(talkRow(q.who, q.name, q.q));
+    var card = document.createElement('div'); card.className = 'card';
+    var qt = document.createElement('div'); qt.className = 'q-text';
+    qt.textContent = '第 ' + (state.qi+1) + '/' + list.length + ' 题';
+    card.appendChild(qt);
+    var opts = document.createElement('div'); opts.className = 'opts';
+    var answered = false;
+    for (var i=0;i<q.opts.length;i++){
+      (function(i){
+        var o = document.createElement('div'); o.className = 'opt';
+        o.textContent = String.fromCharCode(65+i) + '. ' + q.opts[i];
+        o.onclick = function(){
+          if (answered) return;
+          if (i === q.right){
+            answered = true;
+            o.classList.add('right'); state.correctCount += 1;
+            speak('答对啦');
+            if (state.qi >= list.length-1){
+              recordResult(key, true);
+              afterQuiz(body, q.tip, function(){ clearScene(true); nextScene(); },
+                (G.idx >= SCENES.length-1) ? '写今天的日记 📔' : '下一站 ▶');
+            } else {
+              afterQuiz(body, q.tip, function(){ state.qi += 1; renderQ(); }, '下一题 ▶');
+            }
+          } else {
+            o.classList.add('wrong'); o.classList.add('shake');
+            setTimeout(function(){ o.classList.remove('shake'); }, 400);
+            toast('再想想看～ 💭');
+          }
+        };
+        opts.appendChild(o);
+      })(i);
+    }
+    card.appendChild(opts);
+    body.appendChild(card);
+  }
+  renderQ();
+}
+// 答对后展示提示卡 + 按钮（题内流转，不切场景）
+function afterQuiz(body, tipText, onClick, label){
+  var card = body.querySelector('.card');
+  var tip = document.createElement('div'); tip.className = 'tip-card show'; tip.innerHTML = tipText;
+  card.appendChild(tip);
+  var btn = document.createElement('button'); btn.className = 'next-btn show'; btn.textContent = label;
+  var used = false;
+  btn.onclick = function(){ if (used) return; used = true; onClick(); };
+  card.appendChild(btn);
+  btn.scrollIntoView({ behavior:'smooth', block:'center' });
+}
+
+/* ========== 关卡（新增）：课间十分钟——和铁头猜拳 三局两胜 ========== */
+function buildRps(body){
+  body.appendChild(talkRow('tie','铁头','课间十分钟到！米小圈，咱俩来猜拳，三局两胜，输的人给对方讲个笑话！'));
+  var card = document.createElement('div'); card.className = 'card'; card.style.textAlign = 'center';
+  var score = document.createElement('div'); score.className = 'q-text';
+  card.appendChild(score);
+
+  var arena = document.createElement('div'); arena.className = 'rps-arena';
+  arena.innerHTML = '<div style="font-size:12px;font-weight:800;color:#5a86b0;">你<br><span class="rps-hand" id="youHand">✊</span></div>'
+                  + '<div class="rps-vs">VS</div>'
+                  + '<div style="font-size:12px;font-weight:800;color:#5a86b0;">铁头<br><span class="rps-hand" id="meHand">✊</span></div>';
+  card.appendChild(arena);
+
+  var hint = document.createElement('div'); hint.className = 'hint-line';
+  hint.textContent = '👇 出什么全靠你！先到 2 分就赢～';
+  card.appendChild(hint);
+
+  var moves = [['石头','✊'],['剪刀','✌️'],['布','✋']];
+  var row = document.createElement('div'); row.className = 'rps-row';
+  var picks = [];
+  for (var i=0;i<moves.length;i++){
+    (function(i){
+      var b = document.createElement('div'); b.className = 'rps-pick';
+      b.innerHTML = moves[i][1] + '<span class="pl">' + moves[i][0] + '</span>';
+      b.onclick = function(){ play(i); };
+      row.appendChild(b); picks.push(b);
+    })(i);
+  }
+  card.appendChild(row);
+  body.appendChild(card);
+
+  var you = 0, me = 0, ended = false;
+  function setScore(){
+    score.innerHTML = '你 <b style="color:#3d7fd0">' + you + '</b> ： <b style="color:#c0392b">' + me + '</b> 铁头（三局两胜）';
+  }
+  function reveal(el, txt){
+    el.textContent = txt;
+    el.classList.remove('reveal'); void el.offsetWidth; el.classList.add('reveal');
+  }
+  function play(pi){
+    if (ended) return;
+    var ci = Math.floor(Math.random()*3);
+    reveal($('youHand'), moves[pi][1]);
+    reveal($('meHand'),  moves[ci][1]);
+    if (pi === ci){
+      hint.textContent = '✊ 平局！再来一次～';
+    } else if ((pi+1)%3 === ci){ // 石头>剪刀>布>石头
+      you += 1; setScore(); hint.textContent = '🎉 这局你赢啦！';
+    } else {
+      me += 1; setScore(); hint.textContent = '😆 这局铁头赢咯～';
+    }
+    if (you >= 2){
+      ended = true;
+      for (var k=0;k<picks.length;k++) picks[k].onclick = null;
+      speak('我赢啦');
+      recordResult('recess', true);
+      tipAndNext(body, '米小圈得意地拍拍胸脯：「铁头你就是猜不过我，哈哈！」铁头只好乖乖讲了个笑话。', true);
+    } else if (me >= 2){
+      ended = true;
+      for (var j=0;j<picks.length;j++) picks[j].onclick = null;
+      recordResult('recess', false);
+      tipAndNext(body, '铁头乐得直拍手：「哈哈我赢啦！」米小圈只好绞尽脑汁给他讲了个笑话，逗得全班都笑了。', false);
+    }
+  }
+  setScore();
+}
+
+/* ========== 关卡4：午餐护食 ========== */
+function buildDefend(body){
+  body.appendChild(talkRow('jia','姜小牙','嘿嘿，米小圈你的鸡腿看起来好香啊……让我尝一口嘛！'));
+  var wrap = document.createElement('div'); wrap.id = 'defendArea';
+  var stat = document.createElement('div'); stat.className = 'def-stat';
+  stat.innerHTML = '<span class="ok">🛡 挡住 0 / 8</span><span class="bad">🍗 被偷 0 / 3</span>';
+  var plate = document.createElement('div'); plate.className = 'plate';
+  plate.innerHTML = '<div class="drum">🍗</div>';
+  var hintline = document.createElement('div'); hintline.className = 'hint-line';
+  hintline.textContent = '👋 姜小牙的手一伸出来就拍掉它！挡住 8 次就赢～';
+  wrap.appendChild(stat); wrap.appendChild(plate); wrap.appendChild(hintline);
+  body.appendChild(wrap);
+
+  var blocked = 0, stolen = 0, ended = false, spawnT = null, curHand = null, reachT = null;
+  var NEED = 8, MAXLOSE = 3;
+
+  function updateStat(){
+    stat.innerHTML = '<span class="ok">🛡 挡住 ' + blocked + ' / ' + NEED + '</span>'
+                   + '<span class="bad">🍗 被偷 ' + stolen + ' / ' + MAXLOSE + '</span>';
+  }
+  function clearHand(){
+    if (reachT){ clearTimeout(reachT); reachT = null; }
+    if (curHand && curHand.parentNode){ curHand.parentNode.removeChild(curHand); }
+    curHand = null;
+  }
+  function stop(){ if (spawnT){ clearTimeout(spawnT); spawnT = null; } clearHand(); }
+  function popText(x, y, txt, color){
+    var p = document.createElement('div'); p.className = 'pow'; p.textContent = txt;
+    if (color) p.style.color = color;
+    p.style.left = x + 'px'; p.style.top = y + 'px';
+    plate.appendChild(p); setTimeout(function(){ if (p.parentNode) p.remove(); }, 500);
+  }
+  function spawn(){
+    if (ended) return;
+    var fromLeft = Math.random() < 0.5;
+    var h = document.createElement('div'); h.className = 'hand';
+    h.textContent = fromLeft ? '🤚' : '🖐';
+    var pr = plate.getBoundingClientRect();
+    var topY = 40 + Math.random() * (pr.height - 100);
+    h.style.top = topY + 'px';
+    h.style.left = fromLeft ? '-46px' : (pr.width - 6) + 'px';
+    h.style.transition = 'left .9s linear';
+    plate.appendChild(h); curHand = h;
+    // 触发伸入动画
+    var targetX = fromLeft ? (pr.width/2 - 60) : (pr.width/2 + 10);
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){ h.style.left = targetX + 'px'; });
+    });
+    var caught = false;
+    h.onclick = function(){
+      if (caught || ended) return;
+      caught = true;
+      h.classList.add('hit');
+      blocked += 1; updateStat();
+      popText(targetX, topY, 'PIA!', '#5cb85c');
+      clearHand();
+      if (blocked >= NEED){ win(); return; }
+      spawnT = setTimeout(spawn, 350 + Math.random()*450);
+    };
+    // 到达鸡腿：偷成功
+    reachT = setTimeout(function(){
+      if (caught || ended) return;
+      stolen += 1; updateStat();
+      popText(pr.width/2 - 20, pr.height/2, '啊呜!', '#c0392b');
+      clearHand();
+      if (stolen >= MAXLOSE){ lose(); return; }
+      spawnT = setTimeout(spawn, 400 + Math.random()*400);
+    }, 1050);
+  }
+  function win(){
+    if (ended) return; ended = true; stop();
+    hintline.textContent = '🎉 守住啦！鸡腿一口都没被偷！';
+    speak('鸡腿保住了');
+    recordResult('lunch', true);
+    tipAndNext(body, '米小圈把鸡腿护得死死的，姜小牙只好啃自己的馒头，馋得直流口水。', true);
+  }
+  function lose(){
+    if (ended) return; ended = true; stop();
+    hintline.textContent = '😅 被姜小牙偷走几口，不过还是吃饱啦～';
+    recordResult('lunch', false);
+    tipAndNext(body, '姜小牙嘿嘿一笑：「谢啦米小圈，你的鸡腿真香！」米小圈：「喂——那是我的！」', false);
+  }
+  updateStat();
+  spawnT = setTimeout(spawn, 600);
+  defend_cleanup = stop;
+}
+var defend_cleanup = null;
+
+/* ========== 关卡5：美术课涂色 ========== */
+function buildPaint(body){
+  body.appendChild(talkRow('mo','莫老师','这节美术课，我们画「送给好朋友的气球」🎈。米小圈，你想涂什么颜色呀？'));
+  var card = document.createElement('div'); card.className = 'card'; card.style.textAlign = 'center';
+  var q = document.createElement('div'); q.className = 'q-text';
+  q.textContent = '给气球选一个你最喜欢的颜色，涂给李黎吧～';
+  card.appendChild(q);
+  // 气球 SVG
+  var svgWrap = document.createElement('div');
+  svgWrap.innerHTML =
+    '<svg id="paintSvg" viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">'
+    + '<ellipse id="balloon" cx="100" cy="90" rx="62" ry="74" fill="#e8eef4" stroke="#b9c6d4" stroke-width="3"/>'
+    + '<path d="M100 164 l-8 12 h16 z" fill="#b9c6d4"/>'
+    + '<path d="M100 176 q10 26 -4 54" stroke="#b9a" stroke-width="2.5" fill="none"/>'
+    + '<ellipse cx="80" cy="66" rx="16" ry="20" fill="rgba(255,255,255,.5)"/>'
+    + '</svg>';
+  card.appendChild(svgWrap);
+  var row = document.createElement('div'); row.className = 'color-row';
+  var colors = ['#ff8fb0','#ffcf4d','#7ec8ff','#8fe08f','#c79bff','#ff9e6b'];
+  var names  = ['粉红色','金黄色','天蓝色','草绿色','紫色','橙色'];
+  var picked = null, pickedName = null;
+  for (var i=0;i<colors.length;i++){
+    (function(i){
+      var s = document.createElement('div'); s.className = 'swatch';
+      s.style.background = colors[i];
+      s.onclick = function(){
+        picked = colors[i]; pickedName = names[i];
+        var sels = row.querySelectorAll('.swatch');
+        for (var k=0;k<sels.length;k++) sels[k].classList.remove('sel');
+        s.classList.add('sel');
+        document.getElementById('balloon').setAttribute('fill', colors[i]);
+      };
+      row.appendChild(s);
+    })(i);
+  }
+  card.appendChild(row);
+  var done = document.createElement('button'); done.className = 'next-btn show';
+  done.textContent = '画好啦，送给李黎 🎈';
+  done.onclick = function(){
+    if (!picked){ toast('先选一个颜色涂上去呀～ 🎨'); return; }
+    speak('画得真好看');
+    recordResult('art', pickedName);
+    var tip = document.createElement('div'); tip.className = 'tip-card show';
+    tip.innerHTML = '莫老师笑着说：「米小圈画得真用心！」李黎收到' + pickedName + '的气球，开心地笑了。🎨✨';
+    card.appendChild(tip);
+    done.remove();
+    var btn = document.createElement('button'); btn.className = 'next-btn show'; btn.textContent = '下一站 ▶';
+    btn.onclick = function(){ clearScene(true); nextScene(); };
+    card.appendChild(btn);
+    btn.scrollIntoView({ behavior:'smooth', block:'center' });
+  };
+  card.appendChild(done);
+  body.appendChild(card);
+}
+
+/* ========== 关卡6：放学剧情选择 ========== */
+function buildChoice(body){
+  var step = HOME_STEP;
+  body.appendChild(talkRow(step.who, step.name, step.q));
+  var card = document.createElement('div'); card.className = 'card';
+  var opts = document.createElement('div'); opts.className = 'opts';
+  var chosen = false;
+  for (var i=0;i<step.opts.length;i++){
+    (function(i){
+      var op = step.opts[i];
+      var o = document.createElement('div'); o.className = 'opt';
+      o.textContent = String.fromCharCode(65+i) + '. ' + op.t;
+      o.onclick = function(){
+        if (chosen) return; chosen = true;
+        o.classList.add(op.good ? 'right' : 'wrong');
+        speak(op.good ? '真温暖' : '哎呀');
+        recordResult('home', op.good);
+        tipAndNext(body, op.tip, op.good);
+      };
+      opts.appendChild(o);
+    })(i);
+  }
+  card.appendChild(opts);
+  body.appendChild(card);
+}
+
+/* ========== 结算：写日记 ========== */
+function finish(){
+  cleanupTimers();
+  hide('stage'); hide('cover'); show('finale');
+  var s = G.stars, total = SCENES.length;
+  var starStr = '';
+  for (var i=0;i<total;i++) starStr += (i < s ? '⭐' : '☆');
+  $('finStars').textContent = starStr;
+
+  var r = G.result || {};
+  var wakeOk = r.wake === true;
+  var recessOk = r.recess === true;
+  var lunchOk = r.lunch === true;
+  var homeOk = r.home === true;
+  var artColor = r.art ? r.art : '漂亮的颜色';
+
+  var mood, comment;
+  if (s >= total){ mood = '真是超级棒的一天！'; comment = '米小圈觉得自己简直是全班最厉害的小朋友，明天还要更棒！'; }
+  else if (s >= total-1){ mood = '今天过得特别开心～'; comment = '就差那么一点点就满分啦，米小圈已经很得意了。'; }
+  else if (s >= Math.ceil(total/2)){ mood = '今天过得挺开心的～'; comment = '虽然有几件事有点手忙脚乱，但米小圈玩得很尽兴。'; }
+  else { mood = '今天有点小手忙脚乱，'; comment = '不过没关系，米小圈说明天一定会做得更好！'; }
+
+  var now = new Date();
+  var diary =
+    '<h3>2026年 ' + (now.getMonth()+1) + '月 星期一　🌤 晴</h3>'
+  + '<p>今天早上我又<b>赖床</b>了，' + (wakeOk ? '不过我像一阵风冲出了门，一点都没迟到！' : '踩着上课铃才冲进教室，被<b>魏老师</b>瞪了一眼。') + '</p>'
+  + '<p>上学路上碰到<b>铁头</b>和<b>姜小牙</b>，他们又出脑筋急转弯考我，被我一个个破解啦～</p>'
+  + '<p>课堂上<b>魏老师</b>点名提问我，还好我全答上来了（吓死我了）。</p>'
+  + '<p>课间十分钟和铁头猜拳三局两胜，' + (recessOk ? '我赢了，他还得给我讲笑话，哈哈！' : '可惜我输了，只好给他讲了个笑话逗大家开心。') + '</p>'
+  + '<p>午餐时姜小牙一直想偷我的<b>鸡腿</b>，' + (lunchOk ? '全被我拍开了，一口都没让他偷到！' : '被他偷吃了好几口……哼，下次一定看紧点！') + '</p>'
+  + '<p>美术课上<b>莫老师</b>让我画气球送给<b>李黎</b>，我涂了<b>' + artColor + '</b>，她可开心了。放学下大雨，' + (homeOk ? '我和李黎一起打伞回的家，一路上笑个不停。' : '我逞强淋了雨，回家打了好几个喷嚏。') + '</p>'
+  + '<p>' + mood + comment + '</p>'
+  + '<div class="sign">—— 米小圈　得到 ' + s + ' 颗⭐</div>';
+  $('diary').innerHTML = diary;
+
+  renderStickers(wakeOk, recessOk, lunchOk, homeOk, !!r.art);
+  confetti();
+  speak('今天的日记写好啦，你陪米小圈得到了 ' + s + ' 颗星星');
+}
+
+/* 小红花墙：把今天的表现变成一面收集墙 */
+function renderStickers(wakeOk, recessOk, lunchOk, homeOk, artOk){
+  var stk = [
+    { on:wakeOk,   e:'🌅', t:'准时起床' },
+    { on:true,     e:'🧠', t:'急转弯王' },
+    { on:true,     e:'📖', t:'课堂之星' },
+    { on:recessOk, e:'✊', t:'猜拳高手' },
+    { on:lunchOk,  e:'🍗', t:'鸡腿卫士' },
+    { on:artOk,    e:'🎨', t:'小画家' },
+    { on:homeOk,   e:'☔', t:'暖心朋友' }
+  ];
+  var got = 0, html = '';
+  for (var i=0;i<stk.length;i++){
+    if (stk[i].on) got += 1;
+    html += '<div class="stk ' + (stk[i].on ? 'on' : 'off') + '">'
+          + '<div class="se">' + stk[i].e + '</div><div class="st">' + stk[i].t + '</div></div>';
+  }
+  $('stkTitle').textContent = '🌸 今天收集了 ' + got + ' / ' + stk.length + ' 朵小红花';
+  $('stkWall').innerHTML = html;
+}
+
+/* ========== 计时器清理 ========== */
+function cleanupTimers(){
+  if (wake_cleanup){ wake_cleanup(); wake_cleanup = null; }
+  if (defend_cleanup){ defend_cleanup(); defend_cleanup = null; }
+}
+
+/* ========== 事件绑定 ========== */
+function initCast(){
+  var list = [['mxq','米小圈'],['tie','铁头'],['jia','姜小牙'],['lili','李黎'],['wei','魏老师'],['mo','莫老师']];
+  var html = '';
+  for (var i=0;i<list.length;i++){
+    html += '<div class="who">' + avatar(list[i][0]) + '<span>' + list[i][1] + '</span></div>';
+  }
+  $('cast').innerHTML = html;
+}
+
+$('startBtn').onclick = function(){
+  var sv = loadSave();
+  if (sv && sv.ver === SAVE_VER && typeof sv.idx === 'number' && sv.idx > 0 && sv.idx < SCENES.length){
+    G = { ver:SAVE_VER, idx: sv.idx, stars: sv.stars || 0, done: sv.done || [], result: sv.result || {} };
+  } else {
+    resetGame();
+  }
+  goStage();
+};
+$('homeBtn').onclick = function(){
+  cleanupTimers();
+  if (window.confirm('要回到「小小游戏乐园」吗？进度会保存哦～')) location.href = '../';
+  else { /* 留在原地，重建当前场景以恢复计时器 */ goStage(); }
+};
+$('finHome').onclick = function(){ location.href = '../'; };
+$('coverHome').onclick = function(){ location.href = '../'; };
+$('againBtn').onclick = function(){ resetGame(); goStage(); };
+
+initCast();
+</script>
+<script src="../shared/parent-gate.js"></script>
+</body>
+</html>

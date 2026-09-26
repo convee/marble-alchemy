@@ -4,6 +4,8 @@ The public catalog is driven by [`site/games.json`](../../site/games.json). A to
 
 The first catalog page is [`/games/`](https://chaoschemy.com/games/). Each registered game also receives a generated detail page such as [`/games/marble-alchemy/`](https://chaoschemy.com/games/marble-alchemy/). Existing `/gpt6/` and `/fable5.1/` URLs remain stable aliases while the catalog grows.
 
+The catalog also carries the six-game `Kids Game Garden` collection from [`convee/kids-games`](https://github.com/convee/kids-games). Its lobby is `/kids-games/`, and each English-first game keeps its own path under `/kids-games/` while reusing the collection's shared locale, parent gate and AI companion runtime.
+
 To add a game in phase one:
 
 1. Add a new top-level entry to `site/games.json` with a stable `slug`, title, description, status, source path and one or more variants.

@@ -18,6 +18,9 @@ function escapeHtml(value) {
 export function renderGamePage(game, baseUrl = BASE_URL) {
   const title = escapeHtml(game.title);
   const description = escapeHtml(game.description);
+  const lobbyLink = game.lobbyPath
+    ? `<p><a class="button" href="${escapeHtml(game.lobbyPath)}">Open collection lobby</a></p>`
+    : '';
   const variants = (game.variants ?? []).map((variant) => `
         <article class="variant">
           <h2>${escapeHtml(variant.title)}</h2>
@@ -56,6 +59,7 @@ export function renderGamePage(game, baseUrl = BASE_URL) {
       <h1>${title}</h1>
       <p>${escapeHtml(game.tagline ?? '')}</p>
       <p>${description}</p>
+      ${lobbyLink}
       <section class="variants" aria-label="Playable variants">${variants}
       </section>
       <footer><a href="../">Game catalog</a> · <a href="../../">Chaoschemy home</a> · <a href="../../privacy.html">Privacy</a> · <a href="../../terms.html">Terms</a></footer>

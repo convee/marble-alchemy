@@ -29,6 +29,72 @@
           "analyticsApp": "fable5.1"
         }
       ]
+    },
+    {
+      "slug": "kids-game-garden",
+      "title": "Kids Game Garden",
+      "tagline": "Six light games with an AI companion",
+      "description": "A family-friendly collection of quick browser games with English-first copy, local progress, and bounded AI coaching.",
+      "genre": ["Family", "Browser games"],
+      "status": "published",
+      "sourcePath": "https://github.com/convee/kids-games",
+      "lobbyPath": "/kids-games/",
+      "variants": [
+        {
+          "slug": "sweet-adventure",
+          "title": "Sweet Adventure",
+          "description": "Collect treats, dodge obstacles, and reach the rainbow gate.",
+          "playPath": "/kids-games/sweet-adventure/",
+          "sourcePath": "https://github.com/convee/kids-games/tree/main/sweet-adventure",
+          "icon": "🎀",
+          "analyticsApp": "sweet-adventure"
+        },
+        {
+          "slug": "history-time-quest",
+          "title": "History Time Quest",
+          "description": "Travel through eight eras, answer questions, and collect history treasures.",
+          "playPath": "/kids-games/mxq-history/",
+          "sourcePath": "https://github.com/convee/kids-games/tree/main/mxq-history",
+          "icon": "📜",
+          "analyticsApp": "mxq-history"
+        },
+        {
+          "slug": "a-day-at-school",
+          "title": "A Day at School",
+          "description": "Learn, play, share lunch, and write a tiny diary.",
+          "playPath": "/kids-games/mxq-school/",
+          "sourcePath": "https://github.com/convee/kids-games/tree/main/mxq-school",
+          "icon": "🎒",
+          "analyticsApp": "mxq-school"
+        },
+        {
+          "slug": "block-park",
+          "title": "Block Park",
+          "description": "Dig blocks, decorate a small world, and discover hidden gems.",
+          "playPath": "/kids-games/block-park/",
+          "sourcePath": "https://github.com/convee/kids-games/tree/main/block-park",
+          "icon": "⛏️",
+          "analyticsApp": "block-park"
+        },
+        {
+          "slug": "platform-adventure",
+          "title": "Platform Adventure",
+          "description": "Jump across five hand-made stages, collect books, and reach school.",
+          "playPath": "/kids-games/mxq-platform/",
+          "sourcePath": "https://github.com/convee/kids-games/tree/main/mxq-platform",
+          "icon": "🚩",
+          "analyticsApp": "mxq-platform"
+        },
+        {
+          "slug": "sweet-match",
+          "title": "Sweet Match",
+          "description": "Make special candy combinations and complete each level goal.",
+          "playPath": "/kids-games/sweet-match/",
+          "sourcePath": "https://github.com/convee/kids-games/tree/main/sweet-match",
+          "icon": "🍓",
+          "analyticsApp": "sweet-match"
+        }
+      ]
     }
   ]
 }
