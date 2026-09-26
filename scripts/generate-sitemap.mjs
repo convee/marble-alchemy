@@ -11,6 +11,7 @@ const STATIC_PATHS = [
   '/support.html',
   '/terms.html',
   '/refund.html',
+  '/kids-games/guide.html',
 ];
 
 function xmlEscape(value) {

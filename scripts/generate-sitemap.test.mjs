@@ -14,6 +14,7 @@ test('builds stable static and registry-backed game URLs', () => {
     '/support.html',
     '/terms.html',
     '/refund.html',
+    '/kids-games/guide.html',
     '/games/alpha-game/',
     '/alpha-lobby/',
     '/alpha/',
