@@ -55,14 +55,16 @@ function send(event: EventRecord): boolean {
   if (!endpoint) return false;
   const body = JSON.stringify(event);
   try {
+    // Keep the Beacon request CORS-simple. The Worker parses JSON from the body
+    // regardless of the content type, while application/json can trigger a
+    // preflight that some browsers do not complete for Beacon requests.
     const sent = navigator.sendBeacon?.(
       endpoint,
-      new Blob([body], { type: "application/json" }),
+      new Blob([body], { type: "text/plain;charset=UTF-8" }),
     );
     if (sent) return true;
     void fetch(endpoint, {
       method: "POST",
-      headers: { "content-type": "application/json" },
       body,
       keepalive: true,
     });

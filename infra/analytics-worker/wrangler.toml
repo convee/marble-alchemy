@@ -1,0 +1,8 @@
+name = "chaoschemy-analytics"
+main = "src/index.js"
+compatibility_date = "2026-09-26"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "chaoschemy-analytics"
+database_id = "3615cb12-cc8b-4ae6-a3a0-ad1ca0bd22e8"
