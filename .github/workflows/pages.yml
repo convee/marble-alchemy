@@ -66,6 +66,11 @@ jobs:
             adsenseSlot: String(process.env.ADSENSE_SLOT || '').trim(),
           };
           fs.writeFileSync('dist/monetization-config.js', `window.CHAOSCHEMY_MONETIZATION = ${JSON.stringify(values)};\n`);
+          fs.rmSync('dist/ads.txt', { force: true });
+          if (values.adsenseClient.startsWith('ca-pub-')) {
+            const publisher = values.adsenseClient.replace(/^ca-/, '');
+            fs.writeFileSync('dist/ads.txt', `google.com, ${publisher}, DIRECT, f08c47fec0942fa0\n`);
+          }
           NODE
 
       - uses: actions/configure-pages@v6

@@ -14,7 +14,8 @@
 ## Stripe
 
 - 当前浏览器已有一个名为 `New business` 的 Stripe **沙盒测试账号**（页面明确标为 `Test`）；它只用于测试，不能接收真实付款。
-- Stripe 真实账户仍未开通。真实注册需要先确认中国大陆企业的境外法律实体注册国家/地区；注册页默认显示美国，不能把默认值当作实际注册地。
+- 当前登录的 Stripe 真实账户激活页实际显示业务所在地为 **新加坡**，并要求 UEN；它不是中国大陆账户，也不能把已有账户改填成中国大陆主体。
+- Stripe 官方当前支持地区列表没有中国大陆；如果继续使用 Stripe，需要一个 Stripe 支持地区的合法主体、税号、实体地址、电话和实体银行账户。中国大陆主体不能直接作为这条 Stripe 收款路线的注册地。
 - 没有在真实账户中选择国家、接受协议或输入企业/银行资料；也没有创建测试商品或价格，避免替项目擅自决定收费方案。
 - 可接手位置：Chrome 中的 `注册并创建 Stripe 账户 | Stripe` 标签页；另有 `New business 沙盒` 测试控制台可用于后续集成演练。
 
@@ -23,6 +24,7 @@
 - 首页和 `guide.html` 已加载 `monetization-config.js` 与 `monetization.js`。配置为空时不会加载 AdSense、不显示支持按钮，也不会产生第三方支付请求。
 - 支持入口由 `monetization.js` 动态插入；`analytics.js` 现在使用事件委托捕获动态入口的 `cta_click(target=support_click)`，因此启用支付后可以归因支持按钮点击。
 - GitHub Pages 构建会从 repository variables 读取 `STRIPE_PAYMENT_LINK`、`ADSENSE_CLIENT`、`ADSENSE_SLOT`，生成公开配置文件；这些值不是秘密，但只能在账号持有人完成审核后写入。
+- Pages 构建在配置 `ADSENSE_CLIENT` 后会自动生成 `ads.txt`；为空时删除该文件，避免发布无效的广告授权声明。
 - Stripe Payment Link 仅接受 `https://buy.stripe.com/` 前缀；AdSense 仅接受 `ca-pub-` publisher ID 和广告位 ID，避免误把测试地址或任意脚本注入生产页。
 
 ## 接入门槛
