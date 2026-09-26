@@ -271,7 +271,8 @@ export class AlchemyScene extends Phaser.Scene {
         y < -90 ||
         ball.age > 16000
       ) {
-        if (ball.age > 16000) this.hooks.notice('Recovery pulled in a stalled marble · stored damage kept');
+        if (ball.age > 16000)
+          this.hooks.notice('Recovery pulled in a stalled marble · stored damage kept');
         this.removeBall(id, ball);
         continue;
       }

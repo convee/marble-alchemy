@@ -51,7 +51,8 @@ export const UPGRADES: Upgrade[] = [
     symbol: '⑂',
     color: '#8df0cd',
     tag: 'Marble mutation · Unique',
-    description: 'The first collision of each shot creates 2 extra marbles. New marbles do not split.',
+    description:
+      'The first collision of each shot creates 2 extra marbles. New marbles do not split.',
   },
   {
     id: 'critical',
@@ -59,7 +60,8 @@ export const UPGRADES: Upgrade[] = [
     symbol: '◇',
     color: '#ff93bb',
     tag: 'Lucky catalyst · Unique',
-    description: 'Each collision has a 20% chance to double direct damage, including fire but not lightning.',
+    description:
+      'Each collision has a 20% chance to double direct damage, including fire but not lightning.',
   },
   {
     id: 'heal',
@@ -109,7 +111,7 @@ export const LEVELS = [
     hp: 104,
     attack: 2,
     color: '#f2d08b',
-    description: 'The final trial. Forge your own philosopher\'s stone.',
+    description: "The final trial. Forge your own philosopher's stone.",
   },
 ];
 export interface Build {

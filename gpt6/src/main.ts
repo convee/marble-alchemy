@@ -380,7 +380,8 @@ function showUpgrade() {
       sound.unlock();
       sound.tone('upgrade');
       closeModal();
-      $('notice').textContent = `New formula active · ${LEVELS[scene.run.level].name} awaits your challenge`;
+      $('notice').textContent =
+        `New formula active · ${LEVELS[scene.run.level].name} awaits your challenge`;
       render();
     };
   });

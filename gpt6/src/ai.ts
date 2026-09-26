@@ -33,7 +33,8 @@ export const FALLBACK_CHALLENGE: AiChallenge = {
     'The first marble to touch fate strikes twice; lead with gold and wake the echo of dawn.',
   effect: 'double_first_hit',
   source: 'fallback',
-  debrief: 'The offline challenge still grants a first-hit advantage; find a line of consecutive collisions and turn one chance into a chain of sparks.',
+  debrief:
+    'The offline challenge still grants a first-hit advantage; find a line of consecutive collisions and turn one chance into a chain of sparks.',
 };
 
 function dailyIndex(length: number, now = new Date()) {
@@ -88,8 +89,10 @@ export function debriefFor(challenge: AiChallenge, outcome?: AiRunOutcome): stri
   const guidance =
     challenge.debrief ??
     {
-      double_first_hit: 'The first-hit advantage is written into the physics; find a line of consecutive collisions next round.',
-      heal_after_settlement: 'Each purification restores one health; save the risk for the high-pressure stages ahead.',
+      double_first_hit:
+        'The first-hit advantage is written into the physics; find a line of consecutive collisions next round.',
+      heal_after_settlement:
+        'Each purification restores one health; save the risk for the high-pressure stages ahead.',
       glass_cannon: 'Two health demands focus; prioritize formulas that build damage reliably.',
     }[challenge.effect];
   if (!outcome) return guidance;
