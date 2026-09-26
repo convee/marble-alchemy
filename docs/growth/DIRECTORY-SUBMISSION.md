@@ -1,6 +1,6 @@
 # 海外目录与社区分发包
 
-状态：已准备，未提交。外部发布仍由账号持有人逐条登录、阅读规则并人工提交。
+状态：部分已发布（2026-09-26）。外部发布仍按平台逐条记录，不把打开页面算成发布。
 
 ## 标准英文简介
 
@@ -19,12 +19,12 @@
 
 | 目标 | 适合内容 | 状态 |
 |---|---|---|
-| itch.io web + roguelike 标签 | 可试玩构建与标签 | 待账号持有人确认项目页和规则 |
-| BrowserCraft roguelite 标签 | 浏览器游戏目录页 | 待人工提交 |
-| Roguelite.org | 玩法目录/评测入口 | 待核对投稿方式 |
-| Product Hunt | 产品发布和讨论 | 等真实数据与账号资料齐备 |
-| Reddit 相关社区 | 体验帖、开发记录、反馈 | 先读版规；不批量投放 |
-| Dev.to / Hashnode | AI 游戏工程拆解 | 可引用 `guide.html` 与公开仓库 |
+| itch.io web + roguelike 标签 | 可试玩构建与标签 | blocked-by-environment：`https://itch.io/game/new` 进入 Cloudflare 安全验证 |
+| BrowserCraft roguelite 标签 | 浏览器游戏目录页 | not-submitted：公开目录页未发现投稿入口 |
+| Roguelite.org | 玩法目录/评测入口 | submitted-by-email：已发至 `contact@roguelite.org`，等待回复 |
+| Product Hunt | 产品发布和讨论 | blocked-by-environment：`https://www.producthunt.com/launch` 进入 Cloudflare 安全验证 |
+| Reddit 相关社区 | 体验帖、开发记录、反馈 | not-submitted：先读版规，暂不批量投放 |
+| Dev.to / Hashnode | AI 游戏工程拆解 | blocked-by-account：发布入口要求登录，当前未登录 |
 
 ## 发送前检查
 
