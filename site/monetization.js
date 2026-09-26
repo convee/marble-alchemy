@@ -10,6 +10,10 @@
   ].find(([value, isAllowed]) => isAllowed(value))?.[0] || '';
   const adClient = typeof config.adsenseClient === 'string' ? config.adsenseClient : '';
   const adSlot = typeof config.adsenseSlot === 'string' ? config.adsenseSlot : '';
+  const reportPaddleEvent = (data) => {
+    if (typeof data?.name !== 'string') return;
+    window.dispatchEvent(new CustomEvent('chaoschemy:paddle-event', { detail: { name: data.name } }));
+  };
 
   if (paymentLink) {
     document.querySelectorAll('[data-support-slot]').forEach((slot) => {
@@ -28,6 +32,7 @@
       if (!window.Paddle) return;
       window.Paddle.Initialize({
         token: paddleClientToken,
+        eventCallback: reportPaddleEvent,
         checkout: { settings: { displayMode: 'overlay', theme: 'dark', locale: 'en' } },
       });
       document.querySelectorAll('[data-paddle-support]').forEach((button) => {

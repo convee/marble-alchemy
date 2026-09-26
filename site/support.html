@@ -22,17 +22,22 @@
       <h1>Support the Workshop</h1>
       <p>A one-time contribution helps keep Chaoschemy browser experiments online.</p>
       <div class="status" id="checkout-status">Opening secure checkout…</div>
-      <p><a href="./">Return to Chaoschemy</a> · <a href="privacy.html">Privacy</a></p>
+      <p><a href="./">Return to Chaoschemy</a> · <a href="terms.html">Terms</a> · <a href="refund.html">Refund policy</a> · <a href="privacy.html">Privacy</a></p>
     </main>
     <script src="monetization-config.js"></script>
+    <script src="analytics.js"></script>
     <script>
       const config = window.CHAOSCHEMY_MONETIZATION || {};
       const token = typeof config.paddleClientToken === 'string' ? config.paddleClientToken : '';
       const priceId = typeof config.paddlePriceId === 'string' ? config.paddlePriceId : '';
       const status = document.querySelector('#checkout-status');
       const transactionId = new URLSearchParams(location.search).get('_ptxn');
+      const reportPaddleEvent = (data) => {
+        if (typeof data?.name !== 'string') return;
+        window.dispatchEvent(new CustomEvent('chaoschemy:paddle-event', { detail: { name: data.name } }));
+      };
       if (token.startsWith('live_') && window.Paddle) {
-        window.Paddle.Initialize({ token, checkout: { settings: { displayMode: 'overlay', theme: 'dark', locale: 'en' } } });
+        window.Paddle.Initialize({ token, eventCallback: reportPaddleEvent, checkout: { settings: { displayMode: 'overlay', theme: 'dark', locale: 'en' } } });
         if (transactionId) {
           window.Paddle.Checkout.open({ transactionId });
         } else if (priceId.startsWith('pri_')) {

@@ -7,7 +7,7 @@
 - 2026-09-26（GMT+8）现场回读 Cloudflare 站点列表：`chaoschemy.com` 显示最近 24 小时 37 次 page views、35 次 visits；包含验证和未知来源流量，不能当作自然获客样本。
 - 第一方事件接收 Worker 已部署在 `https://chaoschemy-analytics.convee-cn.workers.dev/events`，D1 数据库绑定为 `chaoschemy-analytics`；GitHub Pages 构建变量 `VITE_ANALYTICS_ENDPOINT` 已配置。
 - 2026-09-26（GMT+8）用正式站点真实浏览器链路回读到 `page_view`、`game_start`、`shot_attempt`、`level_complete`，两个版本都带有 `utm_source=x` 和 `utm_campaign=launch_thread`。这些是发布验证流量，不是自然用户 cohort。
-- 2026-09-26 15:49（GMT+8）导出第一方 D1：197 events / 12 sessions / 14 page views / 2 game-start sessions / 1 completed session / 1 replay session。来源分层为 direct 7 sessions、landing 1 session、X 4 sessions；D1/D7 尚无 eligible cohort。这仍是混合验证样本，不能推导自然转化率或留存。
+- 2026-09-26 19:29（GMT+8）导出第一方 D1：264 events / 17 sessions / 41 page views / 2 game-start sessions / 3 completed sessions / 1 replay session。来源分层为 direct 12 sessions、X 4 sessions、landing 2 sessions、guide 2 sessions；D1/D7 尚无 eligible cohort。这仍是同日混合验证样本，不能推导自然转化率或留存。
 
 ## 游戏事件协议
 
@@ -30,6 +30,7 @@
 | `share_attempt` / `share_completed` | `app`, `challenge`, `result`, `score` | 结果分享与自然传播意愿 |
 | `landing_view` | `app`, 三段 UTM | 首页真实到达量与来源分层 |
 | `cta_click` | `app`, `target`, 三段 UTM | 首页到游戏/指南/支持入口的点击归因 |
+| `paddle_checkout_event` | `app`, `event` | Paddle 结账打开、关闭、完成等生命周期归因 |
 
 ## 本地复盘工具
 

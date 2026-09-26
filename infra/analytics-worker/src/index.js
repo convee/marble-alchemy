@@ -20,6 +20,7 @@ const EVENT_NAMES = new Set([
   'share_attempt',
   'share_completed',
   'cta_click',
+  'paddle_checkout_event',
 ]);
 
 function headers() {

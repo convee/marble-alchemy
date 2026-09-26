@@ -104,6 +104,26 @@ test('accepts attributable landing-page calls to action', async () => {
   assert.equal(DB.rows[0].values[7], 'gpt6');
 });
 
+test('accepts anonymous Paddle checkout lifecycle events', async () => {
+  const DB = fakeDb();
+  const response = await worker.fetch(
+    new Request('https://analytics.example/events', {
+      method: 'POST',
+      headers: { origin: 'https://chaoschemy.com', 'content-type': 'application/json' },
+      body: JSON.stringify({
+        name: 'paddle_checkout_event',
+        props: { app: 'landing', event: 'checkout.completed' },
+        ts: '2026-09-26T00:02:00Z',
+        path: '/',
+        session_id: 'payment-session',
+      }),
+    }),
+    { DB },
+  );
+  assert.deepEqual(await response.json(), { accepted: 1 });
+  assert.equal(DB.rows[0].values[0], 'paddle_checkout_event');
+});
+
 test('rejects another origin before touching storage', async () => {
   const DB = fakeDb();
   const response = await worker.fetch(

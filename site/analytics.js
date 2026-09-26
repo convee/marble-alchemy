@@ -33,6 +33,10 @@
 
   track('page_view');
   track('landing_view');
+  window.addEventListener('chaoschemy:paddle-event', (event) => {
+    const name = event.detail?.name;
+    if (typeof name === 'string' && name) track('paddle_checkout_event', { event: name });
+  });
   document.addEventListener('click', (event) => {
     const target = event.target instanceof Element ? event.target.closest('[data-track]') : null;
     if (target) track('cta_click', { target: target.dataset.track });
