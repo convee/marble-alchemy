@@ -21,6 +21,7 @@ const EVENT_NAMES = new Set([
   'share_completed',
   'cta_click',
   'paddle_checkout_event',
+  'kids_ai_coach',
 ]);
 
 function headers() {

@@ -3,7 +3,7 @@
 ## 已启用
 
 - Cloudflare Web Analytics：覆盖 `chaoschemy.com/`、`/gpt6/`、`/fable5.1/`，统计页面访问、设备/地区和性能指标。
-- 入口页、两个游戏页都加载官方 beacon；隐私说明位于 `/privacy.html`。
+- 入口页、两个 Marble Alchemy 游戏页和 Kids Game Garden 页面都加载官方 beacon；隐私说明位于 `/privacy.html`。
 - 2026-09-26（GMT+8）现场回读 Cloudflare 站点列表：`chaoschemy.com` 显示最近 24 小时 37 次 page views、35 次 visits；包含验证和未知来源流量，不能当作自然获客样本。
 - 第一方事件接收 Worker 已部署在 `https://chaoschemy-analytics.convee-cn.workers.dev/events`，D1 数据库绑定为 `chaoschemy-analytics`；GitHub Pages 构建变量 `VITE_ANALYTICS_ENDPOINT` 已配置。
 - 2026-09-26（GMT+8）用正式站点真实浏览器链路回读到 `page_view`、`game_start`、`shot_attempt`、`level_complete`，两个版本都带有 `utm_source=x` 和 `utm_campaign=launch_thread`。这些是发布验证流量，不是自然用户 cohort。
@@ -31,6 +31,7 @@
 | `landing_view` | `app`, 三段 UTM | 首页真实到达量与来源分层 |
 | `cta_click` | `app`, `target`, 三段 UTM | 首页到游戏/指南/支持入口的点击归因 |
 | `paddle_checkout_event` | `app`, `event` | Paddle 结账打开、关闭、完成等生命周期归因 |
+| Kids Game Garden | `app=kids-games`, `game_id`, `event_type` | 大厅/游戏页访问、开始、关卡进度、完成/失败和 AI 陪玩互动 |
 
 ## 本地复盘工具
 

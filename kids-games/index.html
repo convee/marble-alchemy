@@ -70,6 +70,7 @@
 </main>
 <script src="shared/locale.js"></script>
 <script src="shared/parent-gate.js"></script>
+<script src="analytics.js"></script>
 <script>
 (function () {
   var english = window.KidsLocale && window.KidsLocale.english;
@@ -106,6 +107,7 @@
   var grid = document.getElementById('gameGrid');
   catalog.forEach(function (item) {
     var a = document.createElement('a'); a.className='game'; a.href=item.id+'/?quest=1'+(english?'&lang=en':'');
+    a.setAttribute('data-track', 'kids_game_open'); a.setAttribute('data-variant', item.id);
     a.innerHTML='<span class="game-icon" style="--tint:'+item.color+'">'+item.icon+'</span><h3>'+(english?item.en:item.name)+'</h3><p>'+(english?item.enDescription:item.description)+'</p><small>'+(english?item.enType:item.type)+' · '+(english?'Quest: ':'今日任务：')+(english?item.enQuest:item.quest)+' →</small>';
     grid.appendChild(a);
   });
