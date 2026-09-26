@@ -19,6 +19,11 @@
 - 没有在真实账户中选择国家、接受协议或输入企业/银行资料；也没有创建测试商品或价格，避免替项目擅自决定收费方案。
 - 可接手位置：Chrome 中的 `注册并创建 Stripe 账户 | Stripe` 标签页；另有 `New business 沙盒` 测试控制台可用于后续集成演练。
 
+### 中国大陆主体的替代路线
+
+- Stripe 不能直接用中国大陆主体开通生产收款。可评估 Merchant of Record（MoR）路线；Paddle 的[中国支付方案](https://www.paddle.com/billing/china)面向中国企业，包含一次性付款、税务/退款/争议处理，并列出中国市场支付方式，但仍需按其审核、合同和结算规则现场确认。
+- 目前没有注册 Paddle、没有创建商品，也没有把支付链接切到 Paddle；先完成服务商选择和收款合规核对。
+
 ## 当前技术状态
 
 - 首页和 `guide.html` 已加载 `monetization-config.js` 与 `monetization.js`。配置为空时不会加载 AdSense、不显示支持按钮，也不会产生第三方支付请求。
