@@ -5,12 +5,12 @@
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e9f7ff"/><stop offset=".5" stop-color="#f7ecff"/><stop offset="1" stop-color="#fff4de"/></linearGradient>
     <linearGradient id="orb" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#8375e4"/><stop offset="1" stop-color="#f47caf"/></linearGradient>
   </defs>
-  <rect width="1200" height="630" rx="36" fill="url(#bg)"/>
+  <rect width="1200" height="630" rx="36" fill="#f7ecff"/>
   <circle cx="965" cy="135" r="108" fill="#fffdf4" opacity=".75"/>
-  <circle cx="965" cy="135" r="76" fill="url(#orb)" opacity=".85"/>
-  <text x="92" y="184" fill="#796bbd" font-family="system-ui, sans-serif" font-size="24" font-weight="800" letter-spacing="4">CHAOSCHEMY PRESENTS</text>
-  <text x="88" y="292" fill="#3f365f" font-family="system-ui, sans-serif" font-size="74" font-weight="900">Kids Game Garden</text>
-  <text x="94" y="360" fill="#766d8d" font-family="system-ui, sans-serif" font-size="30">Six free browser games · no install · optional AI companion</text>
+  <circle cx="965" cy="135" r="76" fill="#ec70a7" opacity=".85"/>
+  <text x="92" y="184" fill="#796bbd" font-family="Arial" font-size="24" font-weight="800" letter-spacing="4">CHAOSCHEMY PRESENTS</text>
+  <text x="88" y="292" fill="#3f365f" font-family="Arial" font-size="74" font-weight="900">Kids Game Garden</text>
+  <text x="94" y="360" fill="#766d8d" font-family="Arial" font-size="30">Six free browser games · no install · optional AI companion</text>
   <text x="94" y="490" font-size="78">🎪 🍓 🚩 🎒 ⛏️ 🧁</text>
 </svg>
 
