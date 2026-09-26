@@ -47,7 +47,21 @@ export function parseInput(text) {
 }
 
 function normalize(value, index) {
-  const props = value?.props && typeof value.props === 'object' ? value.props : {};
+  const parseObject = (candidate) => {
+    if (candidate && typeof candidate === 'object' && !Array.isArray(candidate)) return candidate;
+    if (typeof candidate !== 'string' || !candidate.trim()) return {};
+    try {
+      const parsed = JSON.parse(candidate);
+      return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
+    } catch {
+      return {};
+    }
+  };
+  const directProps = parseObject(value?.props);
+  const payload = parseObject(value?.payload);
+  const props = Object.keys(directProps).length
+    ? directProps
+    : parseObject(payload.props);
   const name = String(value?.name ?? value?.event ?? '').trim();
   const sessionId = String(value?.session_id ?? value?.sessionId ?? '').trim();
   const timestamp = new Date(value?.ts ?? value?.timestamp ?? value?.occurred_at ?? NaN);
@@ -61,6 +75,22 @@ function normalize(value, index) {
     campaign: String(value?.utm_campaign ?? props.utm_campaign ?? '').trim() || '(none)',
     index,
   };
+}
+
+const LEGACY_VARIANTS = {
+  gpt6: { game_id: 'marble-alchemy', variant: 'gpt6' },
+  'fable5.1': { game_id: 'marble-alchemy', variant: 'fable5.1' },
+};
+
+function eventIdentity(event) {
+  const explicitGameId = String(event.props.game_id ?? event.props.gameId ?? '').trim();
+  const explicitVariant = String(event.props.variant ?? '').trim();
+  if (explicitGameId) {
+    return { game_id: explicitGameId, variant: explicitVariant || '(all)' };
+  }
+  const legacy = LEGACY_VARIANTS[String(event.props.app ?? '').trim()];
+  if (legacy) return legacy;
+  return { game_id: '(unattributed)', variant: '(all)' };
 }
 
 function utcDay(date) {
@@ -140,15 +170,11 @@ export function analyze(values) {
       .map(([source, value]) => [source, { page_views: value.page_views, sessions: value.sessions.size }]),
   );
   const gameGroups = new Map();
-  for (const sessionEvents of sessions.values()) {
-    const identity = sessionEvents.find((event) => event.props.game_id || event.props.gameId) ?? sessionEvents.find((event) => event.props.app);
-    const gameId = String(identity?.props.game_id ?? identity?.props.gameId ?? identity?.props.app ?? '').trim() || '(unattributed)';
-    const variant = String(
-      sessionEvents.find((event) => event.props.variant)?.props.variant ?? '',
-    ).trim() || '(all)';
-    const key = `${gameId}/${variant}`;
-    const current = gameGroups.get(key) ?? { game_id: gameId, variant, events: [] };
-    current.events.push(...sessionEvents);
+  for (const event of events) {
+    const identity = eventIdentity(event);
+    const key = `${identity.game_id}/${identity.variant}`;
+    const current = gameGroups.get(key) ?? { ...identity, events: [] };
+    current.events.push(event);
     gameGroups.set(key, current);
   }
   const breakdownByGame = Object.fromEntries(

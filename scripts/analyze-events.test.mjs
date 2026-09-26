@@ -30,6 +30,22 @@ test('breaks down game and variant telemetry without losing legacy app data', ()
   assert.equal(report.breakdown_by_game['marble-alchemy/gpt6'].funnel.completed_sessions, 1);
 });
 
+test('keeps a mixed visitor split across variants instead of using the first session identity', () => {
+  const report = analyze([
+    { name: 'page_view', session_id: 'mixed', ts: '2026-09-01T00:00:00Z', props: { app: 'landing' } },
+    { name: 'game_start', session_id: 'mixed', ts: '2026-09-01T00:01:00Z', props: { app: 'gpt6' } },
+    { name: 'page_view', session_id: 'mixed', ts: '2026-09-01T00:02:00Z', props: { app: 'landing' } },
+    { name: 'game_start', session_id: 'mixed', ts: '2026-09-01T00:03:00Z', props: { app: 'fable5.1' } },
+    { name: 'run_complete', session_id: 'mixed', ts: '2026-09-01T00:04:00Z', props: { app: 'fable5.1' } },
+  ]);
+
+  assert.equal(report.breakdown_by_game['(unattributed)/(all)'].funnel.page_views, 2);
+  assert.equal(report.breakdown_by_game['marble-alchemy/gpt6'].funnel.game_start_sessions, 1);
+  assert.equal(report.breakdown_by_game['marble-alchemy/fable5.1'].funnel.game_start_sessions, 1);
+  assert.equal(report.breakdown_by_game['marble-alchemy/fable5.1'].funnel.completed_sessions, 1);
+  assert.equal(report.breakdown_by_game['marble-alchemy/gpt6'].funnel.page_views, 0);
+});
+
 test('accepts NDJSON-compatible alternate event keys', () => {
   const report = analyze([
     { event: 'page_view', sessionId: 'one', timestamp: '2026-09-01T00:00:00Z' },
@@ -49,4 +65,20 @@ test('accepts Cloudflare D1 result exports', () => {
   ])));
   assert.equal(report.sessions, 1);
   assert.equal(report.funnel.start_rate, 1);
+});
+
+test('reads props from D1 payload JSON strings', () => {
+  const report = analyze(parseInput(JSON.stringify([
+    {
+      results: [
+        {
+          name: 'game_start',
+          session_id: 'd1-game',
+          occurred_at: '2026-09-01T00:00:00Z',
+          payload: JSON.stringify({ props: { app: 'gpt6', game_id: 'marble-alchemy', variant: 'gpt6' } }),
+        },
+      ],
+    },
+  ])));
+  assert.equal(report.breakdown_by_game['marble-alchemy/gpt6'].events, 1);
 });
