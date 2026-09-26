@@ -10,13 +10,21 @@ function usage() {
   process.exitCode = 2;
 }
 
-function parseInput(text) {
+export function parseInput(text) {
   const trimmed = text.trim();
   if (!trimmed) return [];
   if (trimmed.startsWith('[') || trimmed.startsWith('{')) {
     try {
       const value = JSON.parse(trimmed);
-      if (Array.isArray(value)) return value;
+      if (Array.isArray(value)) {
+        // `wrangler d1 execute --json` returns an array of result envelopes.
+        // Flatten those envelopes while leaving ordinary event arrays intact.
+        return value.flatMap((item) => {
+          if (Array.isArray(item?.results)) return item.results;
+          if (Array.isArray(item?.result?.results)) return item.result.results;
+          return [item];
+        });
+      }
       if (Array.isArray(value.events)) return value.events;
       if (Array.isArray(value.results)) return value.results;
       if (Array.isArray(value.result?.results)) return value.result.results;

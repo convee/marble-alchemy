@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { analyze } from './analyze-events.mjs';
+import { analyze, parseInput } from './analyze-events.mjs';
 
 test('builds a funnel and replay report from event records', () => {
   const report = analyze([
@@ -29,10 +29,14 @@ test('accepts NDJSON-compatible alternate event keys', () => {
 });
 
 test('accepts Cloudflare D1 result exports', () => {
-  const report = analyze([
-    { name: 'page_view', session_id: 'd1', occurred_at: '2026-09-01T00:00:00Z' },
-    { name: 'game_start', session_id: 'd1', occurred_at: '2026-09-01T00:01:00Z' },
-  ]);
+  const report = analyze(parseInput(JSON.stringify([
+    {
+      results: [
+        { name: 'page_view', session_id: 'd1', occurred_at: '2026-09-01T00:00:00Z' },
+        { name: 'game_start', session_id: 'd1', occurred_at: '2026-09-01T00:01:00Z' },
+      ],
+    },
+  ])));
   assert.equal(report.sessions, 1);
   assert.equal(report.funnel.start_rate, 1);
 });

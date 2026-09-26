@@ -5,6 +5,8 @@
 - Cloudflare Web Analytics：覆盖 `chaoschemy.com/`、`/gpt6/`、`/fable5.1/`，统计页面访问、设备/地区和性能指标。
 - 入口页、两个游戏页都加载官方 beacon；隐私说明位于 `/privacy.html`。
 - 2026-09-25 23:38（GMT+8）现场回读 Cloudflare 站点列表：`chaoschemy.com` 显示最近 24 小时 3 次 page views、3 次 visits。这是本次上线验证流量，不是自然获客样本。
+- 第一方事件接收 Worker 已部署在 `https://chaoschemy-analytics.convee-cn.workers.dev/events`，D1 数据库绑定为 `chaoschemy-analytics`；GitHub Pages 构建变量 `VITE_ANALYTICS_ENDPOINT` 已配置。
+- 2026-09-26 10:31（GMT+8）用正式站点真实浏览器链路回读到 `page_view`、`game_start`、`shot_attempt`、`level_complete`，两个版本都带有 `utm_source=x` 和 `utm_campaign=launch_thread`。这些是发布验证流量，不是自然用户 cohort。
 
 ## 游戏事件协议
 
@@ -34,8 +36,7 @@ node --test scripts/analyze-events.test.mjs
 报告会给出入口到开始、完成、复玩率、来源归因以及可用时的 D1/D7 cohort。示例输入在
 [`events.sample.ndjson`](events.sample.ndjson)，它只是协议样例，不是线上用户数据。
 
-## 仍未闭合
+## 运行边界
 
-Cloudflare beacon 已能测页面访问；第一方 Worker 的代码和 D1 schema 在
-[`infra/analytics-worker`](../../infra/analytics-worker)，但尚未绑定真实 D1、部署并把
-`VITE_ANALYTICS_ENDPOINT` 写入 GitHub 仓库变量。完成这一步前不宣称已有真实开始率、通关率或 D1/D7 留存。
+第一方 Worker 的代码、绑定和 D1 schema 在 [`infra/analytics-worker`](../../infra/analytics-worker)。
+当前可以导出线上事件并运行分析器，但验证数据不足以代表自然开始率、通关率、复玩率或 D1/D7 留存；这些指标要等 7–14 天真实访问后再判定。
