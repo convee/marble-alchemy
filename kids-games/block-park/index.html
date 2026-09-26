@@ -251,6 +251,9 @@ var stats = { built: 0, treasure: 0 };
 function updateStats(){
   var p = $('statPill');
   if (p) p.textContent = '🧱 ' + stats.built + ' · 💎 ' + stats.treasure;
+  window.KidsAI && window.KidsAI.setContext({
+    blocks_built: stats.built, treasures: stats.treasure
+  });
 }
 
 /* ================= 角色（三丽鸥风原创手绘，canvas 绘制） ================= */
@@ -962,6 +965,9 @@ $('startBtn').onclick = function(){
     if (solidAt(player.x, player.y - 2) || solidAt(player.x, player.y - player.h + 2)) spawnPlayer();
   }
   running = true;
+  window.KidsAI && window.KidsAI.event('round_start', {
+    blocks_built: stats.built, treasures: stats.treasure
+  });
   loop();
   toast('👋 一直往右走，去找糖果城堡吧！🏰');
 };

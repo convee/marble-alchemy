@@ -23,7 +23,12 @@ Every game has a shared AI companion with three bounded actions:
 - **Today’s quest**: one small, repeatable goal stored on the current device.
 - **Cheer me on**: encouraging feedback after a difficult or successful round.
 
-The browser sends only game state. It does not send a name, photo, voice recording, contact details, or chat history. If no AI endpoint is configured, the companion uses deterministic offline copy and the game remains fully playable.
+The companion receives live, bounded game state at round boundaries and key
+progress points: level or scene, moves or hearts, goals, collected items,
+answers and completion results. The browser sends only this allowlisted state
+through the proxy; it never sends names, chat history, voice or a model key.
+
+If no AI endpoint is configured, the companion uses deterministic offline copy and the game remains fully playable.
 
 The optional proxy in `worker/ai-proxy.js` calls **`glm-5.3-flash`**. The model key must stay in a Worker secret named `GLM_API_KEY`:
 

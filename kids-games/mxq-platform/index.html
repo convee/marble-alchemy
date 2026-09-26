@@ -483,6 +483,13 @@ function startLevel(i) {
   showScreen(null);
   updateHud();
   showBanner('第' + (i + 1) + '关 · ' + LEVELS[i].name, 1400);
+  window.KidsAI && window.KidsAI.event('round_start', {
+    level: i + 1, books_total: game.booksTotal, hearts: game.hearts
+  });
+  window.KidsAI && window.KidsAI.setContext({
+    level: i + 1, books: game.books, books_total: game.booksTotal,
+    hearts: game.hearts, candy: game.candy
+  });
 }
 function updateHud() {
   $('hudLv').textContent = '第' + (game.lv + 1) + '关';
@@ -689,6 +696,10 @@ function hurtRespawn() {
 }
 function levelFail() {
   game.screen = 'fail';               /* 冻结 update,防止重复扣血/叠加重开 */
+  window.KidsAI && window.KidsAI.event('round_fail', {
+    level: game.lv + 1, books: game.books, books_total: game.booksTotal,
+    hearts: game.hearts
+  });
   sfx.over();
   showBanner('再试一次！💪', 1300);
   var lv = game.lv;
@@ -702,6 +713,10 @@ function levelClear() {
     var ratio = game.books / game.booksTotal;
     st = ratio >= 0.999 ? 3 : ratio >= 0.6 ? 2 : 1;
   } else st = 3;
+  window.KidsAI && window.KidsAI.event('round_complete', {
+    level: game.lv + 1, stars: st, books: game.books, books_total: game.booksTotal,
+    hearts: game.hearts
+  });
   save.stars[game.lv] = Math.max(save.stars[game.lv] || 0, st);
   if (game.lv + 1 >= save.unlocked) save.unlocked = Math.min(LEVELS.length, game.lv + 2);
   persist();

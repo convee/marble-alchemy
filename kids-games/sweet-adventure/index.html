@@ -566,6 +566,10 @@ function startLevel() {
   game.world = genLevel(game.level, curSpeed());
   game.world.dist = 0;
   game.cleared = false;
+  window.KidsAI && window.KidsAI.setContext({
+    level: game.level, score: game.score, hearts: game.hearts,
+    speed: Math.round(curSpeed())
+  });
 }
 function startGame() {
   initAudio(); if (AC && AC.state === 'suspended') AC.resume();
@@ -577,6 +581,9 @@ function startGame() {
   game.magnet = 0; game.shield = false;
   game.players = [newPlayer(0, selChar[0])];
   startLevel();
+  window.KidsAI && window.KidsAI.event('round_start', {
+    level: game.level, score: game.score, hearts: game.hearts
+  });
   $('menu').classList.add('hidden'); $('over').classList.add('hidden'); $('pauseMask').classList.add('hidden');
   $('hud').classList.remove('hidden');
   updateHud();
@@ -584,6 +591,9 @@ function startGame() {
 }
 function endGame() {
   game.screen = 'over'; sfx.over();
+  window.KidsAI && window.KidsAI.event('round_fail', {
+    level: game.level, score: game.score, hearts: game.hearts
+  });
   if (game.score > game.best) { game.best = game.score; localStorage.setItem('sweet_run_best', game.best); }
   $('finalScore').textContent = game.score + ' 分';
   $('bestScore').textContent = '🏆 最高纪录：' + game.best + ' 分';
@@ -763,6 +773,10 @@ function update(dt) {
             game.floats.push({ x: sxp, y: sy - 10, txt: '+' + e.pts, t: 1, c: '#ff4f92' });
           }
           updateHud();
+          window.KidsAI && window.KidsAI.setContext({
+            level: game.level, score: game.score, hearts: game.hearts,
+            collected: e.type, distance: Math.round(wd.dist)
+          });
         }
       }
     }
@@ -780,6 +794,9 @@ function update(dt) {
       spawnParts(playerSX(pi), playerSY(pi), '#ffd94f', 18);
     game.level++;
     updateHud();
+    window.KidsAI && window.KidsAI.event('round_complete', {
+      level: game.level - 1, score: game.score, stars: 1, hearts: game.hearts
+    });
     setTimeout(() => { if (game.screen === 'play') startLevel(); }, 400);
   }
 

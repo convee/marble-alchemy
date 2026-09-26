@@ -625,6 +625,15 @@ function startLevel(i) {
   updateTop();
   guideSay(GUIDE_TIPS[i % GUIDE_TIPS.length]);
   showBanner('第' + (i + 1) + '关！', 1100);
+  window.KidsAI && window.KidsAI.event('round_start', {
+    level: i + 1, moves: G.moves,
+    goals: Object.keys(G.need).map(function (k) { return k + ':' + G.need[k]; }).join(',')
+  });
+  window.KidsAI && window.KidsAI.setContext({
+    level: i + 1, moves: G.moves,
+    goals: Object.keys(G.need).map(function (k) { return k + ':' + G.need[k]; }).join(','),
+    combo: 0
+  });
 }
 function updateTop() {
   $('movesNum').textContent = Math.max(0, G.moves);
@@ -641,6 +650,9 @@ function levelWin() {
   G.over = true; G.busy = true;
   sfx.win();
   var st = G.moves >= 5 ? 3 : G.moves >= 2 ? 2 : 1;
+  window.KidsAI && window.KidsAI.event('round_complete', {
+    level: G.lv + 1, stars: st, moves_left: G.moves, score: totalStars()
+  });
   save.stars[G.lv] = Math.max(save.stars[G.lv] || 0, st);
   if (G.lv + 1 >= save.unlocked) save.unlocked = Math.min(LEVELS.length, G.lv + 2);
   persist();
@@ -663,6 +675,10 @@ function levelWin() {
 }
 function levelLose() {
   G.over = true; G.busy = true;
+  window.KidsAI && window.KidsAI.event('round_fail', {
+    level: G.lv + 1, moves_left: G.moves,
+    goals: Object.keys(G.need).map(function (k) { return k + ':' + G.need[k]; }).join(',')
+  });
   sfx.lose();
   $('rTitle').textContent = '💦 差一点点！';
   $('rStars').textContent = '💪';

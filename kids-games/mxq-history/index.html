@@ -792,6 +792,10 @@ function finishBoss(win) {
     $('tSay').textContent = '米小圈：别灰心！我考试也经常差一点点……好像不是一点点。';
   }
   $('btnNextEra').style.display = 'none';
+  window.KidsAI && window.KidsAI.event(win ? 'round_complete' : 'round_fail', {
+    mode: 'time_challenge', correct: boss.right, total: boss.qs.length,
+    stars: win ? 1 : 0
+  });
   show('reward');
 }
 
@@ -801,6 +805,12 @@ function curEra() { return cur.reviewEra ? cur.reviewEra : ERAS[cur.era]; }
 function startEra(i) {
   cur = { era: i, qi: 0, stars: 0, firstTry: true, streak: 0 };
   var era = ERAS[i];
+  window.KidsAI && window.KidsAI.event('round_start', {
+    era: i + 1, era_name: era.name, questions: era.qs.length
+  });
+  window.KidsAI && window.KidsAI.setContext({
+    era: i + 1, era_name: era.name, question: 1, stars: 0
+  });
   showSkit('第' + (i + 1) + '关 · ' + era.name, era, function () {
     stopBossTimer();
     $('bossHearts').classList.add('hidden');
@@ -1022,6 +1032,10 @@ function finishQuestion(q, card) {
     if (cur.streak >= 3) { sfx.streak(); streakBurst(cur.streak); }
   }
   if (cur.reviewEra) reviewClear();
+  window.KidsAI && window.KidsAI.event('progress', {
+    era: cur.era + 1, question: cur.qi + 1, correct: true,
+    first_try: !!cur.firstTry, stars: cur.stars
+  });
   guideSay(cur.firstTry ? '太棒了！一次就答对！⭐' : '答对啦！你真会动脑筋！');
   var tip = document.createElement('div'); tip.className = 'tip-card show';
   tip.textContent = '💡 知识小贴士：' + q.tip;
@@ -1046,6 +1060,10 @@ function finishEra() {
   save.done[era.id] = true;
   save.stars[era.id] = Math.max(save.stars[era.id] || 0, cur.stars);
   persist();
+  window.KidsAI && window.KidsAI.event('round_complete', {
+    era: cur.era + 1, era_name: era.name, stars: cur.stars,
+    questions: era.qs.length
+  });
   sfx.clear();
   $('tIcon').textContent = era.treasure.icon;
   $('tName').textContent = era.treasure.name;

@@ -83,6 +83,7 @@
 
   function event(type, data) {
     data = data || {};
+    context = safeContext(Object.assign({}, context, data));
     if (type === 'round_start') {
       state.sessions += 1;
       state.streak = Math.max(1, state.streak);
@@ -239,7 +240,9 @@
   }, true);
   window.addEventListener('kids-game-event', function (ev) { if (ev.detail) event(ev.detail.type || 'progress', ev.detail); });
   window.KidsAI = {
-    model: MODEL, game: game, event: event, setContext: function (data) { context = safeContext(data); },
+    model: MODEL, game: game, event: event,
+    setContext: function (data) { context = safeContext(Object.assign({}, context, data || {})); },
+    reportState: function (data) { context = safeContext(Object.assign({}, context, data || {})); },
     ask: ask, open: function () { toggle(true); }, getState: function () { return state; }
   };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', build); else build();

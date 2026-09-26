@@ -455,6 +455,10 @@ function goStage(){
   hide('cover'); hide('finale'); show('stage');
   if (G.idx >= SCENES.length){ finish(); return; }
   var sc = SCENES[G.idx];
+  window.KidsAI && window.KidsAI.setContext({
+    scene: G.idx + 1, scene_name: sc.name, stars: G.stars,
+    completed: G.done.length
+  });
   $('sceneName').textContent = sc.icon + ' ' + sc.name;
   renderTrip();
   var body = $('stageBody'); body.innerHTML = '';
@@ -471,6 +475,9 @@ function clearScene(gotStar){
   if (gotStar && G.done.indexOf(G.idx) < 0){ G.stars += 1; G.done.push(G.idx); }
   persist();
   renderTrip();
+  window.KidsAI && window.KidsAI.event('progress', {
+    scene: G.idx + 1, stars: G.stars, success: !!gotStar
+  });
 }
 function nextScene(){
   if (advancing) return;
@@ -864,6 +871,9 @@ function finish(){
   cleanupTimers();
   hide('stage'); hide('cover'); show('finale');
   var s = G.stars, total = SCENES.length;
+  window.KidsAI && window.KidsAI.event('round_complete', {
+    stars: s, scenes: total, completed: G.done.length
+  });
   var starStr = '';
   for (var i=0;i<total;i++) starStr += (i < s ? '⭐' : '☆');
   $('finStars').textContent = starStr;
