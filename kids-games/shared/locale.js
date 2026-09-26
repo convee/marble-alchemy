@@ -53,7 +53,11 @@
     '⛏️ 挖掘':'⛏️ Dig', '🌱 重开':'🌱 Reset', '出发闯关 🏃':'Start the adventure 🏃', '🗺️ 闯关地图':'🗺️ Adventure map',
     '回选关地图':'Back to level map', '🏫 叮铃铃——赶上啦！':'🏫 Ring ring—we made it!', '你就是最棒的闯关小英雄！':'You are the best adventure hero!',
     '再丢课本就叫家长':'Lose the books again and I will call your parents',
-    '星期一':'Monday', '起床、上学、上课、课间、午餐、美术、放学':'wake up, school, class, break, lunch, art, and home time'
+    '星期一':'Monday', '起床、上学、上课、课间、午餐、美术、放学':'wake up, school, class, break, lunch, art, and home time',
+    '小美美':'Mimi', '酷洛洛':'Kulu', '桂桂狗':'Gigi', '凯蒂咪':'Kitty', '米小圈':'Mickey', '铁头':'Titou', '姜小牙':'Jiang', '李黎':'Lily', '魏老师':'Teacher Wei', '莫老师':'Teacher Mo', '孙悟空':'the Monkey King',
+    '米小圈：':'Mickey: ', '铁头说他只认识':'Titou only knows ', '姜小牙说历史书太贵他也没看':'Jiang says history books cost too much, so he has not read one', '《我最喜欢的历史人物》':'“My Favorite Historical Person”', '可我一个历史人物都不认识！':'but I do not know any historical person!', '（那是神话啦！）':'(that is a legend!)', '快跟我一起':'Come travel with me ', '穿越时空':'through time', '从远古一路玩到明清':'from ancient times to the Ming and Qing eras', '每一关都有宝物收集哦':'and collect a treasure in every stage',
+    '叮铃铃——闹钟响啦！':'Ring ring—the alarm is ringing!', '又赖床了':'is still in bed', '要经历':'You will ', '七件大事':'seven big moments', '还会遇到':'and meet', '不好啦！一阵超级大风把我的书包吹上了天，课本撒了一路！':'Oh no! A huge gust blew my schoolbag into the sky and scattered my books!', '魏老师说过：':'Teacher Wei said: ', '快帮我一路蹦蹦跳跳捡回课本，躲开大白鹅和泥水坑，赶在上课铃响前冲到学校吧！':'Help me hop along, collect the books, dodge the goose and puddles, and reach school before the bell!',
+    '挖掉':'Dig ', '方块':'blocks', '放上':'place ', '喜欢的方块盖小房子':'your favorite blocks to build a home', '你搭的世界会':'Your world ', '自动保存':'saves automatically', '下次接着玩':'next time'
   };
   function text(value) { return english && common[value] ? common[value] : value; }
   function translate(root) {
@@ -63,9 +67,11 @@
     var keys = Object.keys(common).sort(function (a, b) { return b.length - a.length; });
     while ((node = walker.nextNode())) {
       var value = node.nodeValue.trim();
+      var translated = node.nodeValue;
       for (var i = 0; i < keys.length; i += 1) {
-        if (value.indexOf(keys[i]) >= 0) { node.nodeValue = node.nodeValue.replace(keys[i], common[keys[i]]); break; }
+        if (translated.indexOf(keys[i]) >= 0) translated = translated.split(keys[i]).join(common[keys[i]]);
       }
+      if (translated !== node.nodeValue) node.nodeValue = translated;
     }
   }
   function switchUrl() {
