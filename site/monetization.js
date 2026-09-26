@@ -1,10 +1,15 @@
 (function () {
   const config = window.CHAOSCHEMY_MONETIZATION || {};
-  const paymentLink = typeof config.stripePaymentLink === 'string' ? config.stripePaymentLink : '';
+  const stripePaymentLink = typeof config.stripePaymentLink === 'string' ? config.stripePaymentLink : '';
+  const paddlePaymentLink = typeof config.paddlePaymentLink === 'string' ? config.paddlePaymentLink : '';
+  const paymentLink = [
+    [stripePaymentLink, (value) => value.startsWith('https://buy.stripe.com/')],
+    [paddlePaymentLink, (value) => value.startsWith('https://pay.paddle.io/checkout/')],
+  ].find(([value, isAllowed]) => isAllowed(value))?.[0] || '';
   const adClient = typeof config.adsenseClient === 'string' ? config.adsenseClient : '';
   const adSlot = typeof config.adsenseSlot === 'string' ? config.adsenseSlot : '';
 
-  if (paymentLink.startsWith('https://buy.stripe.com/')) {
+  if (paymentLink) {
     document.querySelectorAll('[data-support-slot]').forEach((slot) => {
       slot.hidden = false;
       slot.innerHTML = `<p><strong>Keep the lab open</strong><br><span>Support the workshop if today’s experiment earned a replay.</span></p><a class="btn support" href="${paymentLink}" data-track="support_click">Support the lab</a>`;

@@ -55,6 +55,7 @@ jobs:
       - name: Write public monetization config
         env:
           STRIPE_PAYMENT_LINK: ${{ vars.STRIPE_PAYMENT_LINK }}
+          PADDLE_PAYMENT_LINK: ${{ vars.PADDLE_PAYMENT_LINK }}
           ADSENSE_CLIENT: ${{ vars.ADSENSE_CLIENT }}
           ADSENSE_SLOT: ${{ vars.ADSENSE_SLOT }}
         run: |
@@ -62,6 +63,7 @@ jobs:
           const fs = require('node:fs');
           const values = {
             stripePaymentLink: String(process.env.STRIPE_PAYMENT_LINK || '').trim(),
+            paddlePaymentLink: String(process.env.PADDLE_PAYMENT_LINK || '').trim(),
             adsenseClient: String(process.env.ADSENSE_CLIENT || '').trim(),
             adsenseSlot: String(process.env.ADSENSE_SLOT || '').trim(),
           };

@@ -22,15 +22,16 @@
 ### 中国大陆主体的替代路线
 
 - Stripe 不能直接用中国大陆主体开通生产收款。可评估 Merchant of Record（MoR）路线；Paddle 的[中国支付方案](https://www.paddle.com/billing/china)面向中国企业，包含一次性付款、税务/退款/争议处理，并列出中国市场支付方式，但仍需按其审核、合同和结算规则现场确认。
-- 目前没有注册 Paddle、没有创建商品，也没有把支付链接切到 Paddle；先完成服务商选择和收款合规核对。
+- 已选择 Paddle Merchant of Record 作为中国大陆主体的一次性支持路线。Paddle 的一次性数字产品流程需要先创建商品和一次性价格，再通过 Hosted Checkout 或交易 checkout URL 收款；仍需完成账号审核、网站批准和结算资料核对。
+- Paddle 账号注册已打开并停在密码输入前的交接点；注册完成后，下一步是添加并批准 `chaoschemy.com`，创建一次性支持商品，生成 `https://pay.paddle.io/checkout/` 链接，再写入 GitHub repository variable `PADDLE_PAYMENT_LINK`。
 
 ## 当前技术状态
 
 - 首页和 `guide.html` 已加载 `monetization-config.js` 与 `monetization.js`。配置为空时不会加载 AdSense、不显示支持按钮，也不会产生第三方支付请求。
 - 支持入口由 `monetization.js` 动态插入；`analytics.js` 现在使用事件委托捕获动态入口的 `cta_click(target=support_click)`，因此启用支付后可以归因支持按钮点击。
-- GitHub Pages 构建会从 repository variables 读取 `STRIPE_PAYMENT_LINK`、`ADSENSE_CLIENT`、`ADSENSE_SLOT`，生成公开配置文件；这些值不是秘密，但只能在账号持有人完成审核后写入。
+- GitHub Pages 构建会从 repository variables 读取 `STRIPE_PAYMENT_LINK`、`PADDLE_PAYMENT_LINK`、`ADSENSE_CLIENT`、`ADSENSE_SLOT`，生成公开配置文件；这些值不是秘密，但只能在账号持有人完成审核后写入。
 - Pages 构建在配置 `ADSENSE_CLIENT` 后会自动生成 `ads.txt`；为空时删除该文件，避免发布无效的广告授权声明。
-- Stripe Payment Link 仅接受 `https://buy.stripe.com/` 前缀；AdSense 仅接受 `ca-pub-` publisher ID 和广告位 ID，避免误把测试地址或任意脚本注入生产页。
+- 支持链接只接受 Stripe `https://buy.stripe.com/` 或 Paddle Hosted Checkout `https://pay.paddle.io/checkout/` 前缀；AdSense 仅接受 `ca-pub-` publisher ID 和广告位 ID，避免误把测试地址或任意脚本注入生产页。
 
 ## 接入门槛
 
@@ -38,13 +39,14 @@
 
 ## 用户接手清单
 
-1. AdSense：确认实际法定收款国家/地区后，再决定是否接受条款并提交；不要直接保留“美国”默认值。
-2. Stripe：确认真实法律实体注册国家/地区、业务主体和收款银行后，再从测试沙盒切换到真实账户；沙盒账号不能代替生产支付账号。
-3. 提交后回读账号状态、站点审核状态和支付资料状态；在这些状态可核验前，不在站点插入广告脚本或真实支付入口。
+1. Paddle：完成注册、邮箱验证、账号审核与收款资料；批准 `chaoschemy.com` 后创建一次性支持商品和 Hosted Checkout。
+2. AdSense：确认实际法定收款国家/地区后，再决定是否接受条款并提交；不要直接保留“美国”默认值。
+3. Stripe：仅在未来具备受支持地区的合法实体、税号和银行资料时再考虑；当前不作为中国大陆主体路线。
+4. 提交后回读账号状态、站点审核状态和支付资料状态；在这些状态可核验前，不在站点插入广告脚本或真实支付入口。
 
 ## 技术接手步骤
 
-1. 在 Stripe 真实账户创建经过税务与退款政策核对的 Payment Link；将公开 URL 写入 GitHub repository variable `STRIPE_PAYMENT_LINK`。
+1. 在 Paddle 创建一次性支持商品/价格并生成 Hosted Checkout；将公开 URL 写入 GitHub repository variable `PADDLE_PAYMENT_LINK`。
 2. 在 AdSense 站点审核通过后，将 publisher ID 写入 `ADSENSE_CLIENT`、广告位 ID 写入 `ADSENSE_SLOT`。
-3. 手动触发 Pages workflow，回读首页的支持入口、广告位、隐私页和浏览器事件；支付先用 Stripe 的合法测试方式验证成功、取消和退款路径。
-4. 若要暂停变现，清空这三个 variables 并重新部署即可；空配置会自动隐藏入口。
+3. 手动触发 Pages workflow，回读首页的支持入口、广告位、隐私页和浏览器事件；支付先用 Paddle sandbox 验证成功、取消和退款路径。
+4. 若要暂停变现，清空 `PADDLE_PAYMENT_LINK`、`STRIPE_PAYMENT_LINK`、`ADSENSE_CLIENT` 和 `ADSENSE_SLOT` 并重新部署即可；空配置会自动隐藏入口。
