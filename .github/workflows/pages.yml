@@ -49,6 +49,7 @@ jobs:
           cp -r site/. dist/
           cp -r gpt6/dist dist/gpt6
           cp -r fable5.1/dist dist/fable5.1
+          node scripts/generate-game-pages.mjs dist/games.json dist/games
           test -f dist/index.html
           test -f dist/gpt6/index.html
           test -f dist/fable5.1/index.html
@@ -62,8 +63,9 @@ jobs:
           if (!Array.isArray(registry.games) || registry.games.length === 0) throw new Error('games.json must contain games');
           const slugs = new Set();
           for (const game of registry.games) {
-            if (!game.slug || slugs.has(game.slug)) throw new Error(`duplicate game slug: ${game.slug}`);
+            if (!/^[a-z0-9][a-z0-9-]*$/.test(game.slug || '') || slugs.has(game.slug)) throw new Error(`invalid or duplicate game slug: ${game.slug}`);
             slugs.add(game.slug);
+            if (!fs.existsSync(path.join('dist', 'games', game.slug, 'index.html'))) throw new Error(`missing game page: ${game.slug}`);
             if (!Array.isArray(game.variants) || game.variants.length === 0) throw new Error(`game has no variants: ${game.slug}`);
             const variantSlugs = new Set();
             for (const variant of game.variants) {

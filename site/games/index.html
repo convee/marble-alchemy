@@ -62,7 +62,7 @@
         </article>`;
       const renderGame = (game) => `
         <article class="game">
-          <div class="game-head"><div><h2>${escapeHtml(game.title)}</h2><p>${escapeHtml(game.tagline)}<br />${escapeHtml(game.description)}</p></div><span class="status">${escapeHtml(game.status)}</span></div>
+          <div class="game-head"><div><h2>${escapeHtml(game.title)}</h2><p>${escapeHtml(game.tagline)}<br />${escapeHtml(game.description)}</p><a class="button" href="./${escapeHtml(game.slug)}/">Open game page</a></div><span class="status">${escapeHtml(game.status)}</span></div>
           <div class="variants">${(game.variants || []).map((variant) => renderVariant(game, variant)).join('')}</div>
         </article>`;
       fetch('../games.json', { cache: 'no-store' })

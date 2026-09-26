@@ -27,6 +27,7 @@ export function sitemapPaths(registry) {
   if (!registry || !Array.isArray(registry.games)) throw new TypeError('games registry must contain a games array');
   const paths = new Set(STATIC_PATHS);
   for (const game of registry.games) {
+    if (typeof game.slug === 'string' && game.slug) paths.add(`/games/${game.slug}/`);
     for (const variant of game.variants ?? []) {
       if (typeof variant.playPath === 'string' && variant.playPath.startsWith('/')) paths.add(variant.playPath);
     }
