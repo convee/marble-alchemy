@@ -34,7 +34,7 @@
       const transactionId = new URLSearchParams(location.search).get('_ptxn');
       const reportPaddleEvent = (data) => {
         if (typeof data?.name !== 'string') return;
-        window.dispatchEvent(new CustomEvent('chaoschemy:paddle-event', { detail: { name: data.name } }));
+        window.dispatchEvent(new CustomEvent('chaoschemy:paddle-event', { detail: { name: data.name, code: data.code, type: data.type } }));
         if (data.name === 'checkout.error' || data.name === 'checkout.payment.error' || data.name === 'checkout.warning') {
           status.textContent = 'Checkout is temporarily unavailable. Please try again later.';
         } else if (/complete|paid|success/i.test(data.name)) {

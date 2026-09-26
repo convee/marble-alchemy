@@ -35,7 +35,12 @@
   track('landing_view');
   window.addEventListener('chaoschemy:paddle-event', (event) => {
     const name = event.detail?.name;
-    if (typeof name === 'string' && name) track('paddle_checkout_event', { event: name });
+    if (typeof name === 'string' && name) {
+      const props = { event: name };
+      if (typeof event.detail?.code === 'string') props.code = event.detail.code.slice(0, 80);
+      if (typeof event.detail?.type === 'string') props.type = event.detail.type.slice(0, 80);
+      track('paddle_checkout_event', props);
+    }
   });
   document.addEventListener('click', (event) => {
     const target = event.target instanceof Element ? event.target.closest('[data-track]') : null;

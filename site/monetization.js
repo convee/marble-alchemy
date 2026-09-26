@@ -12,7 +12,7 @@
   const adSlot = typeof config.adsenseSlot === 'string' ? config.adsenseSlot : '';
   const reportPaddleEvent = (data) => {
     if (typeof data?.name !== 'string') return;
-    window.dispatchEvent(new CustomEvent('chaoschemy:paddle-event', { detail: { name: data.name } }));
+    window.dispatchEvent(new CustomEvent('chaoschemy:paddle-event', { detail: { name: data.name, code: data.code, type: data.type } }));
   };
   window.addEventListener('chaoschemy:paddle-event', (event) => {
     const name = event.detail?.name;
