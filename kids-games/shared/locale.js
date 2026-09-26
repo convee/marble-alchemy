@@ -86,7 +86,12 @@
     var titleMeta = document.querySelector('meta[name="kids-game"]');
     var titleName = titleMeta && titleMeta.getAttribute('data-name-en');
     if (titleName) document.title = titleName;
-    else if (document.title.indexOf('小小游戏乐园') >= 0) document.title = 'Kids Game Garden · Play a little each day';
+    else if (document.title.indexOf('小小游戏乐园') >= 0 || document.title.indexOf('Kids Game Garden') >= 0) document.title = 'Kids Game Garden · Play a little each day';
+  } else {
+    var chineseMeta = document.querySelector('meta[name="kids-game"]');
+    var chineseName = chineseMeta && chineseMeta.getAttribute('data-name');
+    if (chineseName) document.title = chineseName;
+    else if (document.title.indexOf('Kids Game Garden') >= 0) document.title = '小小游戏乐园 · 每天玩一点';
   }
   var style = document.createElement('style');
   style.textContent = '.kids-locale-toggle{position:fixed;left:max(12px,env(safe-area-inset-left));bottom:max(14px,env(safe-area-inset-bottom));z-index:10002;border:2px solid #fff;border-radius:999px;padding:8px 12px;background:#ffffffdf;color:#665a89;font:900 12px system-ui,sans-serif;box-shadow:0 5px 16px #5d4d8926;cursor:pointer}';
