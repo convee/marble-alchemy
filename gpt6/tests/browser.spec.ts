@@ -59,8 +59,16 @@ test('real mouse shot, live feedback, deferred settlement and restart cleanup', 
 });
 
 test('AI model challenge is applied before play and changes the run contract', async ({ page }) => {
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  let firstRequest = true;
   await page.route('**/ai/scenarios.json', async (route) => {
-    await new Promise((resolve) => setTimeout(resolve, 250));
+    if (firstRequest) {
+      firstRequest = false;
+      await gate;
+    }
     await route.continue();
   });
   await page.goto('/?ai=1');
@@ -69,7 +77,10 @@ test('AI model challenge is applied before play and changes the run contract', a
   await page.locator('#game').focus();
   await page.keyboard.press('Space');
   expect((await snapshot(page)).shots).toBe(0);
-  await readyWithAi(page);
+  release();
+  await expect(page.locator('#ai-source')).toContainText('模型命题');
+  await expect(page.locator('#ai-effect')).not.toHaveText('AI 规则载入中');
+  await expect(page.locator('#launch')).toBeEnabled();
   const state = await snapshot(page);
   expect(state.challenge).toMatchObject({ source: 'model', generatedBy: 'glm-5.3-flash' });
   expect(['double_first_hit', 'heal_after_settlement', 'glass_cannon']).toContain(
