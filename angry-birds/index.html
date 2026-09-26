@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Angry Birds is a physics-based browser game from the Chaoschemy workshop." />
+    <link rel="canonical" href="https://chaoschemy.com/angry-birds/" />
+    <title>Angry Birds · Chaoschemy</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <main id="game-container" aria-label="Angry Birds game">
+      <div id="ui-layer" aria-live="polite">
+        <div id="score-display">Score: <span id="score">0</span></div>
+        <div id="level-display">Level: <span id="level">1</span></div>
+        <div id="birds-count">Birds left: <span id="birds-left">3</span></div>
+      </div>
+      <canvas id="game-canvas"></canvas>
+      <div id="start-screen" class="screen active">
+        <h1>🐦 Angry Birds</h1>
+        <p>Drag the slingshot to launch a bird and knock down every pig.</p>
+        <button id="start-btn" type="button">Start game</button>
+      </div>
+      <div id="game-over-screen" class="screen">
+        <h2 id="result-title">Game over</h2>
+        <p id="result-score">Final score: 0</p>
+        <button id="restart-btn" type="button">Restart</button>
+        <button id="next-level-btn" type="button" style="display: none">Next level</button>
+      </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/matter-js@0.19.0/build/matter.min.js"></script>
+    <script src="analytics.js"></script>
+    <script src="js/game.js"></script>
+  </body>
+</html>
