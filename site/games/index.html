@@ -84,5 +84,6 @@
         .then((catalogData) => { catalog.innerHTML = catalogData.games.map(renderGame).join(''); })
         .catch(() => { catalog.innerHTML = '<p class="error">The catalog is temporarily unavailable. <a href="../">Return to the homepage.</a></p>'; });
     </script>
+    <script>if (/^(www\.)?chaoschemy\.com$/.test(location.hostname)) { const beacon = document.createElement('script'); beacon.type = 'module'; beacon.src = 'https://static.cloudflareinsights.com/beacon.min.js'; beacon.dataset.cfBeacon = '{"token":"0f3c50f57d6d46eb95641c93b4c7781d"}'; document.body.append(beacon); }</script>
   </body>
 </html>

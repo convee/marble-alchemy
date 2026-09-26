@@ -96,8 +96,9 @@ ${image ? `    <meta name="twitter:image" content="${escapeHtml(`${base}${image}
       ${lobbyLink}
       <section class="variants" aria-label="Playable variants">${variants}
       </section>
-      <footer><a href="../">Game catalog</a> · <a href="../../">Chaoschemy home</a> · <a href="../../privacy.html">Privacy</a> · <a href="../../terms.html">Terms</a></footer>
+    <footer><a href="../">Game catalog</a> · <a href="../../">Chaoschemy home</a> · <a href="../../privacy.html">Privacy</a> · <a href="../../terms.html">Terms</a></footer>
     </main>
+    <script>if (/^(www\\.)?chaoschemy\\.com$/.test(location.hostname)) { const beacon = document.createElement('script'); beacon.type = 'module'; beacon.src = 'https://static.cloudflareinsights.com/beacon.min.js'; beacon.dataset.cfBeacon = '{"token":"0f3c50f57d6d46eb95641c93b4c7781d"}'; document.body.append(beacon); }</script>
   </body>
 </html>
 `;
