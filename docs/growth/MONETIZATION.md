@@ -23,9 +23,9 @@
 
 - Stripe 不能直接用中国大陆主体开通生产收款。可评估 Merchant of Record（MoR）路线；Paddle 的[中国支付方案](https://www.paddle.com/billing/china)面向中国企业，包含一次性付款、税务/退款/争议处理，并列出中国市场支付方式，但仍需按其审核、合同和结算规则现场确认。
 - 已选择 Paddle Merchant of Record 作为中国大陆主体的一次性支持路线。Paddle 的一次性数字产品流程需要先创建商品和一次性价格，再通过 Hosted Checkout 或 Paddle.js 交易结账收款。
-- Paddle 账号已注册并进入 Live 控制台；一次性商品为 `Chaoschemy Workshop Support`，价格为 `$5 USD`，价格 ID 为 `pri_01m3emp0rdnnfgacbjpcn4c8ta`。`chaoschemy.com` 已提交网站批准，当前状态仍为 **Pending**。
+- Paddle 账号已注册并进入 Live 控制台；一次性商品为 `Chaoschemy Workshop Support`，价格为 `$5 USD`，价格 ID 为 `pri_01m3emp0rdnnfgacbjpcn4c8ta`。账户验证资料已提交，Paddle 当前显示 **In progress / We're reviewing your details**。
 - Live 客户端 Token 和 `PADDLE_PRICE_ID` 已配置到 Pages 构建变量，首页的 Paddle.js 一次性结账入口已经可用。Hosted Checkout 当前受限，`PADDLE_PAYMENT_LINK` 仍为空；审核通过并获得权限后再补默认 Payment Link。
-- Paddle 审核要求的英文 Terms 和 Refund Policy 页面已加入站点并列入 sitemap；审核页仍显示 Pending，后续需重新回读是否转为 Approved。
+- Paddle 审核要求的英文 Terms 和 Refund Policy 页面已加入站点并列入 sitemap；当前等待 Paddle 团队审核，后续需重新回读是否转为 Approved。
 
 ## 当前技术状态
 
@@ -37,13 +37,13 @@
 
 ## 支付与广告当前状态
 
-支付代码已经启用 Paddle.js 一次性支持入口；尚未执行真实扣款。仍需完成 Paddle 网站批准、结账成功/取消/退款与 Webhook 回归，并回读结算资料。当前 Notifications 没有 webhook destination；Hosted Checkout 受限期间，不把空的 `PADDLE_PAYMENT_LINK` 当作支付故障。
+支付代码已经启用 Paddle.js 一次性支持入口；尚未执行真实扣款。仍需完成 Paddle 审核、结账成功/取消/退款与 Webhook 回归，并回读结算资料。当前 Notifications 没有 webhook destination；Hosted Checkout 受限期间，不把空的 `PADDLE_PAYMENT_LINK` 当作支付故障。
 
 AdSense 尚未提交注册或站点审核，广告入口保持关闭。先积累 7–14 天真实访问数据，再决定是否提交 AdSense 和填入广告配置；接入前还要完成隐私说明、广告政策、账号验证和收款资料回读。
 
 ## 用户接手清单
 
-1. Paddle：等待 `chaoschemy.com` 网站批准，完成结算资料核对；Hosted Checkout 获批后再创建默认 Payment Link。当前 Paddle.js 直接结账已可用。
+1. Paddle：等待账户审核完成，完成结算资料核对；Hosted Checkout 获批后再创建默认 Payment Link。当前 Paddle.js 直接结账已可用。
 2. AdSense：确认实际法定收款国家/地区后，再决定是否接受条款并提交；不要直接保留“美国”默认值。当前尚未提交。
 3. Stripe：仅在未来具备受支持地区的合法实体、税号和银行资料时再考虑；当前不作为中国大陆主体路线。
 4. 每次提交后回读账号状态、站点审核状态和支付资料状态；当前支付入口已经是可用的 Paddle.js 路线，广告脚本仍保持关闭。

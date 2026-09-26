@@ -8,7 +8,7 @@
 | 监控 | Cloudflare Web Analytics 24 小时回读 37 page views / 35 visits；第一方 D1 最新导出为 264 events / 17 sessions / 41 page views / 2 game-start sessions / 3 completions / 1 replay，X 归因 4 sessions | pass-with-baseline | 继续按自然/验证流量分层；等待 7–14 天真实 cohort 后再判断留存 |
 | 获客 | 英文首页、游戏页、field guide、canonical、sitemap、robots 已上线；事实版 X Thread 已发布（1/3、2/3、3/3）；Roguelite.org 投稿邮件已发送；DEV 与 Hashnode 英文工程文章已发布 | conditional | Product Hunt、itch.io 和 Hashnode 公开页当前被 Cloudflare 安全验证拦截；BrowserCraft 无公开投稿入口；先验证 Search Console，再按规则做 5–15 条人工外链 |
 | 复玩 | GPT-6 版形成“模型命题 → 受限规则 → 玩家五关回应 → AI 复盘 → 本地每日完成记录/分享”；事件包含 `landing_view`、`cta_click`、`ai_challenge_loaded`、`ai_rule_triggered`、`daily_challenge_completed`、`run_complete` 和三段 UTM | conditional | 累积 7–14 天真实访问，再按命题来源、开始率、通关率、复玩率和 D1/D7 判断 AI 是否带来留存 |
-| 变现 | Paddle.js 一次性 `$5 USD` 支持入口已上线并可打开结账；AdSense 未提交；Paddle 网站审核、结算资料、退款/Webhook 回归未完成 | prepared-handoff | 完成 Paddle 审核和结算资料，跑 Sandbox 成功/取消/退款/Webhook；再决定是否提交 AdSense |
+| 变现 | Paddle.js 一次性 `$5 USD` 支持入口已上线并可打开结账；账户验证资料已提交，Paddle 显示 In progress；AdSense 未提交；结算资料、退款/Webhook 回归未完成 | prepared-handoff | 等待 Paddle 审核，完成结算资料，跑 Sandbox 成功/取消/退款/Webhook；再决定是否提交 AdSense |
 | 复盘 | 事件字典、UTM 归因、D1 导出分析器和目录分发包已提交；最新导出有 264 events / 17 sessions，但 D1/D7 尚无 eligible cohort | conditional | 用 7–14 天真实 cohort 数据做一次继续/停止决定 |
 
 ## 不能混写的证据边界
