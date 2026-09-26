@@ -76,13 +76,25 @@ export function effectLabel(effect: AiChallenge['effect']) {
   }[effect];
 }
 
-export function debriefFor(challenge: AiChallenge): string {
-  return (
+export interface AiRunOutcome {
+  won: boolean;
+  levelsCleared: number;
+  totalDamage: number;
+  shots: number;
+  hp: number;
+}
+
+export function debriefFor(challenge: AiChallenge, outcome?: AiRunOutcome): string {
+  const guidance =
     challenge.debrief ??
     {
       double_first_hit: '首击优势已经写入物理规则；下一轮先找能连续碰撞的落点。',
       heal_after_settlement: '每次净化都能收回一滴生命；把风险留给即将到来的高压关卡。',
       glass_cannon: '两点生命换来更高的专注度；优先选择能稳定累积伤害的配方。',
-    }[challenge.effect]
-  );
+    }[challenge.effect];
+  if (!outcome) return guidance;
+  const result = outcome.won
+    ? `本局五关完成：${outcome.shots} 次发射造成 ${outcome.totalDamage} 点伤害，结算时还剩 ${outcome.hp} 点生命。`
+    : `本局完成 ${outcome.levelsCleared} 关：${outcome.shots} 次发射造成 ${outcome.totalDamage} 点伤害，最后剩余 ${outcome.hp} 点生命。`;
+  return `${guidance} ${result}`;
 }

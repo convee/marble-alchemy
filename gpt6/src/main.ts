@@ -415,7 +415,13 @@ function showEnd() {
     ai_source: challenge?.source ?? 'none',
   });
   const aiDebrief = challenge
-    ? debriefFor(challenge)
+    ? debriefFor(challenge, {
+        won,
+        levelsCleared: won ? LEVELS.length : scene.run.level,
+        totalDamage: scene.run.totalDamage,
+        shots: scene.run.shots,
+        hp: scene.run.hp,
+      })
     : 'AI 命题尚未载入；下一次实验会从这里重新开始。';
   openModal(
     'end',
