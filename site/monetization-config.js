@@ -2,6 +2,7 @@
 window.CHAOSCHEMY_MONETIZATION = {
   stripePaymentLink: '',
   paddlePaymentLink: '',
+  paddleClientToken: '',
   adsenseClient: '',
   adsenseSlot: '',
 };

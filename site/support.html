@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Support Chaoschemy with a one-time contribution." />
+    <link rel="canonical" href="https://chaoschemy.com/support.html" />
+    <title>Support the Workshop · Chaoschemy</title>
+    <style>
+      :root { color-scheme: dark; }
+      body { min-height: 100vh; margin: 0; display: grid; place-items: center; padding: 24px; background: #080c18; color: #e8f4ff; font: 16px/1.7 system-ui, -apple-system, sans-serif; }
+      main { width: min(620px, 100%); padding: 36px; border: 1px solid rgba(216, 198, 143, .35); border-radius: 18px; background: rgba(14, 20, 40, .88); box-shadow: 0 0 36px rgba(53, 242, 255, .12); text-align: center; }
+      h1 { margin: 0 0 12px; color: #d8c68f; letter-spacing: 2px; }
+      p { color: #9aabd0; }
+      a { color: #35f2ff; }
+      .status { margin-top: 24px; padding: 14px; border: 1px solid rgba(142, 162, 200, .25); border-radius: 12px; }
+    </style>
+    <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+  </head>
+  <body>
+    <main>
+      <h1>Support the Workshop</h1>
+      <p>A one-time contribution helps keep Chaoschemy browser experiments online.</p>
+      <div class="status" id="checkout-status">Opening secure checkout…</div>
+      <p><a href="./">Return to Chaoschemy</a> · <a href="privacy.html">Privacy</a></p>
+    </main>
+    <script src="monetization-config.js"></script>
+    <script>
+      const config = window.CHAOSCHEMY_MONETIZATION || {};
+      const token = typeof config.paddleClientToken === 'string' ? config.paddleClientToken : '';
+      const status = document.querySelector('#checkout-status');
+      const transactionId = new URLSearchParams(location.search).get('_ptxn');
+      if (token.startsWith('live_') && window.Paddle) {
+        window.Paddle.Initialize({ token, checkout: { settings: { displayMode: 'overlay', theme: 'dark', locale: 'en' } } });
+        if (transactionId) {
+          window.Paddle.Checkout.open({ transactionId });
+        } else {
+          status.textContent = 'Checkout is ready. Return to the homepage and use the support button to open it.';
+        }
+      } else {
+        status.textContent = 'Support checkout is being prepared. Please return later.';
+      }
+    </script>
+  </body>
+</html>
